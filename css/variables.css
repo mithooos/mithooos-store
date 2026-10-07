@@ -1,0 +1,72 @@
+/* ============================================
+   MITHOOOS — CSS Design Tokens
+   ============================================ */
+
+:root {
+  --color-primary:       #7A1F2B;
+  --color-primary-dark:  #5C1620;
+  --color-primary-light: #A94A55;
+  --color-secondary:     #182333;
+  --color-accent:        #B58A3A;
+  --color-ink:           #182333;
+  --color-ink-soft:      #2B3442;
+  --color-body:          #3F3A36;
+  --color-muted:         #756F68;
+  --color-border:        #DCCFBE;
+  --color-border-soft:   #EEE5D8;
+  --color-bg:            #FFFFFF;
+  --color-surface:       #F7F1E7;
+  --color-surface-alt:   #E8D8C3;
+  --color-success:       #10B981;
+  --color-warning:       #F59E0B;
+  --color-error:         #EF4444;
+  --color-info:          #3B82F6;
+  --font-heading: 'Poppins', 'Segoe UI', system-ui, sans-serif;
+  --font-body:    'Inter', 'Segoe UI', system-ui, sans-serif;
+  --text-xs:   0.75rem;
+  --text-sm:   0.875rem;
+  --text-base: 1rem;
+  --text-lg:   1.125rem;
+  --text-xl:   1.25rem;
+  --text-2xl:  1.5rem;
+  --text-3xl:  1.875rem;
+  --text-4xl:  2.25rem;
+  --text-5xl:  3rem;
+  --text-6xl:  3.75rem;
+  --space-1:  0.25rem;
+  --space-2:  0.5rem;
+  --space-3:  0.75rem;
+  --space-4:  1rem;
+  --space-5:  1.25rem;
+  --space-6:  1.5rem;
+  --space-8:  2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+  --radius-sm:   6px;
+  --radius-md:   10px;
+  --radius-lg:   16px;
+  --radius-xl:   24px;
+  --radius-2xl:  32px;
+  --radius-full: 9999px;
+  --shadow-xs:  0 1px 2px rgba(0,0,0,.05);
+  --shadow-sm:  0 2px 8px rgba(0,0,0,.07);
+  --shadow-md:  0 4px 20px rgba(0,0,0,.09);
+  --shadow-lg:  0 8px 40px rgba(0,0,0,.12);
+  --shadow-xl:  0 16px 60px rgba(0,0,0,.15);
+  --shadow-brand: 0 8px 30px rgba(122,31,43,.22);
+  --shadow-card:  0 2px 16px rgba(24,35,51,.09);
+  --transition-fast:   150ms ease;
+  --transition-base:   250ms ease;
+  --transition-slow:   400ms cubic-bezier(.4,0,.2,1);
+  --transition-spring: 350ms cubic-bezier(.34,1.56,.64,1);
+  --container-xl:  1280px;
+  --nav-height:    82px;
+  --z-dropdown: 100;
+  --z-sticky:  200;
+  --z-overlay: 300;
+  --z-modal:   400;
+  --z-toast:   500;
+}

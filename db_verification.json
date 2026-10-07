@@ -1,0 +1,564 @@
+{
+    "tables": [
+        "addresses",
+        "audit_log",
+        "blog_posts",
+        "carts",
+        "categories",
+        "collections",
+        "contact_messages",
+        "coupons",
+        "inventory_items",
+        "inventory_movements",
+        "inventory_reservations",
+        "newsletter_subscribers",
+        "order_items",
+        "orders",
+        "payments",
+        "product_attributes",
+        "product_collections",
+        "product_images",
+        "product_reviews",
+        "product_variants",
+        "products",
+        "rate_limits",
+        "schema_migrations",
+        "settings",
+        "users",
+        "wishlists"
+    ],
+    "constraints": [
+        {
+            "conname": "users_user_type_check",
+            "pg_get_constraintdef": "CHECK (((user_type)::text = ANY ((ARRAY['customer'::character varying, 'admin'::character varying])::text[])))"
+        },
+        {
+            "conname": "products_price_check",
+            "pg_get_constraintdef": "CHECK ((price >= (0)::numeric))"
+        },
+        {
+            "conname": "products_discount_percentage_check",
+            "pg_get_constraintdef": "CHECK (((discount_percentage >= (0)::numeric) AND (discount_percentage <= (100)::numeric)))"
+        },
+        {
+            "conname": "products_cost_price_check",
+            "pg_get_constraintdef": "CHECK ((cost_price >= (0)::numeric))"
+        },
+        {
+            "conname": "products_stock_quantity_check",
+            "pg_get_constraintdef": "CHECK ((stock_quantity >= 0))"
+        },
+        {
+            "conname": "products_status_check",
+            "pg_get_constraintdef": "CHECK (((status)::text = ANY ((ARRAY['draft'::character varying, 'published'::character varying, 'archived'::character varying])::text[])))"
+        },
+        {
+            "conname": "product_variants_price_check",
+            "pg_get_constraintdef": "CHECK ((price >= (0)::numeric))"
+        },
+        {
+            "conname": "product_variants_stock_quantity_check",
+            "pg_get_constraintdef": "CHECK ((stock_quantity >= 0))"
+        },
+        {
+            "conname": "inventory_items_available_stock_check",
+            "pg_get_constraintdef": "CHECK ((available_stock >= 0))"
+        },
+        {
+            "conname": "inventory_items_reserved_stock_check",
+            "pg_get_constraintdef": "CHECK ((reserved_stock >= 0))"
+        },
+        {
+            "conname": "inventory_items_on_hand_stock_check",
+            "pg_get_constraintdef": "CHECK ((on_hand_stock >= 0))"
+        },
+        {
+            "conname": "inventory_items_status_check",
+            "pg_get_constraintdef": "CHECK (((status)::text = ANY ((ARRAY['active'::character varying, 'low_stock'::character varying, 'out_of_stock'::character varying, 'discontinued'::character varying])::text[])))"
+        },
+        {
+            "conname": "inventory_movements_movement_type_check",
+            "pg_get_constraintdef": "CHECK (((movement_type)::text = ANY ((ARRAY['received'::character varying, 'sold'::character varying, 'returned'::character varying, 'adjusted'::character varying, 'cancelled'::character varying])::text[])))"
+        },
+        {
+            "conname": "inventory_reservations_quantity_check",
+            "pg_get_constraintdef": "CHECK ((quantity > 0))"
+        },
+        {
+            "conname": "inventory_reservations_status_check",
+            "pg_get_constraintdef": "CHECK (((status)::text = ANY ((ARRAY['active'::character varying, 'fulfilled'::character varying, 'expired'::character varying])::text[])))"
+        },
+        {
+            "conname": "product_reviews_rating_check",
+            "pg_get_constraintdef": "CHECK (((rating >= 1) AND (rating <= 5)))"
+        },
+        {
+            "conname": "carts_quantity_check",
+            "pg_get_constraintdef": "CHECK ((quantity > 0))"
+        },
+        {
+            "conname": "orders_subtotal_check",
+            "pg_get_constraintdef": "CHECK ((subtotal >= (0)::numeric))"
+        },
+        {
+            "conname": "orders_tax_check",
+            "pg_get_constraintdef": "CHECK ((tax >= (0)::numeric))"
+        },
+        {
+            "conname": "orders_shipping_cost_check",
+            "pg_get_constraintdef": "CHECK ((shipping_cost >= (0)::numeric))"
+        },
+        {
+            "conname": "orders_discount_amount_check",
+            "pg_get_constraintdef": "CHECK ((discount_amount >= (0)::numeric))"
+        },
+        {
+            "conname": "orders_online_discount_amount_check",
+            "pg_get_constraintdef": "CHECK ((online_discount_amount >= (0)::numeric))"
+        },
+        {
+            "conname": "orders_total_amount_check",
+            "pg_get_constraintdef": "CHECK ((total_amount >= (0)::numeric))"
+        },
+        {
+            "conname": "orders_order_status_check",
+            "pg_get_constraintdef": "CHECK (((order_status)::text = ANY ((ARRAY['pending'::character varying, 'confirmed'::character varying, 'processing'::character varying, 'shipped'::character varying, 'delivered'::character varying, 'cancelled'::character varying, 'refunded'::character varying])::text[])))"
+        },
+        {
+            "conname": "order_items_price_at_purchase_check",
+            "pg_get_constraintdef": "CHECK ((price_at_purchase >= (0)::numeric))"
+        },
+        {
+            "conname": "order_items_cost_at_purchase_check",
+            "pg_get_constraintdef": "CHECK ((cost_at_purchase >= (0)::numeric))"
+        },
+        {
+            "conname": "order_items_quantity_check",
+            "pg_get_constraintdef": "CHECK ((quantity > 0))"
+        },
+        {
+            "conname": "order_items_item_total_check",
+            "pg_get_constraintdef": "CHECK ((item_total >= (0)::numeric))"
+        },
+        {
+            "conname": "payments_payment_method_check",
+            "pg_get_constraintdef": "CHECK (((payment_method)::text = ANY ((ARRAY['credit_card'::character varying, 'debit_card'::character varying, 'paypal'::character varying, 'stripe'::character varying, 'bank_transfer'::character varying, 'easypaisa'::character varying, 'cod'::character varying])::text[])))"
+        },
+        {
+            "conname": "payments_amount_check",
+            "pg_get_constraintdef": "CHECK ((amount >= (0)::numeric))"
+        },
+        {
+            "conname": "payments_payment_status_check",
+            "pg_get_constraintdef": "CHECK (((payment_status)::text = ANY ((ARRAY['pending'::character varying, 'completed'::character varying, 'failed'::character varying, 'refunded'::character varying])::text[])))"
+        },
+        {
+            "conname": "addresses_address_type_check",
+            "pg_get_constraintdef": "CHECK (((address_type)::text = ANY ((ARRAY['shipping'::character varying, 'billing'::character varying, 'both'::character varying])::text[])))"
+        },
+        {
+            "conname": "coupons_discount_type_check",
+            "pg_get_constraintdef": "CHECK (((discount_type)::text = ANY ((ARRAY['percentage'::character varying, 'fixed'::character varying])::text[])))"
+        },
+        {
+            "conname": "coupons_discount_value_check",
+            "pg_get_constraintdef": "CHECK ((discount_value >= (0)::numeric))"
+        },
+        {
+            "conname": "coupons_minimum_purchase_check",
+            "pg_get_constraintdef": "CHECK ((minimum_purchase >= (0)::numeric))"
+        },
+        {
+            "conname": "coupons_used_count_check",
+            "pg_get_constraintdef": "CHECK ((used_count >= 0))"
+        },
+        {
+            "conname": "blog_posts_view_count_check",
+            "pg_get_constraintdef": "CHECK ((view_count >= 0))"
+        }
+    ],
+    "fks": [
+        {
+            "conname": "categories_parent_category_id_fkey",
+            "pg_get_constraintdef": "FOREIGN KEY (parent_category_id) REFERENCES categories(category_id) ON DELETE SET NULL"
+        },
+        {
+            "conname": "products_category_id_fkey",
+            "pg_get_constraintdef": "FOREIGN KEY (category_id) REFERENCES categories(category_id)"
+        },
+        {
+            "conname": "product_collections_product_id_fkey",
+            "pg_get_constraintdef": "FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE"
+        },
+        {
+            "conname": "product_collections_collection_id_fkey",
+            "pg_get_constraintdef": "FOREIGN KEY (collection_id) REFERENCES collections(collection_id) ON DELETE CASCADE"
+        },
+        {
+            "conname": "product_variants_product_id_fkey",
+            "pg_get_constraintdef": "FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE"
+        },
+        {
+            "conname": "inventory_movements_created_by_fkey",
+            "pg_get_constraintdef": "FOREIGN KEY (created_by) REFERENCES users(user_id) ON DELETE SET NULL"
+        },
+        {
+            "conname": "inventory_items_product_id_fkey",
+            "pg_get_constraintdef": "FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE"
+        },
+        {
+            "conname": "inventory_items_variant_id_fkey",
+            "pg_get_constraintdef": "FOREIGN KEY (variant_id) REFERENCES product_variants(variant_id) ON DELETE CASCADE"
+        },
+        {
+            "conname": "inventory_movements_inventory_id_fkey",
+            "pg_get_constraintdef": "FOREIGN KEY (inventory_id) REFERENCES inventory_items(inventory_id) ON DELETE CASCADE"
+        },
+        {
+            "conname": "inventory_reservations_product_id_fkey",
+            "pg_get_constraintdef": "FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE"
+        },
+        {
+            "conname": "inventory_reservations_variant_id_fkey",
+            "pg_get_constraintdef": "FOREIGN KEY (variant_id) REFERENCES product_variants(variant_id) ON DELETE CASCADE"
+        },
+        {
+            "conname": "inventory_reservations_user_id_fkey",
+            "pg_get_constraintdef": "FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE"
+        },
+        {
+            "conname": "product_attributes_product_id_fkey",
+            "pg_get_constraintdef": "FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE"
+        },
+        {
+            "conname": "product_images_product_id_fkey",
+            "pg_get_constraintdef": "FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE"
+        },
+        {
+            "conname": "product_reviews_product_id_fkey",
+            "pg_get_constraintdef": "FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE"
+        },
+        {
+            "conname": "product_reviews_user_id_fkey",
+            "pg_get_constraintdef": "FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE"
+        },
+        {
+            "conname": "wishlists_user_id_fkey",
+            "pg_get_constraintdef": "FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE"
+        },
+        {
+            "conname": "wishlists_product_id_fkey",
+            "pg_get_constraintdef": "FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE"
+        },
+        {
+            "conname": "carts_user_id_fkey",
+            "pg_get_constraintdef": "FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE"
+        },
+        {
+            "conname": "carts_product_id_fkey",
+            "pg_get_constraintdef": "FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE"
+        },
+        {
+            "conname": "carts_variant_id_fkey",
+            "pg_get_constraintdef": "FOREIGN KEY (variant_id) REFERENCES product_variants(variant_id) ON DELETE CASCADE"
+        },
+        {
+            "conname": "orders_user_id_fkey",
+            "pg_get_constraintdef": "FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE"
+        },
+        {
+            "conname": "order_items_order_id_fkey",
+            "pg_get_constraintdef": "FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE"
+        },
+        {
+            "conname": "order_items_product_id_fkey",
+            "pg_get_constraintdef": "FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE RESTRICT"
+        },
+        {
+            "conname": "order_items_variant_id_fkey",
+            "pg_get_constraintdef": "FOREIGN KEY (variant_id) REFERENCES product_variants(variant_id) ON DELETE SET NULL"
+        },
+        {
+            "conname": "payments_order_id_fkey",
+            "pg_get_constraintdef": "FOREIGN KEY (order_id) REFERENCES orders(order_id)"
+        },
+        {
+            "conname": "addresses_user_id_fkey",
+            "pg_get_constraintdef": "FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE"
+        },
+        {
+            "conname": "blog_posts_author_id_fkey",
+            "pg_get_constraintdef": "FOREIGN KEY (author_id) REFERENCES users(user_id)"
+        },
+        {
+            "conname": "audit_log_user_id_fkey",
+            "pg_get_constraintdef": "FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL"
+        }
+    ],
+    "indexes": [
+        {
+            "indexname": "schema_migrations_pkey",
+            "indexdef": "CREATE UNIQUE INDEX schema_migrations_pkey ON public.schema_migrations USING btree (version)"
+        },
+        {
+            "indexname": "users_pkey",
+            "indexdef": "CREATE UNIQUE INDEX users_pkey ON public.users USING btree (user_id)"
+        },
+        {
+            "indexname": "users_email_key",
+            "indexdef": "CREATE UNIQUE INDEX users_email_key ON public.users USING btree (email)"
+        },
+        {
+            "indexname": "categories_pkey",
+            "indexdef": "CREATE UNIQUE INDEX categories_pkey ON public.categories USING btree (category_id)"
+        },
+        {
+            "indexname": "categories_category_name_key",
+            "indexdef": "CREATE UNIQUE INDEX categories_category_name_key ON public.categories USING btree (category_name)"
+        },
+        {
+            "indexname": "categories_slug_key",
+            "indexdef": "CREATE UNIQUE INDEX categories_slug_key ON public.categories USING btree (slug)"
+        },
+        {
+            "indexname": "products_pkey",
+            "indexdef": "CREATE UNIQUE INDEX products_pkey ON public.products USING btree (product_id)"
+        },
+        {
+            "indexname": "products_slug_key",
+            "indexdef": "CREATE UNIQUE INDEX products_slug_key ON public.products USING btree (slug)"
+        },
+        {
+            "indexname": "products_sku_key",
+            "indexdef": "CREATE UNIQUE INDEX products_sku_key ON public.products USING btree (sku)"
+        },
+        {
+            "indexname": "collections_pkey",
+            "indexdef": "CREATE UNIQUE INDEX collections_pkey ON public.collections USING btree (collection_id)"
+        },
+        {
+            "indexname": "collections_collection_name_key",
+            "indexdef": "CREATE UNIQUE INDEX collections_collection_name_key ON public.collections USING btree (collection_name)"
+        },
+        {
+            "indexname": "collections_slug_key",
+            "indexdef": "CREATE UNIQUE INDEX collections_slug_key ON public.collections USING btree (slug)"
+        },
+        {
+            "indexname": "product_collections_pkey",
+            "indexdef": "CREATE UNIQUE INDEX product_collections_pkey ON public.product_collections USING btree (product_id, collection_id)"
+        },
+        {
+            "indexname": "product_variants_pkey",
+            "indexdef": "CREATE UNIQUE INDEX product_variants_pkey ON public.product_variants USING btree (variant_id)"
+        },
+        {
+            "indexname": "product_variants_sku_key",
+            "indexdef": "CREATE UNIQUE INDEX product_variants_sku_key ON public.product_variants USING btree (sku)"
+        },
+        {
+            "indexname": "inventory_items_pkey",
+            "indexdef": "CREATE UNIQUE INDEX inventory_items_pkey ON public.inventory_items USING btree (inventory_id)"
+        },
+        {
+            "indexname": "inventory_items_product_id_variant_id_key",
+            "indexdef": "CREATE UNIQUE INDEX inventory_items_product_id_variant_id_key ON public.inventory_items USING btree (product_id, variant_id)"
+        },
+        {
+            "indexname": "inventory_movements_pkey",
+            "indexdef": "CREATE UNIQUE INDEX inventory_movements_pkey ON public.inventory_movements USING btree (movement_id)"
+        },
+        {
+            "indexname": "inventory_reservations_pkey",
+            "indexdef": "CREATE UNIQUE INDEX inventory_reservations_pkey ON public.inventory_reservations USING btree (reservation_id)"
+        },
+        {
+            "indexname": "product_attributes_pkey",
+            "indexdef": "CREATE UNIQUE INDEX product_attributes_pkey ON public.product_attributes USING btree (attribute_id)"
+        },
+        {
+            "indexname": "product_attributes_product_id_attr_name_key",
+            "indexdef": "CREATE UNIQUE INDEX product_attributes_product_id_attr_name_key ON public.product_attributes USING btree (product_id, attr_name)"
+        },
+        {
+            "indexname": "product_images_pkey",
+            "indexdef": "CREATE UNIQUE INDEX product_images_pkey ON public.product_images USING btree (image_id)"
+        },
+        {
+            "indexname": "product_reviews_pkey",
+            "indexdef": "CREATE UNIQUE INDEX product_reviews_pkey ON public.product_reviews USING btree (review_id)"
+        },
+        {
+            "indexname": "product_reviews_user_id_product_id_key",
+            "indexdef": "CREATE UNIQUE INDEX product_reviews_user_id_product_id_key ON public.product_reviews USING btree (user_id, product_id)"
+        },
+        {
+            "indexname": "wishlists_pkey",
+            "indexdef": "CREATE UNIQUE INDEX wishlists_pkey ON public.wishlists USING btree (wishlist_id)"
+        },
+        {
+            "indexname": "wishlists_user_id_product_id_key",
+            "indexdef": "CREATE UNIQUE INDEX wishlists_user_id_product_id_key ON public.wishlists USING btree (user_id, product_id)"
+        },
+        {
+            "indexname": "carts_pkey",
+            "indexdef": "CREATE UNIQUE INDEX carts_pkey ON public.carts USING btree (cart_id)"
+        },
+        {
+            "indexname": "orders_pkey",
+            "indexdef": "CREATE UNIQUE INDEX orders_pkey ON public.orders USING btree (order_id)"
+        },
+        {
+            "indexname": "orders_order_number_key",
+            "indexdef": "CREATE UNIQUE INDEX orders_order_number_key ON public.orders USING btree (order_number)"
+        },
+        {
+            "indexname": "orders_idempotency_key_key",
+            "indexdef": "CREATE UNIQUE INDEX orders_idempotency_key_key ON public.orders USING btree (idempotency_key)"
+        },
+        {
+            "indexname": "order_items_pkey",
+            "indexdef": "CREATE UNIQUE INDEX order_items_pkey ON public.order_items USING btree (order_item_id)"
+        },
+        {
+            "indexname": "payments_pkey",
+            "indexdef": "CREATE UNIQUE INDEX payments_pkey ON public.payments USING btree (payment_id)"
+        },
+        {
+            "indexname": "addresses_pkey",
+            "indexdef": "CREATE UNIQUE INDEX addresses_pkey ON public.addresses USING btree (address_id)"
+        },
+        {
+            "indexname": "coupons_pkey",
+            "indexdef": "CREATE UNIQUE INDEX coupons_pkey ON public.coupons USING btree (coupon_id)"
+        },
+        {
+            "indexname": "coupons_code_key",
+            "indexdef": "CREATE UNIQUE INDEX coupons_code_key ON public.coupons USING btree (code)"
+        },
+        {
+            "indexname": "newsletter_subscribers_pkey",
+            "indexdef": "CREATE UNIQUE INDEX newsletter_subscribers_pkey ON public.newsletter_subscribers USING btree (subscriber_id)"
+        },
+        {
+            "indexname": "newsletter_subscribers_email_key",
+            "indexdef": "CREATE UNIQUE INDEX newsletter_subscribers_email_key ON public.newsletter_subscribers USING btree (email)"
+        },
+        {
+            "indexname": "blog_posts_pkey",
+            "indexdef": "CREATE UNIQUE INDEX blog_posts_pkey ON public.blog_posts USING btree (post_id)"
+        },
+        {
+            "indexname": "blog_posts_slug_key",
+            "indexdef": "CREATE UNIQUE INDEX blog_posts_slug_key ON public.blog_posts USING btree (slug)"
+        },
+        {
+            "indexname": "audit_log_pkey",
+            "indexdef": "CREATE UNIQUE INDEX audit_log_pkey ON public.audit_log USING btree (log_id)"
+        },
+        {
+            "indexname": "rate_limits_pkey",
+            "indexdef": "CREATE UNIQUE INDEX rate_limits_pkey ON public.rate_limits USING btree (ip_address)"
+        },
+        {
+            "indexname": "settings_pkey",
+            "indexdef": "CREATE UNIQUE INDEX settings_pkey ON public.settings USING btree (setting_id)"
+        },
+        {
+            "indexname": "settings_setting_key_key",
+            "indexdef": "CREATE UNIQUE INDEX settings_setting_key_key ON public.settings USING btree (setting_key)"
+        },
+        {
+            "indexname": "contact_messages_pkey",
+            "indexdef": "CREATE UNIQUE INDEX contact_messages_pkey ON public.contact_messages USING btree (message_id)"
+        },
+        {
+            "indexname": "idx_users_type",
+            "indexdef": "CREATE INDEX idx_users_type ON public.users USING btree (user_type)"
+        },
+        {
+            "indexname": "idx_users_active",
+            "indexdef": "CREATE INDEX idx_users_active ON public.users USING btree (is_active)"
+        },
+        {
+            "indexname": "idx_categories_parent",
+            "indexdef": "CREATE INDEX idx_categories_parent ON public.categories USING btree (parent_category_id)"
+        },
+        {
+            "indexname": "idx_products_category",
+            "indexdef": "CREATE INDEX idx_products_category ON public.products USING btree (category_id)"
+        },
+        {
+            "indexname": "idx_products_slug",
+            "indexdef": "CREATE INDEX idx_products_slug ON public.products USING btree (slug)"
+        },
+        {
+            "indexname": "idx_products_active",
+            "indexdef": "CREATE INDEX idx_products_active ON public.products USING btree (is_active)"
+        },
+        {
+            "indexname": "idx_products_featured",
+            "indexdef": "CREATE INDEX idx_products_featured ON public.products USING btree (is_featured)"
+        },
+        {
+            "indexname": "idx_products_created",
+            "indexdef": "CREATE INDEX idx_products_created ON public.products USING btree (created_at)"
+        },
+        {
+            "indexname": "idx_images_product",
+            "indexdef": "CREATE INDEX idx_images_product ON public.product_images USING btree (product_id)"
+        },
+        {
+            "indexname": "idx_reviews_product",
+            "indexdef": "CREATE INDEX idx_reviews_product ON public.product_reviews USING btree (product_id)"
+        },
+        {
+            "indexname": "idx_carts_user",
+            "indexdef": "CREATE INDEX idx_carts_user ON public.carts USING btree (user_id)"
+        },
+        {
+            "indexname": "idx_carts_session",
+            "indexdef": "CREATE INDEX idx_carts_session ON public.carts USING btree (session_id)"
+        },
+        {
+            "indexname": "idx_orders_user",
+            "indexdef": "CREATE INDEX idx_orders_user ON public.orders USING btree (user_id)"
+        },
+        {
+            "indexname": "idx_orders_status",
+            "indexdef": "CREATE INDEX idx_orders_status ON public.orders USING btree (order_status)"
+        },
+        {
+            "indexname": "idx_orders_created",
+            "indexdef": "CREATE INDEX idx_orders_created ON public.orders USING btree (created_at)"
+        },
+        {
+            "indexname": "idx_order_items_order",
+            "indexdef": "CREATE INDEX idx_order_items_order ON public.order_items USING btree (order_id)"
+        },
+        {
+            "indexname": "idx_payments_order",
+            "indexdef": "CREATE INDEX idx_payments_order ON public.payments USING btree (order_id)"
+        },
+        {
+            "indexname": "idx_addresses_user",
+            "indexdef": "CREATE INDEX idx_addresses_user ON public.addresses USING btree (user_id)"
+        },
+        {
+            "indexname": "idx_coupons_active",
+            "indexdef": "CREATE INDEX idx_coupons_active ON public.coupons USING btree (is_active)"
+        },
+        {
+            "indexname": "idx_blog_published",
+            "indexdef": "CREATE INDEX idx_blog_published ON public.blog_posts USING btree (is_published)"
+        },
+        {
+            "indexname": "idx_contact_read",
+            "indexdef": "CREATE INDEX idx_contact_read ON public.contact_messages USING btree (is_read)"
+        },
+        {
+            "indexname": "idx_products_search",
+            "indexdef": "CREATE INDEX idx_products_search ON public.products USING gin (to_tsvector('simple'::regconfig, (((COALESCE(product_name, ''::character varying))::text || ' '::text) || COALESCE(description, ''::text))))"
+        }
+    ]
+}

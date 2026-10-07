@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Categories — Admin | Mithooos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/admin.css">
+  <link rel="stylesheet" href="../../css/skeleton.css">
+  <script src="../js/admin-auth.js"></script>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-logo"><img src="../../images/logo.png" alt="Mithooos logo" style="height:42px;width:auto;display:block;"></div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Overview</div>
+    <a href="../index.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="17" height="17"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
+    <div class="nav-section">Catalog</div>
+    <a href="categories.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="17" height="17"><path d="M4 7h16M4 12h16M4 17h10"/><circle cx="17" cy="17" r="3"/></svg>Categories</a>
+    <a href="products.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="17" height="17"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>Products</a>
+    <div class="nav-section">Sales</div>
+    <a href="orders.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="17" height="17"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>Orders</a>
+    <a href="coupons.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="17" height="17"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/></svg>Coupons</a>
+    <div class="nav-section">People</div>
+    <a href="customers.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="17" height="17"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Customers</a>
+    <div class="nav-section">System</div>
+    <a href="analytics.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="17" height="17"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Analytics</a>
+    <a href="../../index.html" class="nav-item" style="margin-top:auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="17" height="17"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>View Store</a>
+  </nav>
+</aside>
+
+<div class="main-wrap">
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="page-title">Categories</div>
+      <div style="font-size:.75rem;color:var(--muted)">Manage Sindhi cultural catalog groups</div>
+    </div>
+    <div class="topbar-right">
+      <button class="btn btn-primary" onclick="openCategoryModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Category
+      </button>
+      <div class="admin-avatar">A</div>
+    </div>
+  </header>
+
+  <main class="content">
+    <div class="card">
+      <div class="toolbar">
+        <div class="toolbar-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2" width="15" height="15"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="search" placeholder="Search categories…" id="categorySearch" oninput="filterCategories()">
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Image</th>
+              <th>Slug</th>
+              <th>Description</th>
+              <th>Display Order</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="categoriesBody">
+            <tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--muted)">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="modal-overlay" id="categoryModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="categoryModalTitle">Add Category</span>
+      <button class="modal-close" onclick="closeModal('categoryModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <form id="categoryForm" onsubmit="saveCategory(event)">
+        <input type="hidden" id="categoryId">
+        <div class="form-group">
+          <label class="form-label">Category Name *</label>
+          <input type="text" class="form-control" id="categoryName" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Slug *</label>
+          <input type="text" class="form-control" id="categorySlug" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Category Image</label>
+          <input type="file" class="form-control" id="categoryImageFile" accept="image/jpeg,image/png,image/webp">
+          <small style="display:block;margin-top:.35rem;color:var(--muted)">JPEG, PNG, or WebP · Max 5MB</small>
+          <label style="display:flex;align-items:center;gap:.4rem;margin-top:.5rem;font-size:.75rem;color:var(--muted)">
+            <input type="checkbox" id="removeCategoryImage"> Remove current image
+          </label>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea class="form-control" id="categoryDescription" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Display Order</label>
+          <input type="number" class="form-control" id="categoryOrder" min="0" value="0">
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('categoryModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="document.getElementById('categoryForm').requestSubmit()">Save Category</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+<script src="../js/admin.js?v=20260916"></script>
+<script>
+let editingCategoryId = null;
+let categoryRows = [];
+const categoryBasePath = window.location.pathname.includes('/mithooos') ? '/mithooos' : '';
+
+async function loadCategories() {
+  try {
+    const res = await AdminAPI.get('/categories');
+    categoryRows = res.data || [];
+    renderCategories(categoryRows);
+  } catch (err) {
+    document.getElementById('categoriesBody').innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--error)">Could not load categories.</td></tr>';
+    showToast(err.message || 'Could not load categories.', 'error');
+  }
+}
+
+function renderCategories(rows) {
+  const tbody = document.getElementById('categoriesBody');
+  if (!rows.length) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--muted)">No categories found.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = rows.map(c => `
+    <tr>
+      <td>${escapeHtml(c.category_name)}</td>
+      <td>${c.cover_image_url ? `<img src="${escapeHtml(c.cover_image_url)}" alt="" style="width:48px;height:36px;object-fit:cover;border-radius:6px;display:block">` : '<span class="td-muted">No image</span>'}</td>
+      <td><span class="td-muted">${escapeHtml(c.slug)}</span></td>
+      <td>${escapeHtml((c.description || '').slice(0, 90) || '—')}</td>
+      <td>${Number(c.display_order || 0)}</td>
+      <td>${c.is_active ? '<span class="badge badge-active">Active</span>' : '<span class="badge badge-inactive">Inactive</span>'}</td>
+      <td>
+        <div class="td-actions">
+          <button class="btn btn-ghost btn-sm" onclick="editCategory(${c.category_id})">Edit</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteCategory(${c.category_id})">Delete</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function filterCategories() {
+  const q = document.getElementById('categorySearch').value.trim().toLowerCase();
+  const filtered = !q ? categoryRows : categoryRows.filter(c =>
+    (c.category_name || '').toLowerCase().includes(q) ||
+    (c.slug || '').toLowerCase().includes(q) ||
+    (c.description || '').toLowerCase().includes(q)
+  );
+  renderCategories(filtered);
+}
+
+function openCategoryModal() {
+  editingCategoryId = null;
+  document.getElementById('categoryForm').reset();
+  document.getElementById('categoryId').value = '';
+  document.getElementById('categoryModalTitle').textContent = 'Add Category';
+  openModal('categoryModal');
+}
+
+function editCategory(id) {
+  const c = categoryRows.find(x => x.category_id === id);
+  if (!c) return;
+  editingCategoryId = id;
+  document.getElementById('categoryId').value = id;
+  document.getElementById('categoryName').value = c.category_name || '';
+  document.getElementById('categorySlug').value = c.slug || '';
+  document.getElementById('categoryImageFile').value = '';
+  document.getElementById('removeCategoryImage').checked = false;
+  document.getElementById('categoryDescription').value = c.description || '';
+  document.getElementById('categoryOrder').value = c.display_order || 0;
+  document.getElementById('categoryModalTitle').textContent = 'Edit Category';
+  openModal('categoryModal');
+}
+
+async function saveCategory(e) {
+  e.preventDefault();
+  const imageFile = document.getElementById('categoryImageFile').files[0];
+  let uploadedImageUrl = '';
+
+  if (imageFile) {
+    const formData = new FormData();
+    formData.append('image', imageFile);
+    try {
+      const uploadResponse = await fetch(`${categoryBasePath}/backend/upload.php`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${localStorage.getItem('pp_token') || ''}` },
+        body: formData,
+      });
+      const uploadResult = await uploadResponse.json().catch(() => ({}));
+      if (!uploadResponse.ok || !uploadResult.success || !uploadResult.data?.uploaded?.[0]?.url) {
+        throw new Error(uploadResult.message || 'Category image upload failed.');
+      }
+      uploadedImageUrl = uploadResult.data.uploaded[0].url;
+    } catch (err) {
+      showToast(err.message || 'Category image upload failed.', 'error');
+      return;
+    }
+  }
+
+  const existingCategory = categoryRows.find(category => category.category_id === editingCategoryId);
+  const payload = {
+    category_name: document.getElementById('categoryName').value.trim(),
+    slug: document.getElementById('categorySlug').value.trim(),
+    cover_image_url: document.getElementById('removeCategoryImage').checked ? '' : (uploadedImageUrl || existingCategory?.cover_image_url || ''),
+    description: document.getElementById('categoryDescription').value.trim(),
+    display_order: Number(document.getElementById('categoryOrder').value || 0),
+    is_active: true,
+  };
+
+  if (!payload.category_name || !payload.slug) {
+    showToast('Name and slug are required.', 'error');
+    return;
+  }
+
+  try {
+    if (editingCategoryId) {
+      await AdminAPI.put('/categories/' + editingCategoryId, payload);
+      showToast('Category updated.', 'success');
+    } else {
+      await AdminAPI.post('/categories', payload);
+      showToast('Category created.', 'success');
+    }
+    closeModal('categoryModal');
+    loadCategories();
+  } catch (err) {
+    showToast(err.message || 'Could not save category.', 'error');
+  }
+}
+
+async function deleteCategory(id) {
+  if (!confirm('Delete this category? It will be hidden from the storefront catalog.')) return;
+  try {
+    await AdminAPI.del('/categories/' + id);
+    showToast('Category deleted.', 'success');
+    loadCategories();
+  } catch (err) {
+    showToast(err.message || 'Could not delete category.', 'error');
+  }
+}
+
+loadCategories();
+</script>
+</body>
+</html>

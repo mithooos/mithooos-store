@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="/admin-panel/">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png">
+  <title>Dashboard — Mithooos Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/admin.css">
+  <link rel="stylesheet" href="../css/skeleton.css">
+  <script src="js/admin-auth.js"></script>
+</head>
+<body>
+
+<!-- ═══════════════ SIDEBAR ═══════════════ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <img src="../images/logo.png" alt="Mithooos logo" style="height:42px;width:auto;display:block;">
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Overview</div>
+    <a href="index.html" class="nav-item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </a>
+    <div class="nav-section">Catalog</div>
+    <a href="pages/categories.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h10"/><circle cx="17" cy="17" r="3"/></svg>
+      Categories
+    </a>
+    <a href="pages/products.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>
+      Products
+    </a>
+    <div class="nav-section">Sales</div>
+    <a href="pages/orders.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      Orders
+      <span class="nav-badge-count" id="pendingOrdersBadge"></span>
+    </a>
+    <a href="pages/coupons.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/></svg>
+      Coupons
+    </a>
+    <div class="nav-section">People</div>
+    <a href="pages/customers.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+      Customers
+    </a>
+    
+    <div class="nav-section">Content</div>
+    <a href="pages/blog.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+      Blog
+    </a>
+    <div class="nav-section">Analytics</div>
+    <a href="pages/analytics.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      Analytics
+    </a>
+    <div class="nav-section">System</div>
+    <a href="pages/settings.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33"/></svg>
+      Settings
+    </a>
+    <a href="../index.html" class="nav-item danger" style="margin-top:auto">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      View Store
+    </a>
+    <button onclick="adminLogout()" class="nav-item danger" style="background:none;border:none;width:100%;text-align:left;cursor:pointer;font-family:inherit;font-size:inherit">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Logout
+    </button>
+  </nav>
+</aside>
+
+<!-- ═══════════════ MAIN ═══════════════ -->
+<div class="main-wrap">
+
+  <!-- Topbar -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="topbar-icon" id="sidebarToggle" aria-label="Toggle sidebar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <h1 class="page-title">Dashboard</h1>
+    </div>
+    <div class="topbar-right">
+      <span style="font-size:.78rem;color:#9CA3AF" id="adminUserName">Admin</span>
+      <div class="admin-avatar" id="adminAvatar">A</div>
+    </div>
+  </header>
+
+  <!-- Content -->
+  <main class="content">
+
+    <!-- Date range selector -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:.75rem">
+      <div>
+        <p style="font-size:.72rem;color:#9CA3AF;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px">Overview</p>
+        <p style="font-size:.8rem;font-weight:600;color:#1A1A2E" id="dateRangeLabel">Loading...</p>
+      </div>
+      <div style="display:flex;gap:.5rem;align-items:center;">
+        <button id="cleanupAlertBtn" onclick="showCleanupModal()" style="background:white;color:var(--ink);border:1.5px solid var(--border);padding:6px 12px;border-radius:6px;font-size:0.75rem;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:6px;transition:all 0.2s">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-top:-2px"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Export Week Detail <span id="cleanupCount" style="color:#DC2626"></span>
+        </button>
+        <button class="btn btn-ghost btn-sm period-btn active" data-period="7">7 days</button>
+        <button class="btn btn-ghost btn-sm period-btn" data-period="30">30 days</button>
+        <button class="btn btn-ghost btn-sm period-btn" data-period="90">90 days</button>
+      </div>
+    </div>
+
+    <!-- Stat cards -->
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card">
+        <div class="stat-header">
+          <div class="stat-icon orange"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+          <div class="mini-chart" id="revChart"></div>
+        </div>
+        <div class="stat-val" id="statRevenue">—</div>
+        <div class="stat-label">Order Revenue (PKR)</div>
+        <div class="stat-trend up" id="statRevTrend">↑ Loading…</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-header">
+          <div class="stat-icon green"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
+          <div class="mini-chart" id="profChart"></div>
+        </div>
+        <div class="stat-val" id="statProfit">—</div>
+        <div class="stat-label">Gross Profit (PKR)</div>
+        <div class="stat-trend up" id="statProfTrend">↑ Loading…</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-header">
+          <div class="stat-icon yellow"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
+          <div class="mini-chart" id="ordChart"></div>
+        </div>
+        <div class="stat-val" id="statOrders">—</div>
+        <div class="stat-label">Orders</div>
+        <div class="stat-trend up" id="statOrdTrend">↑ Loading…</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-header">
+          <div class="stat-icon green"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+          <div class="mini-chart" id="custChart"></div>
+        </div>
+        <div class="stat-val" id="statCustomers">—</div>
+        <div class="stat-label">Registered Customers</div>
+        <div class="stat-trend up" id="statCustTrend">↑ Loading…</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-header">
+          <div class="stat-icon blue"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/></svg></div>
+          <div class="mini-chart" id="prodChart"></div>
+        </div>
+        <div class="stat-val" id="statProducts">—</div>
+        <div class="stat-label">Active Products</div>
+        <div class="stat-trend neutral" id="statProdTrend">Loading…</div>
+      </div>
+    </div>
+
+    <!-- Charts row -->
+    <div class="grid-2" style="margin-bottom:1.25rem">
+
+      <!-- Revenue chart -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Revenue Over Time</span>
+          <span style="font-size:.72rem;color:#9CA3AF" id="revenueChartPeriod">Last 30 days</span>
+        </div>
+        <div style="position:relative;height:220px">
+          <canvas id="revenueChart" role="img" aria-label="Revenue over time line chart"></canvas>
+        </div>
+      </div>
+
+      <!-- Orders by status donut -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Orders by Status</span>
+          <span style="font-size:.72rem;color:#9CA3AF">Current</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;align-items:center">
+          <div style="position:relative;height:180px">
+            <canvas id="statusChart" role="img" aria-label="Orders by status donut chart"></canvas>
+          </div>
+          <div id="statusLegend" style="display:flex;flex-direction:column;gap:.5rem;font-size:.72rem"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Order Types row -->
+    <div class="grid-2" style="margin-bottom:1.25rem">
+      <div class="card" style="grid-column: 1 / -1;">
+        <div class="card-header">
+          <span class="card-title">Order Types Breakdown</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th style="text-transform:uppercase;font-size:0.7rem;color:var(--muted)">Payment Method</th>
+                <th style="text-transform:uppercase;font-size:0.7rem;color:var(--muted);text-align:center">Total Orders</th>
+                <th style="text-transform:uppercase;font-size:0.7rem;color:var(--muted);text-align:center">Delivered</th>
+                <th style="text-transform:uppercase;font-size:0.7rem;color:var(--muted);text-align:center">Pending / Shipped</th>
+                <th style="text-transform:uppercase;font-size:0.7rem;color:var(--muted);text-align:center">Cancelled</th>
+              </tr>
+            </thead>
+            <tbody id="paymentTypesTbody">
+              <tr><td colspan="5" style="text-align:center;color:#9CA3AF;padding:2rem">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tables row -->
+    <div class="grid-2">
+
+      <!-- Recent orders -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Recent Orders</span>
+          <a href="pages/orders.html" class="btn btn-outline btn-sm">View All</a>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Order</th>
+                <th>Customer</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="recentOrdersTbody">
+              <tr><td colspan="5" style="text-align:center;color:#9CA3AF;padding:2rem">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Top products -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Top Products <small style="font-weight:400;color:var(--muted)">(product sales)</small></span>
+          <a href="pages/products.html" class="btn btn-outline btn-sm">View All</a>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Sold</th>
+                <th>Product Sales</th>
+              </tr>
+            </thead>
+            <tbody id="topProductsTbody">
+              <tr><td colspan="3" style="text-align:center;color:#9CA3AF;padding:2rem">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div><!-- /main-wrap -->
+
+<!-- Cleanup Modal Overlay -->
+<div class="modal-overlay" id="cleanupModalOverlay">
+  <div class="modal" style="max-width:450px;">
+    <div class="modal-header">
+      <h3 class="modal-title">Export Week Detail</h3>
+      <button class="modal-close" onclick="closeCleanupModal()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body" style="font-size:.85rem;color:var(--ink);line-height:1.6">
+      <p>Before deleting the screenshots, a comprehensive <strong>HTML report</strong> containing this week's orders, new customers, and inventory overview will be downloaded.</p>
+      <div style="margin-top:1rem;color:#B91C1C;background:#FEF2F2;padding:.75rem 1rem;border-radius:6px;font-size:.8rem;border:1px solid #FCA5A5">
+        <strong style="display:block;margin-bottom:4px">Notice:</strong>
+        Order records will remain intact. Only the physical image files older than 7 days will be permanently deleted to free up server space.
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeCleanupModal()">Cancel</button>
+      <button class="btn btn-primary" id="cleanupConfirmBtn" onclick="executeCleanup()" style="background:#DC2626;border-color:#DC2626">Export & Delete Now</button>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Chart.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
+<script>
+if (typeof ChartDataLabels !== 'undefined') {
+  Chart.register(ChartDataLabels);
+}
+</script>
+<script src="js/admin.js?v=20260916"></script>
+<script>
+'use strict';
+
+/* ── Chart instances ── */
+let revenueChart = null;
+let statusChart  = null;
+let activePeriod = 30;
+
+/* ── Mini sparkbars ── */
+function renderMiniChart(containerId, values, color = '#FF6B35') {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  const max = Math.max(...values);
+  el.innerHTML = values.map(v => {
+    const h = Math.round((v / max) * 36) || 2;
+    return `<div class="mini-bar" style="height:${h}px;background:${color}"></div>`;
+  }).join('');
+}
+
+/* ── Stat cards ── */
+function renderStats(d) {
+  document.getElementById('statRevenue').textContent   = fmt.currency(d.revenue);
+  document.getElementById('statProfit').textContent    = fmt.currency(d.profit);
+  document.getElementById('statOrders').textContent    = d.orders.toLocaleString();
+  document.getElementById('statCustomers').textContent = d.customers.toLocaleString();
+  document.getElementById('statProducts').textContent  = d.products.toLocaleString();
+
+  const setTrend = (id, text, isUp) => {
+    const el = document.getElementById(id);
+    el.textContent = text === 'No comparison data' ? text : (isUp ? '↑ ' : '↓ ') + text;
+    el.className = 'stat-trend ' + (isUp ? 'up' : (text.includes('low') ? 'neutral' : 'down'));
+  };
+  setTrend('statRevTrend',  d.revTrend.text, d.revTrend.up);
+  setTrend('statProfTrend', d.profTrend.text, d.profTrend.up);
+  setTrend('statOrdTrend',  d.ordTrend.text, d.ordTrend.up);
+  setTrend('statCustTrend', d.custTrend.text, d.custTrend.up);
+  document.getElementById('statProdTrend').textContent = d.prodTrend;
+  document.getElementById('statProdTrend').className   = 'stat-trend neutral';
+
+  // Sparklines
+  const sliced7 = d.revSeries.slice(-7);
+  renderMiniChart('revChart',  sliced7, '#FF6B35');
+  renderMiniChart('profChart', sliced7, '#10B981'); // Fallback to revenue shape for sparkline
+  renderMiniChart('ordChart',  d.ordSeries.slice(-7), '#F59E0B');
+  renderMiniChart('custChart', d.custSeries.slice(-7), '#10B981');
+  renderMiniChart('prodChart', [503,498,502,501,500,503,503], '#3B82F6');
+}
+
+/* ── Revenue line chart ── */
+function renderRevenueChartFromDaily(dailyRevenue, period) {
+  const ctx = document.getElementById('revenueChart').getContext('2d');
+  const dateKey = date => date.toLocaleDateString('en-CA');
+  const byDay = Object.fromEntries((dailyRevenue || []).map(row => [String(row.day).slice(0, 10), Number(row.revenue || 0)]));
+  const dates = Array.from({ length: period }, (_, index) => {
+    const date = new Date();
+    date.setHours(0, 0, 0, 0);
+    date.setDate(date.getDate() - (period - 1 - index));
+    return date;
+  });
+  const labels = dates.map(date => date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+  const data = dates.map(date => byDay[dateKey(date)] || 0);
+
+  if (revenueChart) revenueChart.destroy();
+  revenueChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Revenue',
+        data,
+        borderColor: '#FF6B35',
+        backgroundColor: 'rgba(255,107,53,.08)',
+        borderWidth: 2.5,
+        fill: true,
+        tension: 0.45,
+        pointRadius: 3,
+        pointBackgroundColor: '#FF6B35',
+        pointBorderColor: 'white',
+        pointBorderWidth: 2,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { 
+        legend: { display: false },
+        datalabels: { display: false }
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { size: 10 }, color: '#9CA3AF', maxTicksLimit: 8 } },
+        y: {
+          grid: { color: '#F3F4F6' },
+          ticks: {
+            font: { size: 10 }, color: '#9CA3AF',
+            callback: v => v >= 1000 ? 'Rs. ' + (v / 1000).toFixed(1) + 'k' : fmt.currency(v)
+          }
+        }
+      }
+    }
+  });
+  document.getElementById('revenueChartPeriod').textContent = 'Last ' + period + ' days';
+}
+
+/* ── Status donut chart ── */
+function renderStatusChart(counts) {
+  const ctx = document.getElementById('statusChart').getContext('2d');
+  const labels  = Object.keys(counts).map(s => s.charAt(0).toUpperCase() + s.slice(1));
+  const values  = Object.values(counts);
+  const colors  = ['#F59E0B','#3B82F6','#8B5CF6','#FF6B35','#10B981','#EF4444'];
+
+  if (statusChart) statusChart.destroy();
+  statusChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels,
+      datasets: [{ data: values, backgroundColor: colors, borderWidth: 2, borderColor: 'white' }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '68%',
+      plugins: { 
+        legend: { display: false }, 
+        tooltip: { titleFont: { size: 11 }, bodyFont: { size: 11 } },
+        datalabels: {
+          color: '#fff',
+          font: { weight: 'bold', size: 12 },
+          formatter: (val) => val > 0 ? val : ''
+        }
+      }
+    }
+  });
+
+  // Custom legend
+  const legend = document.getElementById('statusLegend');
+  legend.innerHTML = labels.map((l, i) =>
+    `<div style="display:flex;align-items:center;gap:.4rem">
+       <span style="width:10px;height:10px;border-radius:2px;background:${colors[i]};flex-shrink:0"></span>
+       <span style="color:#374151">${l}</span>
+       <span style="margin-left:auto;font-weight:700;color:#1A1A2E">${values[i]}</span>
+     </div>`
+  ).join('');
+}
+
+/* ── Recent orders table ── */
+function renderRecentOrders(orders) {
+  const statusClasses = {
+    pending:'badge-pending', confirmed:'badge-confirmed', processing:'badge-processing',
+    shipped:'badge-shipped', delivered:'badge-delivered', cancelled:'badge-cancelled',
+  };
+  const rows = (orders || []).map(o => {
+    const orderId = o.id || o.order_number || o.order_id || '—';
+    const customer = String(o.customer || 'Customer');
+    const total = Number(o.total ?? 0);
+    const status = String(o.status || 'pending').toLowerCase();
+    return `
+      <tr>
+        <td><span class="td-name">#${escapeHtml(orderId)}</span></td>
+        <td>${escapeHtml(customer)}</td>
+        <td style="font-weight:700">${fmt.currency(total)}</td>
+        <td><span class="badge ${statusClasses[status] || 'badge-pending'}">${escapeHtml(status)}</span></td>
+        <td><button class="btn btn-ghost btn-sm btn-icon" title="View order details" aria-label="View order details" onclick="openOrderDetails(${Number(o.orderId)})"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td>
+      </tr>`;
+  }).join('');
+
+  document.getElementById('recentOrdersTbody').innerHTML = rows || '<tr><td colspan="5" style="text-align:center;color:#9CA3AF;padding:2rem">No recent orders.</td></tr>';
+}
+
+function openOrderDetails(orderId) {
+  if (!orderId) return;
+  window.location.href = `pages/orders.html?order_id=${encodeURIComponent(orderId)}`;
+}
+
+/* ── Top products table ── */
+function renderTopProducts(products) {
+  const rows = (products || []).map((p, i) => `
+    <tr>
+      <td>
+        <div style="display:flex;align-items:center;gap:.625rem">
+          <span style="width:22px;height:22px;border-radius:6px;background:${['#FFF0EB','#FEF3C7','#D1FAE5','#DBEAFE'][i]};display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800;color:${['#FF6B35','#CA8A04','#065F46','#1D4ED8'][i]}">${i+1}</span>
+          <span class="td-name" style="font-size:.78rem">${escapeHtml(p.name || 'Product')}</span>
+        </div>
+      </td>
+      <td style="font-weight:600">${Number(p.sold || 0).toLocaleString()}</td>
+      <td style="font-weight:700;color:#10B981">${fmt.currency(p.revenue || 0)}</td>
+    </tr>`).join('');
+
+  document.getElementById('topProductsTbody').innerHTML = rows || '<tr><td colspan="3" style="text-align:center;color:#9CA3AF;padding:2rem">No products sold yet.</td></tr>';
+}
+
+/* ── Date range label ── */
+function updateDateLabel(period) {
+  const now  = new Date();
+  const from = new Date(now - period * 86400000);
+  const fmt  = d => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  document.getElementById('dateRangeLabel').textContent = `${fmt(from)} — ${fmt(now)}`;
+}
+
+function trend(current, previous) {
+  current = Number(current || 0);
+  previous = Number(previous || 0);
+  if (previous === 0) return { text: 'No comparison data', up: true };
+  const percent = ((current - previous) / previous) * 100;
+  return { text: `${Math.abs(percent).toFixed(1)}% vs previous period`, up: percent >= 0 };
+}
+
+/* ── Load period ── */
+async function loadPeriod(period) {
+  activePeriod = period;
+
+  try {
+    const [analyticsRes, dashboardRes] = await Promise.all([
+      AdminAPI.get('/analytics?days=' + period),
+      AdminAPI.get('/dashboard')
+    ]);
+
+    if (!analyticsRes.success || !dashboardRes.success) {
+      throw new Error(analyticsRes.message || dashboardRes.message || 'Dashboard unavailable.');
+    }
+
+    const stats = dashboardRes.data?.stats || {};
+    const recentOrders = (dashboardRes.data?.recent_orders || []).map(o => ({
+      orderId: o.order_id,
+      id: o.order_number || o.order_id || o.id,
+      customer: [o.first_name, o.last_name].filter(Boolean).join(' ') || o.customer || o.email || 'Customer',
+      total: Number(o.total_amount ?? o.total ?? 0),
+      status: String(o.order_status || o.status || 'pending').toLowerCase()
+    }));
+    const topProducts = (dashboardRes.data?.top_products || []).map((p, index) => ({
+      name: p.product_name || p.name || `Product ${index + 1}`,
+      sold: Number(p.sold ?? p.quantity ?? 0),
+      revenue: Number(p.revenue ?? p.total_revenue ?? 0)
+    }));
+    const orderStatuses = dashboardRes.data?.order_statuses || [];
+    const dailyRevenue = analyticsRes.data?.daily_revenue || [];
+
+    const statusCounts = { pending: 0, confirmed: 0, processing: 0, shipped: 0, delivered: 0, cancelled: 0 };
+    orderStatuses.forEach(row => {
+      const key = String(row.order_status || '').toLowerCase();
+      if (key in statusCounts) statusCounts[key] = Number(row.count || row.cnt || 0);
+    });
+
+    const revenueSeries = dailyRevenue.map(row => Number(row.revenue || 0));
+    const revenueLabels = dailyRevenue.map(row => {
+      const date = new Date(row.day);
+      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    });
+
+    const normalizedStats = {
+      revenue: Number(analyticsRes.data?.current?.revenue ?? stats.revenue_month ?? 0),
+      profit: Number(stats.profit_month || 0),
+      orders: Number(analyticsRes.data?.current?.orders ?? stats.orders_month ?? 0),
+      customers: Number(stats.total_customers || 0),
+      products: Number(stats.active_products || 0),
+      revTrend: trend(analyticsRes.data?.current?.revenue, analyticsRes.data?.previous?.revenue),
+      profTrend: { text: 'Monthly margin', up: true },
+      ordTrend: trend(analyticsRes.data?.current?.orders, analyticsRes.data?.previous?.orders),
+      custTrend: { text: 'No comparison data', up: true },
+      prodTrend: stats.low_stock ? `${stats.low_stock} low-stock items` : 'No low-stock products',
+      revSeries: revenueSeries.length ? revenueSeries : [0],
+      ordSeries: dailyRevenue.map(row => Number(row.orders || 0)),
+      custSeries: dailyRevenue.map(row => Number(row.orders || 0)),
+      statusCounts
+    };
+
+    renderStats(normalizedStats);
+    renderRevenueChartFromDaily(dailyRevenue, period);
+    renderStatusChart(statusCounts);
+    renderRecentOrders(recentOrders);
+    renderTopProducts(topProducts);
+    updateDateLabel(period);
+
+    // Update payment types breakdown
+    const tb3 = document.getElementById('paymentTypesTbody');
+    if (!dashboardRes.data?.payment_types || !dashboardRes.data.payment_types.length) {
+      tb3.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:1.5rem;color:#9CA3AF">No data available.</td></tr>`;
+    } else {
+      tb3.innerHTML = dashboardRes.data.payment_types.map(pt => `
+        <tr style="cursor:pointer" onclick="window.location.href='pages/orders.html?payment_method=${encodeURIComponent(pt.payment_method)}'" title="View ${escapeHtml(pt.payment_method)} orders">
+          <td><strong style="text-transform:capitalize">${escapeHtml(pt.payment_method || 'Unknown')}</strong></td>
+          <td style="text-align:center;font-weight:600">${pt.total || 0}</td>
+          <td style="text-align:center;color:#10B981;font-weight:600">${pt.delivered || 0}</td>
+          <td style="text-align:center;color:#F59E0B;font-weight:600">${pt.pending_shipment || 0}</td>
+          <td style="text-align:center;color:#EF4444;font-weight:600">${pt.cancelled || 0}</td>
+        </tr>
+      `).join('');
+    }
+
+    const pending = statusCounts.pending || 0;
+    const badge = document.getElementById('pendingOrdersBadge');
+    if (badge) badge.textContent = pending > 0 ? pending : '';
+    
+    const oldScreenshots = Number(stats.old_screenshots || 0);
+    const alertBtn = document.getElementById('cleanupAlertBtn');
+    if (alertBtn) {
+      const countSpan = document.getElementById('cleanupCount');
+      if (oldScreenshots > 0) {
+        countSpan.textContent = `(${oldScreenshots} to clean)`;
+        alertBtn.style.background = '#FEF2F2';
+        alertBtn.style.color = '#DC2626';
+        alertBtn.style.borderColor = '#FCA5A5';
+      } else {
+        countSpan.textContent = '';
+        alertBtn.style.background = 'white';
+        alertBtn.style.color = 'var(--ink)';
+        alertBtn.style.borderColor = 'var(--border)';
+      }
+    }
+
+    return;
+  } catch (error) {
+    console.error('Dashboard load failed:', error);
+    document.getElementById('recentOrdersTbody').innerHTML = '<tr><td colspan="5" style="text-align:center;color:#9CA3AF;padding:2rem">No live dashboard data available.</td></tr>';
+    document.getElementById('topProductsTbody').innerHTML = '<tr><td colspan="3" style="text-align:center;color:#9CA3AF;padding:2rem">No products available.</td></tr>';
+    document.getElementById('statusLegend').innerHTML = '';
+    showToast(error.message || 'Dashboard could not load.', 'error');
+  }
+}
+
+/* ── Period buttons ── */
+document.querySelectorAll('.period-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    loadPeriod(parseInt(btn.dataset.period));
+  });
+});
+
+/* ── Sidebar toggle (mobile) ── */
+document.getElementById('sidebarToggle')?.addEventListener('click', () => {
+  document.getElementById('sidebar').classList.toggle('collapsed');
+});
+
+/* ── Admin user name ── */
+document.addEventListener('DOMContentLoaded', () => {
+  try {
+    const user = JSON.parse(localStorage.getItem('pp_user') || '{}');
+    if (user.first_name) {
+      document.getElementById('adminUserName').textContent = user.first_name + ' ' + (user.last_name || '');
+      document.getElementById('adminAvatar').textContent   = user.first_name.charAt(0).toUpperCase();
+    }
+  } catch (e) {}
+  loadPeriod(30);
+});
+
+/* ── Cleanup Feature ── */
+function showCleanupModal() {
+  document.getElementById('cleanupModalOverlay').classList.add('open');
+}
+function closeCleanupModal() {
+  document.getElementById('cleanupModalOverlay').classList.remove('open');
+}
+async function executeCleanup() {
+  const btn = document.getElementById('cleanupConfirmBtn');
+  const originalText = btn.innerHTML;
+  btn.disabled = true;
+  btn.textContent = 'Processing...';
+  
+  try {
+    // 1. Trigger the export download
+    const segments = window.location.pathname.split('/').filter(Boolean);
+    const adminIndex = segments.indexOf('admin-panel');
+    const basePath = adminIndex > 0 ? '/' + segments.slice(0, adminIndex).join('/') : '';
+    const exportUrl = `${basePath}/backend/index.php?_url=%2Fadmin%2Fexport-weekly`;
+    const token = localStorage.getItem('pp_token');
+    
+    const res = await fetch(exportUrl, { headers: { 'Authorization': 'Bearer ' + token } });
+    if (!res.ok) throw new Error('Export failed');
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `weekly_report_${new Date().toISOString().slice(0, 10)}.html`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    
+    // 2. Perform the deletion
+    btn.textContent = 'Deleting...';
+    const cleanupRes = await AdminAPI.post('/cleanup-screenshots', {});
+    if (cleanupRes.success) {
+      showToast(cleanupRes.message || 'Cleanup complete!', 'success');
+      closeCleanupModal();
+      loadPeriod(activePeriod); // refresh stats
+    } else {
+      throw new Error(cleanupRes.message || 'Deletion failed');
+    }
+  } catch (err) {
+    console.error(err);
+    showToast(err.message || 'Failed to complete the cleanup process.', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = originalText;
+  }
+}
+
+/* ── Safe escape ── */
+function escapeHtml(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+</script>
+</body>
+</html>

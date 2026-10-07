@@ -1,0 +1,26 @@
+# Mithoos — robots.txt
+
+User-agent: *
+Allow: /
+Allow: /pages/shop.html
+Allow: /pages/product.php
+Allow: /pages/about.html
+Allow: /pages/contact.html
+Allow: /pages/blog.html
+
+# No SEO value / private — keep crawlers out
+Disallow: /admin-panel/
+Disallow: /backend/
+Disallow: /pages/cart.html
+Disallow: /pages/checkout.html
+Disallow: /pages/account.html
+Disallow: /pages/wishlist.html
+Disallow: /pages/login.html
+Disallow: /pages/reset-password.html
+Disallow: /pages/order-tracking.html
+
+# Future Production Configuration:
+# Once deployed, uncomment and set the real domain so crawlers can find the
+# full product catalog (the sitemap itself only makes sense with a live,
+# publicly-resolvable domain — see sitemap.xml for the matching TODO).
+Sitemap: https://mithooos.com/sitemap.xml
