@@ -99,7 +99,7 @@ class Auth {
         }
 
         $this->db->execute(
-            'UPDATE users SET login_attempts = 0, locked_until = NULL, last_login = NOW() WHERE user_id = ?',
+            'UPDATE users SET login_attempts = 0, locked_until = NULL, last_login = CURRENT_TIMESTAMP WHERE user_id = ?',
             [$user['user_id']]
         );
 
@@ -168,7 +168,7 @@ class Auth {
         $user = $this->db->fetchOne(
             'SELECT user_id, email, first_name FROM users
              WHERE reset_token = ?
-               AND reset_expires > NOW()
+               AND reset_expires > CURRENT_TIMESTAMP
                AND is_active = TRUE',
             [$token]
         );
@@ -289,7 +289,7 @@ class Auth {
     /* ── Profile Update ── */
     public function updateProfile(int $userId, string $first, string $last, string $phone): void {
         $this->db->execute(
-            'UPDATE users SET first_name = ?, last_name = ?, phone = ?, updated_at = NOW() WHERE user_id = ?',
+            'UPDATE users SET first_name = ?, last_name = ?, phone = ?, updated_at = CURRENT_TIMESTAMP WHERE user_id = ?',
             [$first, $last, $phone, $userId]
         );
         $this->logAudit($userId, 'profile_updated');
@@ -307,7 +307,7 @@ class Auth {
 
         $hash = password_hash($newPassword, PASSWORD_ARGON2ID);
         $this->db->execute(
-            'UPDATE users SET password_hash = ?, updated_at = NOW() WHERE user_id = ?',
+            'UPDATE users SET password_hash = ?, updated_at = CURRENT_TIMESTAMP WHERE user_id = ?',
             [$hash, $userId]
         );
         $this->logAudit($userId, 'password_changed');
@@ -318,7 +318,7 @@ class Auth {
     /* ── Update Preferences ── */
     public function updatePreferences(int $userId, bool $newsletter, bool $orderNotif, bool $restockAlerts): void {
         $this->db->execute(
-            'UPDATE users SET prefs_newsletter = ?, prefs_order_notifications = ?, prefs_restock_alerts = ?, updated_at = NOW() WHERE user_id = ?',
+            'UPDATE users SET prefs_newsletter = ?, prefs_order_notifications = ?, prefs_restock_alerts = ?, updated_at = CURRENT_TIMESTAMP WHERE user_id = ?',
             [$newsletter ? 1 : 0, $orderNotif ? 1 : 0, $restockAlerts ? 1 : 0, $userId]
         );
         $this->logAudit($userId, 'preferences_updated');
@@ -327,7 +327,7 @@ class Auth {
     /* ── Deactivate Account ── */
     public function deactivateAccount(int $userId): void {
         $this->db->execute(
-            'UPDATE users SET is_active = FALSE, updated_at = NOW() WHERE user_id = ?',
+            'UPDATE users SET is_active = FALSE, updated_at = CURRENT_TIMESTAMP WHERE user_id = ?',
             [$userId]
         );
         $this->logAudit($userId, 'account_deactivated');
