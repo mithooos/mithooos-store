@@ -82,7 +82,7 @@ if($method==='POST'){
         
         // Insert into payments table for completeness (although order tracking handles most of it)
         $db->insert(
-            'INSERT INTO payments (order_id, payment_method, amount, payment_status) VALUES (?,?,?,?)',
+            'INSERT INTO payments (order_id, payment_method, amount, status) VALUES (?,?,?,?)',
             [$r['order_id'], $body['payment_method'], $totals['total'], 'pending']
         );
         

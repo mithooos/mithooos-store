@@ -63,7 +63,7 @@ class Order {
     }
 
     public function findById(int $id, ?int $user_id = null): array|false {
-        $sql  = 'SELECT o.*, u.first_name, u.last_name, u.email, u.phone, p.payment_status, p.transaction_id FROM orders o JOIN users u ON o.user_id = u.user_id LEFT JOIN payments p ON o.order_id = p.order_id WHERE o.order_id = ?';
+        $sql  = 'SELECT o.*, u.first_name, u.last_name, u.email, u.phone, COALESCE(p.status, o.payment_status) AS payment_status, p.transaction_id FROM orders o JOIN users u ON o.user_id = u.user_id LEFT JOIN payments p ON o.order_id = p.order_id WHERE o.order_id = ?';
         $bind = [$id];
         if ($user_id !== null) { $sql .= ' AND o.user_id = ?'; $bind[] = $user_id; }
         $order = $this->db->fetchOne($sql, $bind);
@@ -76,7 +76,7 @@ class Order {
         $order_number = trim($order_number);
         if ($order_number === '') return false;
 
-        $sql = 'SELECT o.*, u.first_name, u.last_name, u.email, u.phone, p.payment_status, p.transaction_id FROM orders o JOIN users u ON o.user_id = u.user_id LEFT JOIN payments p ON o.order_id = p.order_id WHERE o.order_number = ?';
+        $sql = 'SELECT o.*, u.first_name, u.last_name, u.email, u.phone, COALESCE(p.status, o.payment_status) AS payment_status, p.transaction_id FROM orders o JOIN users u ON o.user_id = u.user_id LEFT JOIN payments p ON o.order_id = p.order_id WHERE o.order_number = ?';
         $bind = [$order_number];
 
         if ($user_id !== null) {
@@ -93,7 +93,7 @@ class Order {
 
     public function userOrders(int $user_id, int $limit = 20, int $offset = 0): array {
         return $this->db->fetchAll(
-            'SELECT o.*, p.payment_status, p.transaction_id, (SELECT COUNT(*) FROM order_items WHERE order_id = o.order_id) AS item_count
+            'SELECT o.*, COALESCE(p.status, o.payment_status) AS payment_status, p.transaction_id, (SELECT COUNT(*) FROM order_items WHERE order_id = o.order_id) AS item_count
              FROM orders o LEFT JOIN payments p ON o.order_id = p.order_id WHERE o.user_id = ? ORDER BY o.created_at DESC LIMIT ? OFFSET ?',
             [$user_id, $limit, $offset]
         );
@@ -129,7 +129,7 @@ class Order {
             }
             
             if ($payment_status !== null) {
-                $current_pay = $this->db->fetchOne('SELECT payment_status FROM payments WHERE order_id = ?', [$id]);
+                $current_pay = $this->db->fetchOne('SELECT payment_status FROM orders WHERE order_id = ?', [$id]);
                 if ($current_pay) {
                     $curr_pay_status = $current_pay['payment_status'];
                     $valid_pay_transitions = [
@@ -144,7 +144,8 @@ class Order {
                     }
                     
                     if ($curr_pay_status !== $payment_status) {
-                        $this->db->execute('UPDATE payments SET payment_status = ?, updated_at = CURRENT_TIMESTAMP WHERE order_id = ?', [$payment_status, $id]);
+                        $this->db->execute('UPDATE orders SET payment_status = ?, updated_at = CURRENT_TIMESTAMP WHERE order_id = ?', [$payment_status, $id]);
+                        $this->db->execute('UPDATE payments SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE order_id = ?', [$payment_status, $id]);
                         $updated = true;
                     }
                 }
@@ -162,7 +163,7 @@ class Order {
         $where = ['1=1']; $bind = [];
         if (!empty($f['status']) && $f['status'] !== 'all')  { $where[] = 'o.order_status = ?';  $bind[] = $f['status']; }
         if (!empty($f['payment_status']) && $f['payment_status'] !== 'all') { 
-            $where[] = 'p.payment_status = ?'; $bind[] = $f['payment_status']; 
+            $where[] = 'COALESCE(p.status, o.payment_status) = ?'; $bind[] = $f['payment_status'];
             if ($f['payment_status'] === 'pending') {
                 $where[] = "o.order_status != 'cancelled'";
             }
@@ -174,7 +175,7 @@ class Order {
         $countSql = "SELECT COUNT(*) FROM orders o JOIN users u ON o.user_id = u.user_id LEFT JOIN payments p ON o.order_id = p.order_id WHERE $w";
         $total = (int)$this->db->fetchColumn($countSql, $bind);
         
-        $sql = "SELECT o.*, u.first_name, u.last_name, u.email, p.payment_status, p.transaction_id,
+        $sql = "SELECT o.*, u.first_name, u.last_name, u.email, COALESCE(p.status, o.payment_status) AS payment_status, p.transaction_id,
                 (SELECT COUNT(*) FROM order_items WHERE order_id = o.order_id) AS item_count
                 FROM orders o JOIN users u ON o.user_id = u.user_id 
                 LEFT JOIN payments p ON o.order_id = p.order_id
