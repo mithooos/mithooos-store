@@ -97,7 +97,7 @@ class Blog {
         ]);
         
         if ($imgData) {
-            $this->db->execute("UPDATE blog_posts SET featured_image_url = ? WHERE post_id = ?", ["/api/image.php?type=blog&id={$postId}", $postId]);
+            $this->db->execute("UPDATE blog_posts SET featured_image_url = ? WHERE post_id = ?", ["/backend/api/image.php?type=blog&id={$postId}", $postId]);
         }
         return $postId;
     }
@@ -130,7 +130,7 @@ class Blog {
                     $bind[] = $imgMime;
                     
                     $set[] = "featured_image_url = ?";
-                    $bind[] = "/api/image.php?type=blog&id={$id}";
+                    $bind[] = "/backend/api/image.php?type=blog&id={$id}";
                 } else {
                     $set[] = "$field = ?";
                     $bind[] = $data[$field];

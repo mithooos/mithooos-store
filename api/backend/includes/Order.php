@@ -27,7 +27,7 @@ class Order {
             );
 
             if ($proofData) {
-                $this->db->execute("UPDATE orders SET payment_proof_url = ? WHERE order_id = ?", ["/api/image.php?type=payment&id={$order_id}", $order_id]);
+                $this->db->execute("UPDATE orders SET payment_proof_url = ? WHERE order_id = ?", ["/backend/api/image.php?type=payment&id={$order_id}", $order_id]);
             }
 
             foreach ($items as $item) {

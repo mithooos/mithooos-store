@@ -9,7 +9,7 @@ if ($method === 'GET') {
         );
         if (!$row) { Response::error('Product not found.',404); return; }
         $row['images'] = $db->fetchAll(
-            'SELECT * FROM product_images WHERE product_id = ? ORDER BY is_primary DESC, display_order',
+            'SELECT image_id, product_id, image_url, image_mime, alt_text, display_order, is_primary, created_at FROM product_images WHERE product_id = ? ORDER BY is_primary DESC, display_order',
             [(int)$id]
         );
         Response::success($row);
@@ -78,13 +78,15 @@ if ($method === 'POST') {
                 $proofMime = null;
                 $imgUrl = $img['url'];
                 if (str_starts_with($imgUrl, 'data:')) {
-                    [$meta, $b64] = explode(',', $imgUrl, 2);
-                    $proofMime = str_replace('data:', '', explode(';', $meta)[0]);
-                    $proofData = base64_decode($b64);
+                    if (!preg_match('#^data:(image/(?:jpeg|png|webp));base64,[A-Za-z0-9+/]*={0,2}$#D', $imgUrl, $matches)) {
+                        throw new RuntimeException('Invalid product image data.');
+                    }
+                    $proofMime = $matches[1];
+                    $proofData = $imgUrl;
                     $imgUrl = null;
                 }
                 $imgId = $db->insert('INSERT INTO product_images(product_id,image_url,image_data,image_mime,alt_text,is_primary,display_order) VALUES(?,?,?,?,?,?,?)', [$pid,$imgUrl,$proofData,$proofMime,$img['alt']??null,$i===0?1:0,$i]);
-                if ($proofData) $db->execute("UPDATE product_images SET image_url = ? WHERE image_id = ?", ["/api/image.php?type=product&id={$imgId}", $imgId]);
+                if ($proofData) $db->execute("UPDATE product_images SET image_url = ? WHERE image_id = ?", ["/backend/api/image.php?type=product&id={$imgId}", $imgId]);
             }
         }
         $db->commit();
@@ -108,13 +110,15 @@ if ($method === 'PUT' && $id) {
                 $proofMime = null;
                 $imgUrl = $img['url'];
                 if (str_starts_with($imgUrl, 'data:')) {
-                    [$meta, $b64] = explode(',', $imgUrl, 2);
-                    $proofMime = str_replace('data:', '', explode(';', $meta)[0]);
-                    $proofData = base64_decode($b64);
+                    if (!preg_match('#^data:(image/(?:jpeg|png|webp));base64,[A-Za-z0-9+/]*={0,2}$#D', $imgUrl, $matches)) {
+                        throw new RuntimeException('Invalid product image data.');
+                    }
+                    $proofMime = $matches[1];
+                    $proofData = $imgUrl;
                     $imgUrl = null;
                 }
                 $imgId = $db->insert('INSERT INTO product_images(product_id,image_url,image_data,image_mime,alt_text,is_primary,display_order) VALUES(?,?,?,?,?,?,?)', [(int)$id, $imgUrl, $proofData, $proofMime, $img['alt'] ?? null, $i === 0 ? 1 : 0, $i]);
-                if ($proofData) $db->execute("UPDATE product_images SET image_url = ? WHERE image_id = ?", ["/api/image.php?type=product&id={$imgId}", $imgId]);
+                if ($proofData) $db->execute("UPDATE product_images SET image_url = ? WHERE image_id = ?", ["/backend/api/image.php?type=product&id={$imgId}", $imgId]);
             }
         }
         $db->commit();

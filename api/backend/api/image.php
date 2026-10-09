@@ -34,6 +34,21 @@ if (!$row || !$row['data']) {
     exit('Image not found');
 }
 
+if ($type === 'product' && str_starts_with($row['data'], 'data:')) {
+    if (preg_match('#^data:(image/(?:jpeg|png|webp));base64,([A-Za-z0-9+/]*={0,2})$#D', $row['data'], $matches)) {
+        $row['mime'] = $matches[1];
+        $row['data'] = base64_decode($matches[2], true);
+    } else {
+        http_response_code(415);
+        exit('Invalid image data');
+    }
+}
+
+if ($row['data'] === false) {
+    http_response_code(500);
+    exit('Image data could not be decoded');
+}
+
 // Ensure cache is set
 header('Cache-Control: public, max-age=3600');
 header('Content-Type: ' . ($row['mime'] ?: 'image/jpeg'));
