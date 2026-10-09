@@ -1,7 +1,16 @@
 <?php
 if ($method === 'GET') {
     $rows = $db->fetchAll(
-        'SELECT * FROM categories WHERE is_active = TRUE ORDER BY display_order, category_name'
+        "SELECT category_id, category_name, slug, description, parent_category_id, icon_url,
+                CASE
+                    WHEN cover_image_url LIKE 'data:image/%'
+                    THEN '/backend/api/image.php?type=category&id=' || category_id
+                    ELSE cover_image_url
+                END AS cover_image_url,
+                display_order, is_active, created_at, updated_at
+         FROM categories
+         WHERE is_active = TRUE
+         ORDER BY display_order, category_name"
     );
     Response::success($rows);
     return;

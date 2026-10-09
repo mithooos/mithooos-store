@@ -7,7 +7,7 @@ $db = Database::getInstance();
 $type = $_GET['type'] ?? '';
 $id = (int)($_GET['id'] ?? 0);
 
-if (!$id || !in_array($type, ['product', 'blog', 'payment'])) {
+if (!$id || !in_array($type, ['product', 'blog', 'payment', 'category'], true)) {
     http_response_code(404);
     exit('Not found');
 }
@@ -19,6 +19,14 @@ if ($type === 'product') {
     $row = $db->fetchOne("SELECT featured_image_data as data, featured_image_mime as mime FROM blog_posts WHERE post_id = ?", [$id]);
 } elseif ($type === 'payment') {
     $row = $db->fetchOne("SELECT payment_proof_data as data, payment_proof_mime as mime FROM orders WHERE order_id = ?", [$id]);
+} elseif ($type === 'category') {
+    $row = $db->fetchOne('SELECT cover_image_url AS data FROM categories WHERE category_id = ?', [$id]);
+    if ($row && preg_match('#^data:(image/(?:jpeg|png|webp));base64,([A-Za-z0-9+/]*={0,2})$#D', $row['data'] ?? '', $matches)) {
+        $row['mime'] = $matches[1];
+        $row['data'] = base64_decode($matches[2], true);
+    } else {
+        $row = null;
+    }
 }
 
 if (!$row || !$row['data']) {
@@ -27,7 +35,7 @@ if (!$row || !$row['data']) {
 }
 
 // Ensure cache is set
-header('Cache-Control: public, max-age=31536000, immutable');
+header('Cache-Control: public, max-age=3600');
 header('Content-Type: ' . ($row['mime'] ?: 'image/jpeg'));
 echo $row['data'];
 exit;
