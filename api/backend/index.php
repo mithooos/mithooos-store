@@ -230,7 +230,8 @@ match (true) {
         $safe = str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $q);
 
         $results = $db->fetchAll(
-            "SELECT product_id, product_name, slug, final_price,
+            "SELECT product_id, product_name, slug,
+             ROUND(price - (price * discount_percentage / 100), 2) AS final_price,
              (SELECT image_url FROM product_images
               WHERE product_id = p.product_id AND is_primary = TRUE LIMIT 1) AS image
              FROM products p

@@ -43,7 +43,9 @@ class Cart {
         
         [$clause, $bind] = $this->clause();
         $items = $this->db->fetchAll(
-            "SELECT c.*, p.product_name, p.price, p.cost_price, p.final_price, p.discount_percentage, p.stock_quantity, p.sku AS p_sku,
+            "SELECT c.*, p.product_name, p.price, p.cost_price,
+             ROUND(p.price - (p.price * p.discount_percentage / 100), 2) AS final_price,
+             p.discount_percentage, p.stock_quantity, p.sku AS p_sku,
              p.online_discount_enabled, p.online_discount_percentage, p.online_discount_start, p.online_discount_end,
              v.variant_name, v.size, v.color, v.price AS variant_price, v.sku AS v_sku,
              (SELECT image_url FROM product_images WHERE product_id = p.product_id AND is_primary = 1 LIMIT 1) AS image

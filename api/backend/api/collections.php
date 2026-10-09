@@ -10,7 +10,8 @@ if ($method === 'GET') {
         ['limit' => $limit, 'page' => $page, 'offset' => $offset] = Pagination::params($query);
         $total = (int)$db->fetchColumn('SELECT COUNT(*) FROM product_collections pc JOIN products p ON pc.product_id = p.product_id WHERE pc.collection_id = ? AND p.status = \'published\' AND p.is_active = TRUE', [$c['collection_id']]);
         $rows = $db->fetchAll("
-            SELECT p.product_id, p.product_name, p.slug, p.final_price, p.rating,
+            SELECT p.product_id, p.product_name, p.slug,
+                   ROUND(p.price - (p.price * p.discount_percentage / 100), 2) AS final_price, p.rating,
                    (SELECT image_url FROM product_images WHERE product_id = p.product_id AND is_primary = TRUE LIMIT 1) AS image
             FROM product_collections pc
             JOIN products p ON pc.product_id = p.product_id

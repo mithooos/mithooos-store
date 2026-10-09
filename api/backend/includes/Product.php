@@ -15,19 +15,21 @@ class Product {
             $bind[] = (int)$f['collection_id']; 
         }
         if (!empty($f['category_id'])) { $where[] = 'p.category_id = ?'; $bind[] = (int)$f['category_id']; }
-        if (isset($f['min_price']))    { $where[] = 'p.final_price >= ?'; $bind[] = (float)$f['min_price']; }
-        if (isset($f['max_price']))    { $where[] = 'p.final_price <= ?'; $bind[] = (float)$f['max_price']; }
+        if (isset($f['min_price']))    { $where[] = 'ROUND(p.price - (p.price * p.discount_percentage / 100), 2) >= ?'; $bind[] = (float)$f['min_price']; }
+        if (isset($f['max_price']))    { $where[] = 'ROUND(p.price - (p.price * p.discount_percentage / 100), 2) <= ?'; $bind[] = (float)$f['max_price']; }
         if (!empty($f['is_featured'])) { $where[] = 'p.is_featured = TRUE'; }
         if (!empty($f['is_new']))      { $where[] = 'p.is_new = TRUE'; }
         if (!empty($f['is_sale']))     { $where[] = 'p.is_sale = TRUE'; }
         if (!empty($f['search'])) {
-            $where[] = "to_tsvector('simple', coalesce(p.product_name,'') || ' ' || coalesce(p.description,'')) @@ plainto_tsquery('simple', ?)";
-            $bind[]  = $f['search'];
+            $search = str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], trim($f['search']));
+            $where[] = "(p.product_name LIKE ? ESCAPE '\\' OR p.description LIKE ? ESCAPE '\\')";
+            $bind[]  = "%{$search}%";
+            $bind[]  = "%{$search}%";
         }
 
         $order = match ($f['sort'] ?? 'newest') {
-            'price_asc'  => 'p.final_price ASC',
-            'price_desc' => 'p.final_price DESC',
+            'price_asc'  => 'ROUND(p.price - (p.price * p.discount_percentage / 100), 2) ASC',
+            'price_desc' => 'ROUND(p.price - (p.price * p.discount_percentage / 100), 2) DESC',
             'rating'     => 'p.rating DESC',
             'popular'    => 'p.view_count DESC',
             default      => 'p.created_at DESC',
@@ -38,7 +40,8 @@ class Product {
 
         $rows = $this->db->fetchAll(
             "SELECT p.product_id, p.product_name, p.slug,
-                    p.price, p.discount_percentage, p.final_price,
+                    p.price, p.discount_percentage,
+                    ROUND(p.price - (p.price * p.discount_percentage / 100), 2) AS final_price,
                     p.stock_quantity, p.is_featured, p.is_new, p.is_sale,
                     p.rating, p.review_count, c.category_name,
                     p.online_discount_enabled, p.online_discount_percentage,
@@ -57,7 +60,7 @@ class Product {
     public function find(int|string $id, string $by = 'id'): array|false {
         $col  = $by === 'slug' ? 'p.slug' : 'p.product_id';
         $prod = $this->db->fetchOne(
-            "SELECT p.*, c.category_name
+            "SELECT p.*, ROUND(p.price - (p.price * p.discount_percentage / 100), 2) AS final_price, c.category_name
              FROM products p
              LEFT JOIN categories c ON p.category_id = c.category_id
              WHERE $col = ? AND p.is_active = TRUE", [$id]

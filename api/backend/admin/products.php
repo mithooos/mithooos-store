@@ -4,7 +4,7 @@ $product = new Product($db);
 if ($method === 'GET') {
     if ($id) {
         $row = $db->fetchOne(
-            'SELECT p.*, c.category_name FROM products p LEFT JOIN categories c ON p.category_id = c.category_id WHERE p.product_id = ?',
+            'SELECT p.*, ROUND(p.price - (p.price * p.discount_percentage / 100), 2) AS final_price, c.category_name FROM products p LEFT JOIN categories c ON p.category_id = c.category_id WHERE p.product_id = ?',
             [(int)$id]
         );
         if (!$row) { Response::error('Product not found.',404); return; }
@@ -23,8 +23,8 @@ if ($method === 'GET') {
     $w     = implode(' AND ', $where);
     $sort = match ($query['sort'] ?? 'newest') {
         'oldest' => 'p.created_at ASC',
-        'price_asc' => 'p.final_price ASC',
-        'price_desc' => 'p.final_price DESC',
+        'price_asc' => 'ROUND(p.price - (p.price * p.discount_percentage / 100), 2) ASC',
+        'price_desc' => 'ROUND(p.price - (p.price * p.discount_percentage / 100), 2) DESC',
         'name_asc' => 'p.product_name ASC',
         'name_desc' => 'p.product_name DESC',
         'stock_asc' => 'p.stock_quantity ASC',
@@ -33,7 +33,7 @@ if ($method === 'GET') {
     };
     $total = (int)$db->fetchColumn("SELECT COUNT(*) FROM products p LEFT JOIN categories c ON p.category_id = c.category_id WHERE $w", $bind);
     $rows  = $db->fetchAll(
-        "SELECT p.*, c.category_name,
+        "SELECT p.*, ROUND(p.price - (p.price * p.discount_percentage / 100), 2) AS final_price, c.category_name,
             COALESCE(review_stats.average_rating, 0) AS average_rating,
             COALESCE(review_stats.review_count, 0) AS review_count,
             (SELECT image_url FROM product_images WHERE product_id = p.product_id AND is_primary = 1 LIMIT 1) AS image
