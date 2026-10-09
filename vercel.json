@@ -1,0 +1,22 @@
+{
+  "functions": {
+    "api/index.php": {
+      "runtime": "vercel-php@0.7.4"
+    }
+  },
+  "routes": [
+    { "handle": "filesystem" },
+    { "src": "^/$", "dest": "/api/index.php?__route=home" },
+    { "src": "^/index\\.php$", "dest": "/api/index.php?__route=home" },
+    {
+      "src": "^/(about|account|article|blog|cart|checkout|contact|cookie-policy|login|order-tracking|privacy-policy|product-detail|product|reset-password|shop|terms-of-service|wishlist)/?$",
+      "dest": "/api/index.php?__route=pages/$1.php"
+    },
+    {
+      "src": "^/pages/([a-z0-9-]+)\\.php$",
+      "dest": "/api/index.php?__route=pages/$1.php"
+    },
+    { "src": "^/admin-panel/?$", "dest": "/admin-panel/index.html" },
+    { "src": "^/(.*)$", "dest": "/api/index.php" }
+  ]
+}

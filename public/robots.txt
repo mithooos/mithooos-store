@@ -1,0 +1,17 @@
+# Mithoos — robots.txt
+
+User-agent: *
+Allow: /
+
+# No SEO value / private — keep crawlers out
+Disallow: /admin-panel/
+Disallow: /backend/
+Disallow: /cart
+Disallow: /checkout
+Disallow: /account
+Disallow: /wishlist
+Disallow: /login
+Disallow: /reset-password
+Disallow: /order-tracking
+
+Sitemap: https://mithooos.com/sitemap.xml

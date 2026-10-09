@@ -1,12 +1,35 @@
 # Mithooos — Deployment Guide
 
+## Vercel Deployment
+
+The project uses the community PHP runtime `vercel-php@0.7.4`. PHP entry points
+are under `api/`; browser-served files are under `public/`.
+
+1. Import the repository into Vercel and use the project root as the root directory.
+2. Add the environment variables listed in `.env.example` in **Project Settings → Environment Variables**.
+   `TURSO_DATABASE_URL` must point to a remote Turso database. Do not use localhost.
+3. Set `APP_ENV=production`, `APP_URL` to the deployed HTTPS origin, and provide a
+   randomly generated `JWT_SECRET` of at least 32 characters.
+4. Add the SMTP credentials if the email features are needed.
+5. Deploy. The storefront is served at `/`; clean page paths such as `/about` and
+   `/shop` are routed to PHP, while static files are served from `public/`.
+
+Vercel function filesystems are not persistent. Product/payment uploads currently
+use database-stored data URLs for new image data; any old `/uploads/...` references
+need durable object storage (for example, Vercel Blob or S3-compatible storage)
+before those existing files can be used reliably in production. Do not put payment
+proofs in `public/`.
+
+The app does not call PHP `session_start()` or use `$_SESSION`. Guest identity is a
+client-generated ID held in localStorage/session headers, with cart data stored in
+the remote database.
+
 ## Quick Start (Local Development)
 
 ### Requirements
-- PHP 8.1+
+- PHP 8.3+
 - PHP Extensions: `curl`, `mbstring` (PDO is no longer strictly required for Turso HTTP API)
 - Turso (libSQL) Database Account
-- Apache/Nginx with mod_rewrite
 
 ### Steps
 
@@ -26,54 +49,15 @@ cp .env.example .env
 3. **Set up database schema**
 Run the migration script to apply the SQLite schema to your Turso DB:
 ```bash
-php backend/migrate.php
-php backend/scripts/create_admin.php
+php api/backend/migrate.php
 # DO NOT RUN development.sql in production.
 ```
 
-4. **Set permissions**
+4. **Run the local PHP server**
 ```bash
-chmod 755 /var/www/mithooos
-chmod -R 644 /var/www/mithooos/css /var/www/mithooos/js
-mkdir -p /var/www/mithooos/uploads
-chmod 755 /var/www/mithooos/uploads
+php -S localhost:8000 -t public api/router.php
 ```
-
-5. **Apache Virtual Host**
-```apache
-<VirtualHost *:80>
-    ServerName mithooos.local
-    DocumentRoot /var/www/mithooos
-    <Directory /var/www/mithooos>
-        AllowOverride All
-        Require all granted
-    </Directory>
-</VirtualHost>
-```
-
-6. **Visit**: http://mithooos.local
-7. **Admin Panel**: http://mithooos.local/admin-panel/
-
-## Production Deployment (DigitalOcean)
-
-```bash
-# 1. Create $12/mo Droplet (Ubuntu 24.04)
-# 2. Install stack
-sudo apt update && sudo apt install -y apache2 php8.1 php8.1-curl \
-    php8.1-mbstring php8.1-zip certbot python3-certbot-apache
-
-# 3. Enable modules
-sudo a2enmod rewrite ssl headers deflate expires
-
-# 4. Deploy via git
-cd /var/www && git clone https://github.com/yourrepo/mithooos.git
-
-# 5. SSL
-sudo certbot --apache -d yourdomain.com
-
-# 6. Set up cron for backups
-echo "0 2 * * * /usr/local/bin/pp-backup.sh" | crontab -
-```
+Visit http://localhost:8000/; the admin panel is at `/admin-panel/`.
 
 ## Default Admin Credentials
 - URL: /admin-panel/
@@ -83,42 +67,21 @@ echo "0 2 * * * /usr/local/bin/pp-backup.sh" | crontab -
 ## Project Structure
 ```
 mithooos/
-├── index.html              ← Homepage
-├── pages/                  ← All frontend pages
-│   ├── shop.html
-│   ├── product-detail.html
-│   ├── cart.html
-│   ├── checkout.html
-│   ├── account.html
-│   ├── login.html
-│   ├── about.html
-│   ├── contact.html
-│   └── blog.html
-├── css/                    ← Stylesheets
-│   ├── variables.css       ← Design tokens
-│   ├── main.css            ← Global styles
-│   ├── components.css      ← UI components
-│   └── pages.css           ← Page-specific
-├── js/                     ← JavaScript modules
-│   ├── api-client.js       ← API communication
-│   ├── cart.js             ← Cart logic
-│   ├── auth.js             ← Authentication
-│   ├── search.js           ← Autocomplete search
-│   ├── utils.js            ← Utilities & helpers
-│   └── main.js             ← Global init
-├── images/                 ← Static assets
-│   └── logo.svg
-├── backend/                ← PHP backend
-│   ├── index.php           ← API router
-│   ├── api/                ← REST endpoints
-│   ├── admin/              ← Admin API
-│   ├── config/             ← DB config, schema
-│   └── includes/           ← PHP classes
-└── admin-panel/            ← Admin UI
-    ├── index.html          ← Dashboard
-    ├── pages/              ← Admin pages
-    ├── css/admin.css
-    └── js/admin.js
+├── api/                    ← PHP function and included PHP source
+│   ├── index.php           ← Vercel/local request dispatcher
+│   ├── home.php            ← Storefront home
+│   ├── pages/              ← Storefront PHP pages
+│   ├── includes/           ← Shared storefront includes
+│   ├── backend/            ← API, admin, config, and migrations
+│   └── errors/             ← Shared error pages
+├── public/                 ← Files served statically by Vercel
+│   ├── admin-panel/        ← Admin HTML, CSS, and JavaScript
+│   ├── css/
+│   ├── images/
+│   └── js/
+├── uploads/                ← Local-only legacy uploads (not deployed)
+├── .env.example            ← Environment variable template
+└── vercel.json             ← PHP runtime and URL rewrites
 ```
 
 ## API Endpoints

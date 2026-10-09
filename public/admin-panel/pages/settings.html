@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="../../favicon.png">
+  <link rel="icon" type="image/x-icon" href="../../favicon.ico">
+  <link rel="apple-touch-icon" href="../../apple-touch-icon.png">
+  <title>Settings — Admin | Mithooos</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/admin-panel/css/admin.css">
+  <script src="/admin-panel/js/admin-auth.js"></script>
+  <link rel="stylesheet" href="/css/skeleton.css">
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-logo"><img src="/images/logo.png" alt="Mithooos logo" style="height:42px;width:auto;display:block;"></div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Overview</div><a href="/admin-panel/index.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="17" height="17"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
+    <div class="nav-section">Catalog</div><a href="products.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="17" height="17"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/></svg>Products</a>
+    <div class="nav-section">Sales</div><a href="orders.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="17" height="17"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>Orders</a>
+    <a href="coupons.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="17" height="17"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/></svg>Coupons</a>
+    <div class="nav-section">People</div><a href="customers.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="17" height="17"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Customers</a>
+    <div class="nav-section">System</div><a href="analytics.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="17" height="17"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Analytics</a>
+    <a href="settings.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="17" height="17"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33"/></svg>Settings</a>
+    <a href="/" class="nav-item" style="margin-top:auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="17" height="17"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/></svg>View Store</a>
+  </nav>
+</aside>
+<div class="main-wrap">
+  <header class="topbar">
+    <div class="topbar-left"><div class="page-title">Store Settings</div></div>
+    <div class="topbar-right"><div class="admin-avatar">A</div></div>
+  </header>
+  <main class="content">
+    <div style="display:grid;grid-template-columns:220px 1fr;gap:1.5rem;align-items:start">
+      <!-- Settings nav -->
+      <div class="card" style="position:sticky;top:calc(var(--nav-height,72px) + 1rem)">
+        <div id="settingsNav" style="display:flex;flex-direction:column;gap:.25rem">
+          <button class="btn btn-primary btn-sm" style="justify-content:flex-start;text-align:left" onclick="showSection('general',this)">General</button>
+          <button class="btn btn-ghost btn-sm" style="justify-content:flex-start" onclick="showSection('payment',this)">Payment</button>
+          <button class="btn btn-ghost btn-sm" style="justify-content:flex-start" onclick="showSection('shipping',this)">Shipping</button>
+          <button class="btn btn-ghost btn-sm" style="justify-content:flex-start" onclick="showSection('email',this)">Email / SMTP</button>
+          <button class="btn btn-ghost btn-sm" style="justify-content:flex-start" onclick="showSection('security',this)">Security</button>
+        </div>
+      </div>
+      <!-- Settings panels -->
+      <div>
+        <!-- General -->
+        <div id="sec-general" class="card" style="margin-bottom:1rem">
+          <div class="card-header"><span class="card-title">General Settings</span></div>
+          <div class="form-row"><div class="form-group"><label class="form-label">Store Name</label><input type="text" class="form-control" id="setStoreName"></div><div class="form-group"><label class="form-label">Store Email</label><input type="email" class="form-control" id="setStoreEmail"></div></div>
+          <div class="form-row"><div class="form-group"><label class="form-label">Currency</label><select class="form-control" id="setCurrency"><option value="PKR" selected>PKR — Pakistani Rupee</option></select></div><div class="form-group"><label class="form-label">Timezone <span style="font-weight:400;color:var(--muted)">(coming soon)</span></label><select class="form-control" disabled title="Not yet implemented — the app doesn't do timezone-aware date handling yet"><option>Asia/Karachi (PKT)</option></select></div></div>
+          <div class="form-row"><div class="form-group"><label class="form-label">Items Per Page</label><input type="number" class="form-control" id="setItemsPerPage" min="4" max="100"></div><div class="form-group"><label class="form-label">Tax Rate (%)</label><input type="number" class="form-control" id="setTaxRate" min="0" max="100" step="0.1"></div></div>
+          <button class="btn btn-primary" onclick="saveGeneralSettings()">Save Changes</button>
+        </div>
+        <!-- Payment (hidden) -->
+        <div id="sec-payment" class="card" style="display:none;margin-bottom:1rem">
+          <div class="card-header"><span class="card-title">Payment Settings</span></div>
+          <div class="form-group"><label class="form-label">Default Payment Method</label><select class="form-control" id="setDefaultPayment"><option value="cod">Cash on Delivery (COD)</option><option value="easypaisa">Easypaisa / Online Transfer</option></select></div>
+          <div style="border-top:1px solid var(--border);padding-top:1rem;margin-top:1rem">
+            <p class="form-label" style="margin-bottom:.75rem">Enabled Payment Methods</p>
+            <div style="display:flex;flex-direction:column;gap:.625rem;opacity:.5">
+              <label style="display:flex;align-items:center;gap:.75rem;font-size:.82rem"><label class="toggle"><input type="checkbox" checked disabled><span class="toggle-slider"></span></label>Cash on Delivery</label>
+              <label style="display:flex;align-items:center;gap:.75rem;font-size:.82rem"><label class="toggle"><input type="checkbox" checked disabled><span class="toggle-slider"></span></label>Easypaisa</label>
+            </div>
+          </div>
+          <button class="btn btn-primary" style="margin-top:1rem" onclick="savePaymentSettings()">Save Changes</button>
+        </div>
+        <!-- Shipping (hidden) -->
+        <div id="sec-shipping" class="card" style="display:none;margin-bottom:1rem">
+          <div class="card-header"><span class="card-title">Shipping Settings</span></div>
+          <div class="form-row"><div class="form-group"><label class="form-label">Free Shipping Threshold (PKR)</label><input type="number" class="form-control" id="setFreeShipThreshold" min="0"></div><div class="form-group"><label class="form-label">Standard Shipping Rate (PKR) <span style="font-weight:400;color:var(--muted)">(fixed)</span></label><input type="number" class="form-control" value="5.99" step="0.01" disabled title="Hardcoded in Cart::totals() — not yet a configurable setting"></div></div>
+          <!-- Express/Overnight rates removed from this form — the backend
+               (Cart::totals() in backend/includes/Cart.php) only ever
+               charges the flat/free standard rate, regardless of method.
+               Editing rates here that aren't actually applied anywhere
+               would be pure fiction (same reasoning as disabling these
+               options on the customer-facing checkout page). -->
+          <p style="font-size:.75rem;color:var(--muted);margin-bottom:1rem">Express and overnight shipping aren't implemented as separately-priced options yet — see the shipping method selector on the customer checkout page.</p>
+          <button class="btn btn-primary" onclick="saveShippingSettings()">Save Changes</button>
+        </div>
+        <!-- Email (hidden) -->
+        <div id="sec-email" class="card" style="display:none;margin-bottom:1rem">
+          <div class="card-header"><span class="card-title">Email / SMTP Settings</span></div>
+          <!-- Same reasoning as Stripe keys above: SMTP credentials are
+               .env-level infrastructure config (SMTP_HOST/SMTP_USER/
+               SMTP_PASS/FROM_EMAIL in .env.example), not application data
+               that belongs in a database table editable from this form. -->
+          <div class="form-row"><div class="form-group"><label class="form-label">SMTP Host</label><input type="text" class="form-control" placeholder="Set via SMTP_HOST in .env" disabled></div><div class="form-group"><label class="form-label">SMTP Port</label><input type="number" class="form-control" placeholder="587" disabled></div></div>
+          <div class="form-row"><div class="form-group"><label class="form-label">SMTP Username</label><input type="text" class="form-control" placeholder="Set via SMTP_USER in .env" disabled></div><div class="form-group"><label class="form-label">SMTP Password / API Key</label><input type="password" class="form-control" placeholder="Set via SMTP_PASS in .env" disabled></div></div>
+          <div class="form-row"><div class="form-group"><label class="form-label">From Email</label><input type="email" class="form-control" placeholder="Set via FROM_EMAIL in .env" disabled></div></div>
+          <p style="font-size:.75rem;color:var(--muted)">Email is configured via environment variables — see <code>.env.example</code>. There's also no "send test email" endpoint implemented yet.</p>
+        </div>
+        <!-- Security (hidden) -->
+        <div id="sec-security" class="card" style="display:none">
+          <div class="card-header"><span class="card-title">Security Settings</span></div>
+          <!-- The JWT secret is a real production secret (JWT_SECRET in
+               .env.example, used to sign every auth token — see
+               backend/includes/Auth.php). It must never be readable from
+               a web form or stored anywhere but the environment. The
+               previous version of this page displayed the literal
+               placeholder text from .env.example directly in an editable
+               field, which is exactly the kind of thing that could get
+               copy-pasted into a real deployment and mistaken for "the
+               current secret" — removed entirely rather than shown at all. -->
+          <div class="form-group"><label class="form-label">JWT Secret Key</label><input type="password" class="form-control" placeholder="Set via JWT_SECRET in .env — never shown here" disabled></div>
+          <div class="form-group"><label class="form-label">Session Timeout <span style="font-weight:400;color:var(--muted)">(coming soon)</span></label><input type="number" class="form-control" value="—" disabled title="JWT tokens don't currently have a configurable expiry — see JWT::generateJWT() in backend/includes/Auth.php"></div>
+          <div style="display:flex;flex-direction:column;gap:.75rem;margin:1rem 0;opacity:.5">
+            <label style="display:flex;align-items:center;gap:.75rem;font-size:.82rem"><label class="toggle"><input type="checkbox" checked disabled><span class="toggle-slider"></span></label>Rate limiting <span style="color:var(--muted)">(brute-force lockout is implemented — see Auth::login())</span></label>
+            <label style="display:flex;align-items:center;gap:.75rem;font-size:.82rem"><label class="toggle"><input type="checkbox" disabled><span class="toggle-slider"></span></label>Log all admin actions <span style="color:var(--muted)">(not implemented)</span></label>
+            <label style="display:flex;align-items:center;gap:.75rem;font-size:.82rem"><label class="toggle"><input type="checkbox" disabled><span class="toggle-slider"></span></label>Require 2FA for admin login <span style="color:var(--muted)">(not implemented)</span></label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<div class="toast-container" id="toastContainer"></div>
+<script src="/admin-panel/js/admin.js?v=20260916"></script>
+<script>
+function showSection(id, btn) {
+  document.querySelectorAll('[id^=sec-]').forEach(s => s.style.display = 'none');
+  document.getElementById('sec-'+id).style.display = 'block';
+  document.querySelectorAll('#settingsNav button').forEach(b => b.className='btn btn-ghost btn-sm');
+  btn.className = 'btn btn-primary btn-sm';
+  btn.style.justifyContent = 'flex-start';
+}
+
+/* ══════════════════════════════════════════
+   SETTINGS — Wired to the real backend
+   (GET/PUT /admin/settings — a new endpoint backed by the `settings`
+   table, which had real seed data but zero backend support before)
+   ══════════════════════════════════════════ */
+
+let currentSettings = {};
+
+async function loadSettings() {
+  try {
+    const res = await AdminAPI.get('/settings');
+    currentSettings = res.data || {};
+    document.getElementById('setStoreName').value = currentSettings.store_name || '';
+    document.getElementById('setStoreEmail').value = currentSettings.store_email || '';
+    document.getElementById('setCurrency').value = 'PKR';
+    document.getElementById('setItemsPerPage').value = currentSettings.items_per_page || 20;
+    document.getElementById('setTaxRate').value = currentSettings.tax_rate ? (parseFloat(currentSettings.tax_rate) * 100).toFixed(1) : '10';
+    document.getElementById('setFreeShipThreshold').value = currentSettings.free_shipping_threshold || 50;
+    document.getElementById('setDefaultPayment').value = currentSettings.default_payment || 'cod';
+  } catch (err) {
+    showToast(err.message || 'Could not load settings.', 'error');
+  }
+}
+
+async function saveGeneralSettings() {
+  const payload = {
+    store_name: document.getElementById('setStoreName').value.trim(),
+    store_email: document.getElementById('setStoreEmail').value.trim(),
+    currency: document.getElementById('setCurrency').value,
+    items_per_page: parseInt(document.getElementById('setItemsPerPage').value, 10) || 20,
+    tax_rate: (parseFloat(document.getElementById('setTaxRate').value) / 100).toFixed(4),
+  };
+  try {
+    await AdminAPI.put('/settings', payload);
+    showToast('General settings saved!', 'success');
+  } catch (err) {
+    showToast(err.message || 'Could not save settings.', 'error');
+  }
+}
+
+async function saveShippingSettings() {
+  try {
+    await AdminAPI.put('/settings', {
+      free_shipping_threshold: parseFloat(document.getElementById('setFreeShipThreshold').value) || 0,
+    });
+    showToast('Shipping settings saved!', 'success');
+  } catch (err) {
+    showToast(err.message || 'Could not save settings.', 'error');
+  }
+}
+
+async function savePaymentSettings() {
+  try {
+    await AdminAPI.put('/settings', { default_payment: document.getElementById('setDefaultPayment').value });
+    showToast('Payment settings saved!', 'success');
+  } catch (err) {
+    showToast(err.message || 'Could not save settings.', 'error');
+  }
+}
+
+loadSettings();
+</script>
+</body>
+</html>

@@ -1,4 +1,6 @@
 .env
+vendor/
+.vercel/
 /uploads/*
 !/uploads/.gitkeep
 /logs/*

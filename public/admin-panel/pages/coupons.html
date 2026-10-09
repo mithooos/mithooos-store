@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="../../favicon.png">
+  <link rel="icon" type="image/x-icon" href="../../favicon.ico">
+  <link rel="apple-touch-icon" href="../../apple-touch-icon.png">
+  <title>Coupons — Admin | Mithooos</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/admin-panel/css/admin.css">
+  <script src="/admin-panel/js/admin-auth.js"></script>
+  <link rel="stylesheet" href="/css/skeleton.css">
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-logo"><img src="/images/logo.png" alt="Mithooos logo" style="height:42px;width:auto;display:block;"></div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Overview</div><a href="/admin-panel/index.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="17" height="17"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
+    <div class="nav-section">Sales</div><a href="orders.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="17" height="17"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>Orders</a>
+    <a href="coupons.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="17" height="17"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/></svg>Coupons</a>
+    <div class="nav-section">Catalog</div><a href="products.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="17" height="17"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/></svg>Products</a>
+    <a href="/" class="nav-item" style="margin-top:auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="17" height="17"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/></svg>View Store</a>
+  </nav>
+</aside>
+<div class="main-wrap">
+  <header class="topbar">
+    <div class="topbar-left"><div class="page-title">Coupons & Discounts</div></div>
+    <div class="topbar-right"><button class="btn btn-primary" onclick="openCreateModal();openModal('couponModal')">+ New Coupon</button><div class="admin-avatar">A</div></div>
+  </header>
+  <main class="content">
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Code</th><th>Discount</th><th>Min Purchase</th><th>Usage</th><th>Validity</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="couponsBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+<div class="modal-overlay" id="couponModal">
+  <div class="modal"><div class="modal-header"><span class="modal-title">Create Coupon</span><button class="modal-close" onclick="closeModal('couponModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+  <div class="modal-body">
+    <div class="form-row"><div class="form-group"><label class="form-label">Coupon Code *</label><input type="text" class="form-control" id="cCode" placeholder="SUMMER10" style="text-transform:uppercase"></div><div class="form-group"><label class="form-label">Discount Type *</label><select class="form-control" id="cType"><option value="percentage">Percentage (%)</option><option value="fixed">Fixed Amount ($)</option></select></div></div>
+    <div class="form-row"><div class="form-group"><label class="form-label">Discount Value *</label><input type="number" class="form-control" id="cValue" placeholder="10" min="0" step="0.01"></div><div class="form-group"><label class="form-label">Min Purchase ($)</label><input type="number" class="form-control" id="cMinPurchase" placeholder="0" min="0" value="0"></div></div>
+    <div class="form-row"><div class="form-group"><label class="form-label">Max Uses (-1 = unlimited)</label><input type="number" class="form-control" id="cMaxUsage" value="-1"></div><div class="form-group"><label class="form-label">Description</label><input type="text" class="form-control" id="cDesc" placeholder="Summer sale 10% off"></div></div>
+    <div class="form-row"><div class="form-group"><label class="form-label">Valid From</label><input type="datetime-local" class="form-control" id="cFrom"></div><div class="form-group"><label class="form-label">Valid Until</label><input type="datetime-local" class="form-control" id="cUntil"></div></div>
+  </div>
+  <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('couponModal')">Cancel</button><button class="btn btn-primary" onclick="saveCoupon()">Create Coupon</button></div></div>
+</div>
+<div class="toast-container" id="toastContainer"></div>
+<script src="/admin-panel/js/admin.js?v=20260916"></script>
+<script>
+'use strict';
+
+/* ══════════════════════════════════════════
+   ADMIN COUPONS — Wired to the real backend
+   (GET/POST/PUT/DELETE /admin/coupons via AdminAPI)
+   ══════════════════════════════════════════ */
+
+let editingCouponId = null;
+
+async function loadCoupons() {
+  const tbody = document.getElementById('couponsBody');
+  tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--muted)">Loading…</td></tr>`;
+  try {
+    const res = await AdminAPI.get('/coupons');
+    if (!res.success) throw new Error(res.message || 'Failed to load coupons');
+    renderCoupons(res.data || []);
+  } catch (err) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--error)">Could not load coupons.</td></tr>`;
+    showToast(err.message || 'Could not load coupons.', 'error');
+  }
+}
+
+function fmtDateShort(s) {
+  if (!s) return '—';
+  return new Date(s).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+}
+
+function isExpired(c) {
+  return c.valid_until && new Date(c.valid_until) < new Date();
+}
+
+function renderCoupons(rows) {
+  const tbody = document.getElementById('couponsBody');
+  if (!rows.length) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--muted)">No coupons yet. Create one to get started.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = rows.map(c => {
+    const value = parseFloat(c.discount_value);
+    const min = parseFloat(c.minimum_purchase);
+    const expired = isExpired(c);
+    const active = !!parseInt(c.is_active, 10) && !expired;
+    const statusLabel = expired ? 'Expired' : (parseInt(c.is_active, 10) ? 'Active' : 'Inactive');
+    return `<tr>
+      <td><strong style="font-family:monospace;font-size:.82rem;background:var(--surface);padding:3px 8px;border-radius:5px;letter-spacing:1px">${escapeHtml(c.code)}</strong></td>
+      <td style="font-weight:700">${c.discount_type==='percentage' ? value+'%' : fmt.currency(value)}</td>
+      <td>${min>0 ? fmt.currency(min) : 'None'}</td>
+      <td>${c.used_count} / ${parseInt(c.max_usage,10)===-1 ? '∞' : c.max_usage}</td>
+      <td style="font-size:.75rem">${fmtDateShort(c.valid_from)}<br>to ${fmtDateShort(c.valid_until)}</td>
+      <td><span class="badge ${active?'badge-delivered':'badge-inactive'}">${statusLabel}</span></td>
+      <td><div class="td-actions">
+        <button class="btn btn-ghost btn-sm btn-icon" onclick="navigator.clipboard.writeText('${escapeHtml(c.code)}');showToast('Code copied!','success')" title="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button>
+        <button class="btn btn-ghost btn-sm btn-icon" onclick="editCoupon(${c.coupon_id})" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+        <button class="btn btn-danger btn-sm btn-icon" onclick="deleteCoupon(${c.coupon_id})" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg></button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+function openCreateModal() {
+  editingCouponId = null;
+  document.querySelector('#couponModal .modal-title').textContent = 'Create Coupon';
+  document.querySelector('#couponModal .modal-footer .btn-primary').textContent = 'Create Coupon';
+  document.getElementById('cCode').value = '';
+  document.getElementById('cCode').disabled = false;
+  document.getElementById('cType').value = 'percentage';
+  document.getElementById('cType').disabled = false;
+  document.getElementById('cValue').value = '';
+  document.getElementById('cMinPurchase').value = '0';
+  document.getElementById('cMaxUsage').value = '-1';
+  document.getElementById('cMaxUsage').disabled = false;
+  document.getElementById('cDesc').value = '';
+  document.getElementById('cFrom').value = '';
+  document.getElementById('cUntil').value = '';
+}
+
+function toLocalInputValue(isoStr) {
+  if (!isoStr) return '';
+  const d = new Date(isoStr);
+  const pad = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+async function editCoupon(id) {
+  try {
+    // The list endpoint already has everything we need — no separate
+    // GET /admin/coupons/:id exists, so find it in the last-rendered set.
+    const res = await AdminAPI.get('/coupons');
+    const c = (res.data || []).find(x => x.coupon_id === id);
+    if (!c) { showToast('Coupon not found.', 'error'); return; }
+
+    editingCouponId = id;
+    document.querySelector('#couponModal .modal-title').textContent = 'Edit Coupon';
+    document.querySelector('#couponModal .modal-footer .btn-primary').textContent = 'Save Changes';
+
+    document.getElementById('cCode').value = c.code;
+    document.getElementById('cCode').disabled = true; // code can't be changed after creation (see admin/coupons.php PUT handler)
+    document.getElementById('cType').value = c.discount_type;
+    document.getElementById('cType').disabled = true; // same — not in the allowed PUT fields
+    document.getElementById('cValue').value = c.discount_value;
+    document.getElementById('cMinPurchase').value = c.minimum_purchase;
+    document.getElementById('cMaxUsage').value = c.max_usage;
+    document.getElementById('cMaxUsage').disabled = true; // same
+    document.getElementById('cDesc').value = c.description || '';
+    document.getElementById('cFrom').value = toLocalInputValue(c.valid_from);
+    document.getElementById('cUntil').value = toLocalInputValue(c.valid_until);
+
+    openModal('couponModal');
+  } catch (err) {
+    showToast(err.message || 'Could not load coupon.', 'error');
+  }
+}
+
+async function saveCoupon() {
+  const code = document.getElementById('cCode').value.trim().toUpperCase();
+  const value = parseFloat(document.getElementById('cValue').value);
+  if (!code) { showToast('Coupon code required.', 'error'); return; }
+  if (!value || value <= 0) { showToast('A valid discount value is required.', 'error'); return; }
+
+  try {
+    if (editingCouponId) {
+      // PUT only accepts is_active/description/discount_value/minimum_purchase/valid_until
+      await AdminAPI.put('/coupons/' + editingCouponId, {
+        is_active: 1,
+        description: document.getElementById('cDesc').value.trim() || undefined,
+        discount_value: value,
+        minimum_purchase: parseFloat(document.getElementById('cMinPurchase').value) || 0,
+        valid_until: document.getElementById('cUntil').value || undefined,
+      });
+      showToast(`Coupon ${code} updated!`, 'success');
+    } else {
+      await AdminAPI.post('/coupons', {
+        code,
+        discount_type: document.getElementById('cType').value,
+        discount_value: value,
+        minimum_purchase: parseFloat(document.getElementById('cMinPurchase').value) || 0,
+        max_usage: parseInt(document.getElementById('cMaxUsage').value, 10) || -1,
+        description: document.getElementById('cDesc').value.trim() || undefined,
+        valid_from: document.getElementById('cFrom').value || undefined,
+        valid_until: document.getElementById('cUntil').value || undefined,
+      });
+      showToast(`Coupon ${code} created!`, 'success');
+    }
+    closeModal('couponModal');
+    loadCoupons();
+  } catch (err) {
+    showToast(err.message || 'Could not save coupon.', 'error');
+  }
+}
+
+async function deleteCoupon(id) {
+  if (!confirm('Delete this coupon? This cannot be undone.')) return;
+  try {
+    await AdminAPI.del('/coupons/' + id);
+    showToast('Coupon deleted.', 'success');
+    loadCoupons();
+  } catch (err) {
+    showToast(err.message || 'Could not delete coupon.', 'error');
+  }
+}
+
+loadCoupons();
+</script>
+</body>
+</html>

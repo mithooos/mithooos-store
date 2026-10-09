@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="/admin-panel/">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog Posts — Mithooos Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/admin-panel/css/admin.css">
+  <link rel="stylesheet" href="/css/skeleton.css">
+  <script src="/admin-panel/js/admin-auth.js"></script>
+</head>
+<body>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <img src="/images/logo.png" alt="Mithooos logo" style="height:42px;width:auto;display:block;">
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Overview</div>
+    <a href="index.html" class="nav-item">Dashboard</a>
+    
+    <div class="nav-section">Catalog</div>
+    <a href="/admin-panel/pages/categories.html" class="nav-item">Categories</a>
+    <a href="/admin-panel/pages/products.html" class="nav-item">Products</a>
+    
+    <div class="nav-section">Sales</div>
+    <a href="/admin-panel/pages/orders.html" class="nav-item">Orders</a>
+    <a href="/admin-panel/pages/coupons.html" class="nav-item">Coupons</a>
+    
+    <div class="nav-section">Content</div>
+    <a href="/admin-panel/pages/blog.html" class="nav-item active">Blog</a>
+    
+    <div class="nav-section">People</div>
+    <a href="/admin-panel/pages/customers.html" class="nav-item">Customers</a>
+    
+    <div class="nav-section">System</div>
+    <a href="/admin-panel/pages/settings.html" class="nav-item">Settings</a>
+    <a href="/" class="nav-item danger" style="margin-top:auto">View Store</a>
+    <button onclick="adminLogout()" class="nav-item danger" style="background:none;border:none;width:100%;text-align:left;cursor:pointer;font-family:inherit;font-size:inherit">Logout</button>
+  </nav>
+</aside>
+
+<div class="main-wrap">
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="topbar-icon" id="sidebarToggle" aria-label="Toggle sidebar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <h1 class="page-title">Blog Posts</h1>
+    </div>
+    <div class="topbar-right">
+      <button class="btn btn-primary" onclick="openModal('addPostModal')">Create Post</button>
+    </div>
+  </header>
+
+  <main class="content">
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Category</th>
+              <th>Status</th>
+              <th>Views</th>
+              <th>Date</th>
+              <th style="text-align:right">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="postsTable">
+            <tr><td colspan="6" style="text-align:center">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Modal: Add / Edit Post -->
+<div class="modal-overlay" id="addPostModal">
+  <div class="modal" style="max-width:800px">
+    <div class="modal-header">
+      <h2 class="modal-title" id="postModalTitle">Create Blog Post</h2>
+      <button class="modal-close" onclick="closeModal('addPostModal')">&times;</button>
+    </div>
+    <form id="postForm" class="modal-body" onsubmit="savePost(event)">
+      <input type="hidden" id="postId">
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">Title <span style="color:var(--error)">*</span></label>
+          <input type="text" id="postTitle" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <input type="text" id="postCategory" class="form-control">
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Excerpt</label>
+        <textarea id="postExcerpt" class="form-control" rows="2"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Content <span style="color:var(--error)">*</span> (HTML allowed)</label>
+        <textarea id="postContent" class="form-control" rows="8" required></textarea>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Featured Image URL</label>
+        <input type="text" id="postImage" class="form-control">
+      </div>
+      
+      <div class="form-group" style="display:flex;align-items:center;gap:var(--space-2)">
+        <input type="checkbox" id="postPublished">
+        <label for="postPublished" style="margin:0">Published</label>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="closeModal('addPostModal')">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Post</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+<script src="/admin-panel/js/admin.js"></script>
+<script>
+let currentPosts = [];
+
+async function loadPosts() {
+  try {
+    const res = await apiCall('/admin/blog?is_published=all');
+    currentPosts = res.rows;
+    renderTable();
+  } catch(e) {
+    console.error(e);
+  }
+}
+
+function renderTable() {
+  const tbody = document.getElementById('postsTable');
+  if(!currentPosts.length) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted)">No posts found.</td></tr>';
+    return;
+  }
+  
+  tbody.innerHTML = currentPosts.map(p => `
+    <tr>
+      <td><strong>${escapeHtml(p.title)}</strong><br><small style="color:var(--muted)">/${p.slug}</small></td>
+      <td>${escapeHtml(p.category || '-')}</td>
+      <td><span class="badge ${p.is_published ? 'delivered' : 'pending'}">${p.is_published ? 'Published' : 'Draft'}</span></td>
+      <td>${p.view_count}</td>
+      <td>${formatDate(p.created_at)}</td>
+      <td style="text-align:right">
+        <button class="btn btn-outline btn-sm" onclick="editPost(${p.post_id})">Edit</button>
+        <button class="btn btn-outline btn-sm danger" onclick="deletePost(${p.post_id})">Delete</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function editPost(id) {
+  const p = currentPosts.find(x => x.post_id === id);
+  if(!p) return;
+  document.getElementById('postModalTitle').textContent = 'Edit Blog Post';
+  document.getElementById('postId').value = p.post_id;
+  document.getElementById('postTitle').value = p.title;
+  document.getElementById('postCategory').value = p.category || '';
+  document.getElementById('postExcerpt').value = p.excerpt || '';
+  document.getElementById('postContent').value = p.content || '';
+  document.getElementById('postImage').value = p.featured_image_url || '';
+  document.getElementById('postPublished').checked = p.is_published;
+  openModal('addPostModal');
+}
+
+document.getElementById('addPostModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('addPostModal')) closeModal('addPostModal');
+});
+
+// hook up add button
+document.querySelector('.topbar-right .btn-primary').onclick = () => {
+  document.getElementById('postModalTitle').textContent = 'Create Blog Post';
+  document.getElementById('postForm').reset();
+  document.getElementById('postId').value = '';
+  openModal('addPostModal');
+};
+
+async function savePost(e) {
+  e.preventDefault();
+  const id = document.getElementById('postId').value;
+  const data = {
+    title: document.getElementById('postTitle').value,
+    category: document.getElementById('postCategory').value,
+    excerpt: document.getElementById('postExcerpt').value,
+    content: document.getElementById('postContent').value,
+    featured_image_url: document.getElementById('postImage').value,
+    is_published: document.getElementById('postPublished').checked
+  };
+  
+  try {
+    if(id) {
+      await apiCall('/admin/blog/' + id, 'PUT', data);
+      showToast('Post updated');
+    } else {
+      await apiCall('/admin/blog', 'POST', data);
+      showToast('Post created', 'success');
+    }
+    closeModal('addPostModal');
+    loadPosts();
+  } catch(err) {
+    showToast(err.message || 'Error saving post', 'error');
+  }
+}
+
+async function deletePost(id) {
+  if(!confirm('Are you sure you want to delete this post?')) return;
+  try {
+    await apiCall('/admin/blog/' + id, 'DELETE');
+    showToast('Post deleted');
+    loadPosts();
+  } catch(err) {
+    showToast(err.message || 'Error deleting post', 'error');
+  }
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/[&<>"']/g, m => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'})[m]);
+}
+
+function formatDate(iso) {
+  if(!iso) return '';
+  const d = new Date(iso);
+  return d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+}
+
+document.addEventListener('DOMContentLoaded', loadPosts);
+</script>
+</body>
+</html>
