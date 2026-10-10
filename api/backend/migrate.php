@@ -76,7 +76,8 @@ try {
                 // We use private sendRequest method using reflection or just use raw curl since Database doesn't expose it
                 // Actually, let's just make a dedicated method in Database.php or do raw curl here:
                 
-                $ch = curl_init(getenv('TURSO_DATABASE_URL') . '/v2/pipeline');
+                $url = preg_replace('/^(libsql|wss|ws):\/\//', 'https://', getenv('TURSO_DATABASE_URL'));
+                $ch = curl_init($url . '/v2/pipeline');
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                 curl_setopt($ch, CURLOPT_POST, true);
                 curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
