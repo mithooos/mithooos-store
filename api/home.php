@@ -76,7 +76,7 @@
       <a href="/shop?cat=sindhi-ajrak" class="category-card" data-reveal>
         <img src="/images/hero1.png" class="category-card-image" alt="Sindhi Ajrak heritage collection" loading="lazy">
         <div class="category-card-overlay">
-          <div>
+          <div class="category-card-content">
             <div class="category-card-label">Sindhi Ajrak</div>
             <div class="category-card-count">Heritage textile</div>
           </div>
@@ -85,7 +85,7 @@
       <a href="/shop?cat=sindhi-topi" class="category-card" data-reveal style="transition-delay:.05s">
         <img src="/images/hero2.png" class="category-card-image" alt="Sindhi Topi traditional collection" loading="lazy">
         <div class="category-card-overlay">
-          <div>
+          <div class="category-card-content">
             <div class="category-card-label">Sindhi Topi</div>
             <div class="category-card-count">Festive headwear</div>
           </div>
@@ -94,7 +94,7 @@
       <a href="/shop?cat=sindhi-kajoor" class="category-card" data-reveal style="transition-delay:.1s">
         <img src="/images/hero3.png" class="category-card-image" alt="Sindhi Kajoor premium collection" loading="lazy">
         <div class="category-card-overlay">
-          <div>
+          <div class="category-card-content">
             <div class="category-card-label">Sindhi Kajoor</div>
             <div class="category-card-count">Premium gifting</div>
           </div>
@@ -103,7 +103,7 @@
       <a href="/shop?cat=sindhi-handicrafts" class="category-card" data-reveal style="transition-delay:.15s">
         <img src="/images/hero4.png" class="category-card-image" alt="Sindhi handcrafted traditions collection" loading="lazy">
         <div class="category-card-overlay">
-          <div>
+          <div class="category-card-content">
             <div class="category-card-label">Sindhi Handicrafts</div>
             <div class="category-card-count">Crafted traditions</div>
           </div>
@@ -112,7 +112,7 @@
       <a href="/shop?cat=sindhi-gift-sets" class="category-card" data-reveal style="transition-delay:.2s">
         <img src="/images/hero5.png" class="category-card-image" alt="Sindhi gift sets collection" loading="lazy">
         <div class="category-card-overlay">
-          <div>
+          <div class="category-card-content">
             <div class="category-card-label">Sindhi Gift Sets</div>
             <div class="category-card-count">Celebrate together</div>
           </div>
@@ -538,4 +538,3 @@
 </script>
 </body>
 </html>
-

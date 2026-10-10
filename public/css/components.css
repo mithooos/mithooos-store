@@ -365,12 +365,29 @@
 .category-card:hover img { transform: scale(1.1); }
 .category-card-overlay {
   position: absolute; inset: 0;
-  background: linear-gradient(to top, rgba(24,35,51,.78) 0%, transparent 60%);
+  background: linear-gradient(to top, rgba(16,24,36,.94) 0%, rgba(16,24,36,.68) 28%, rgba(16,24,36,0) 72%);
   display: flex; align-items: flex-end;
-  padding: var(--space-4);
+  padding: clamp(1rem, 1.5vw, 1.5rem);
 }
-.category-card-label { font-family: var(--font-heading); font-weight: 700; font-size: var(--text-xl); color: white; }
-.category-card-count { font-size: var(--text-xs); color: rgba(255,255,255,.7); }
+.category-card-content { width: 100%; }
+.category-card-label {
+  font-family: var(--font-heading); font-weight: 700;
+  font-size: clamp(1rem, 1.3vw, var(--text-xl)); line-height: 1.2;
+  color: white; text-shadow: 0 1px 8px rgba(0,0,0,.3);
+}
+.category-card-count {
+  display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2; line-clamp: 2;
+  margin-top: .35rem; font-size: var(--text-xs); line-height: 1.45;
+  color: rgba(255,255,255,.82);
+}
+.category-card-content::after {
+  content: 'Explore collection  →'; display: inline-block;
+  margin-top: .75rem; color: white; font-size: .7rem;
+  font-weight: 700; letter-spacing: .04em;
+  transition: transform var(--transition-fast);
+}
+.category-card:hover .category-card-content::after { transform: translateX(4px); }
 
 /* ── PROMO / COUNTDOWN ── */
 .promo-section {
@@ -515,5 +532,4 @@
   display: flex; align-items: center; justify-content: center;
   color: var(--color-border); font-size: var(--text-sm);
 }
-
 
