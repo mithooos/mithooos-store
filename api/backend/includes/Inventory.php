@@ -11,7 +11,7 @@ class Inventory {
      * Available stock = on_hand_stock - reserved_stock.
      */
     public function getAvailableStock(int $productId, ?int $variantId = null): int {
-        $query = 'SELECT available_stock FROM inventory_items WHERE product_id = ?';
+        $query = 'SELECT (quantity - reserved_quantity) AS available_stock FROM inventory_items WHERE product_id = ?';
         $params = [$productId];
 
         if ($variantId !== null) {
@@ -30,8 +30,8 @@ class Inventory {
      */
     public function initInventory(int $productId, ?int $variantId = null, int $initialStock = 0): void {
         $this->db->insert(
-            'INSERT INTO inventory_items (product_id, variant_id, available_stock, on_hand_stock) VALUES (?, ?, ?, ?) ON CONFLICT DO NOTHING',
-            [$productId, $variantId, $initialStock, $initialStock]
+            'INSERT INTO inventory_items (product_id, variant_id, quantity) VALUES (?, ?, ?) ON CONFLICT DO NOTHING',
+            [$productId, $variantId, $initialStock]
         );
     }
 
@@ -43,7 +43,7 @@ class Inventory {
         $this->db->beginTransaction();
         try {
             // Lock the inventory row
-            $query = 'SELECT inventory_id, available_stock FROM inventory_items WHERE product_id = ?';
+            $query = 'SELECT inventory_id, (quantity - reserved_quantity) AS available_stock FROM inventory_items WHERE product_id = ?';
             $params = [$productId];
             if ($variantId) {
                 $query .= ' AND variant_id = ?';
@@ -59,10 +59,10 @@ class Inventory {
                 throw new RuntimeException('Insufficient stock available.');
             }
 
-            // Update reserved stock and available stock
+            // Update reserved stock
             $this->db->execute(
-                'UPDATE inventory_items SET reserved_stock = reserved_stock + ?, available_stock = available_stock - ? WHERE inventory_id = ?',
-                [$quantity, $quantity, $item['inventory_id']]
+                'UPDATE inventory_items SET reserved_quantity = reserved_quantity + ? WHERE inventory_id = ?',
+                [$quantity, $item['inventory_id']]
             );
 
             // Create reservation record
@@ -107,9 +107,9 @@ class Inventory {
                 throw new RuntimeException('Inventory item not found.');
             }
 
-            // Deduct from reserved_stock and on_hand_stock
+            // Deduct from reserved_quantity and quantity
             $this->db->execute(
-                'UPDATE inventory_items SET reserved_stock = reserved_stock - ?, on_hand_stock = on_hand_stock - ? WHERE inventory_id = ?',
+                'UPDATE inventory_items SET reserved_quantity = reserved_quantity - ?, quantity = quantity - ? WHERE inventory_id = ?',
                 [$res['quantity'], $res['quantity'], $item['inventory_id']]
             );
 
@@ -150,10 +150,10 @@ class Inventory {
             $item = $this->db->fetchOne($query, $params);
 
             if ($item) {
-                // Restore available stock, reduce reserved stock
+                // Restore available stock by reducing reserved quantity
                 $this->db->execute(
-                    'UPDATE inventory_items SET reserved_stock = reserved_stock - ?, available_stock = available_stock + ? WHERE inventory_id = ?',
-                    [$res['quantity'], $res['quantity'], $item['inventory_id']]
+                    'UPDATE inventory_items SET reserved_quantity = reserved_quantity - ? WHERE inventory_id = ?',
+                    [$res['quantity'], $item['inventory_id']]
                 );
             }
 
@@ -190,8 +190,8 @@ class Inventory {
             }
 
             $this->db->execute(
-                'UPDATE inventory_items SET available_stock = available_stock + ?, on_hand_stock = on_hand_stock + ? WHERE inventory_id = ?',
-                [$quantityChange, $quantityChange, $item['inventory_id']]
+                'UPDATE inventory_items SET quantity = quantity + ? WHERE inventory_id = ?',
+                [$quantityChange, $item['inventory_id']]
             );
 
             // Sync legacy columns to keep frontend fast/easy for now
