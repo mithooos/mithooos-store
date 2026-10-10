@@ -61,7 +61,7 @@ class Database
         $token = getenv('TURSO_AUTH_TOKEN');
 
         if (!$url || !$token) {
-            throw new RuntimeException('Turso credentials missing. Check your .env (TURSO_DATABASE_URL and TURSO_AUTH_TOKEN).');
+            throw new Exception('Turso credentials missing. Check your .env (TURSO_DATABASE_URL and TURSO_AUTH_TOKEN).');
         }
 
         // Convert libsql:// or wss:// to https://

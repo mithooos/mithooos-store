@@ -655,8 +655,7 @@
     const grid = document.getElementById('testimonialsGrid');
     if (!grid) return;
     try {
-      const res = await fetch(API_BASE + '/reviews?limit=3');
-      const data = await res.json();
+      const data = await API.request('GET', '/api/reviews', null, { limit: 3 });
       const reviews = data.data || [];
       if (!reviews.length) return;
       
@@ -717,8 +716,7 @@
   async function setCountdown() {
     let endTs = 0;
     try {
-        const res = await fetch(API_BASE + '/settings');
-        const data = await res.json();
+        const data = await API.request('GET', '/api/settings');
         if (data && data.success && data.data && data.data.promo_end_date) {
             endTs = new Date(data.data.promo_end_date).getTime();
         }

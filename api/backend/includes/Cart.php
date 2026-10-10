@@ -3,8 +3,8 @@ class Cart {
     public function __construct(private Database $db, private ?int $user_id = null, private ?string $session_id = null) {}
 
     private function clause(): array {
-        if ($this->user_id)    return ['user_id = ?',    [$this->user_id]];
-        if ($this->session_id) return ['session_id = ?', [$this->session_id]];
+        if (!empty($this->user_id)) return ['user_id = ?', [$this->user_id]];
+        if (!empty($this->session_id)) return ['session_id = ?', [$this->session_id]];
         throw new RuntimeException('Cart requires user_id or session_id.');
     }
 

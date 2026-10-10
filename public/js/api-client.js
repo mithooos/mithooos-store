@@ -47,6 +47,14 @@ const API = (() => {
       'X-Session-ID': getSessionId(),
     };
 
+    const user = auth.getUser();
+    if (user && user.token) {
+      h['Authorization'] = `Bearer ${user.token}`;
+    } else {
+      const token = localStorage.getItem(TOKEN_KEY);
+      if (token) h['Authorization'] = `Bearer ${token}`;
+    }
+
     // Attach CSRF token for state-changing requests
     if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(method.toUpperCase())) {
       const csrf = await getCsrfToken();
@@ -234,8 +242,10 @@ const API = (() => {
     list: () => request('GET', '/api/collections'),
   };
 
-  return { auth, products, cart, orders, reviews, wishlist, newsletter, contact, categories, collections, addresses, getSessionId };
+  return { auth, products, cart, orders, reviews, wishlist, newsletter, contact, categories, collections, addresses, getSessionId, request, BASE };
 })();
+
+window.API_BASE = API.BASE + '/index.php?_url=/api';
 
 /* ── Custom error class ── */
 class APIError extends Error {
