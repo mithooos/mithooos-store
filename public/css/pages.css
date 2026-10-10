@@ -207,7 +207,7 @@
   aspect-ratio: 4/5; border-radius: var(--radius-xl); overflow: hidden;
   background: var(--color-surface); position: relative; cursor: zoom-in;
 }
-.gallery-main img { width: 100%; height: 100%; object-fit: contain; transition: transform .5s ease; }
+.gallery-main img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; }
 .gallery-main:hover img { transform: scale(1.06); }
 .gallery-thumbs { display: flex; gap: var(--space-3); margin-top: var(--space-4); overflow-x: auto; padding-bottom: var(--space-2); }
 .gallery-thumb {
