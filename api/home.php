@@ -24,10 +24,6 @@
   <div class="container">
     <div class="hero-grid">
       <div class="hero-content">
-        <div class="hero-eyebrow">
-          <span aria-hidden="true"></span>
-          THE MITHOOOS HERITAGE EDIT
-        </div>
         <h1 class="hero-title">
           <span class="hero-title-line">Rooted in</span>
           <span class="hero-title-line text-gradient">Sindh.</span>
