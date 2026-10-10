@@ -45,11 +45,11 @@
       <div class="hero-image-wrapper">
         <div class="hero-image-card">
           <div class="hero-slides" aria-live="polite">
-            <img class="hero-image hero-slide is-active" src="/images/hero1.png" alt="Mithooos heritage campaign">
-            <img class="hero-image hero-slide" src="/images/hero2.png" alt="Mithooos heritage campaign" loading="lazy">
-            <img class="hero-image hero-slide" src="/images/hero3.png" alt="Mithooos heritage campaign" loading="lazy">
-            <img class="hero-image hero-slide" src="/images/hero4.png" alt="Mithooos heritage campaign" loading="lazy">
-            <img class="hero-image hero-slide" src="/images/hero5.png" alt="Mithooos heritage campaign" loading="lazy">
+            <img class="hero-image hero-slide is-active" src="/images/hero1.png" alt="Model wearing a red and black Sindhi Ajrak shawl" fetchpriority="high" decoding="async">
+            <img class="hero-image hero-slide" src="/images/hero2.png" alt="Model wearing a dark Sindhi Ajrak shawl" loading="lazy" decoding="async">
+            <img class="hero-image hero-slide" src="/images/hero3.png" alt="Model wearing a blue Sindhi Ajrak shawl" loading="lazy" decoding="async">
+            <img class="hero-image hero-slide" src="/images/hero4.png" alt="Model wearing a red and black Sindhi Ajrak shawl" loading="lazy" decoding="async">
+            <img class="hero-image hero-slide" src="/images/hero5.png" alt="Model wearing a Sindhi Ajrak shawl" loading="lazy" decoding="async">
           </div>
         </div>
       </div>
@@ -296,19 +296,12 @@
   // ── Hero campaign slider ──
   const heroSlides = Array.from(document.querySelectorAll('.hero-slide'));
   if (heroSlides.length > 1) {
-    let heroOrder = heroSlides.map((_, index) => index).sort(() => Math.random() - 0.5);
-    let heroPosition = 0;
-    let activeHeroIndex = heroOrder[heroPosition];
+    let activeHeroIndex = Math.max(0, heroSlides.findIndex(slide => slide.classList.contains('is-active')));
     heroSlides.forEach((slide, index) => slide.classList.toggle('is-active', index === activeHeroIndex));
 
     const showNextHero = () => {
       heroSlides[activeHeroIndex].classList.remove('is-active');
-      heroPosition += 1;
-      if (heroPosition >= heroOrder.length) {
-        heroOrder = heroSlides.map((_, index) => index).sort(() => Math.random() - 0.5);
-        heroPosition = 0;
-      }
-      activeHeroIndex = heroOrder[heroPosition];
+      activeHeroIndex = (activeHeroIndex + 1) % heroSlides.length;
       heroSlides[activeHeroIndex].classList.add('is-active');
     };
 

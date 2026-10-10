@@ -266,7 +266,7 @@ function renderProduct(p) {
   // rendering or prerendering for this route — out of scope for a static
   // frontend fix, but worth knowing if organic product-page SEO matters.)
   const shortDesc = (p.short_description || p.description || '').slice(0, 160);
-  const ogImage = (p.images && p.images[0]?.image_url) || 'https://mithooos.com/images/og-image.png';
+  const ogImage = (p.images && p.images[0]?.image_url) || 'https://mithooos.com/images/hero1.png';
   const pageUrl = `https://mithooos.com/product-detail?id=${p.product_id}`;
   document.getElementById('metaDescription')?.setAttribute('content', shortDesc);
   document.getElementById('ogTitle')?.setAttribute('content', `${p.product_name} — Mithooos`);
@@ -399,7 +399,7 @@ function renderGallery(images) {
     return;
   }
 
-  main.innerHTML = `<img src="${escapeHtml(resolveImageUrl(images[0].image_url))}" alt="${escapeHtml(currentProduct.product_name)}" onerror="handleImageError(this)" style="width:100%;height:100%;object-fit:cover"><div class="img-fallback" style="display:none;width:100%;height:100%">${placeholderImg(80)}</div>`;
+  main.innerHTML = `<img src="${escapeHtml(resolveImageUrl(images[0].image_url))}" alt="${escapeHtml(currentProduct.product_name)}" fetchpriority="high" decoding="async" onerror="handleImageError(this)" style="width:100%;height:100%"><div class="img-fallback" style="display:none;width:100%;height:100%">${placeholderImg(80)}</div>`;
 
   thumbsEl.innerHTML = images.map((img, i) => `
     <div class="gallery-thumb ${i === 0 ? 'active' : ''}" data-idx="${i}">
@@ -417,7 +417,7 @@ function setMainImg(idx, images) {
   document.querySelector(`.gallery-thumb[data-idx="${idx}"]`)?.classList.add('active');
   if (images[idx]) {
     document.getElementById('galleryMain').innerHTML =
-      `<img src="${escapeHtml(resolveImageUrl(images[idx].image_url))}" alt="${escapeHtml(currentProduct.product_name)}" onerror="handleImageError(this)" style="width:100%;height:100%;object-fit:cover"><div class="img-fallback" style="display:none;width:100%;height:100%">${placeholderImg(80)}</div>`;
+      `<img src="${escapeHtml(resolveImageUrl(images[idx].image_url))}" alt="${escapeHtml(currentProduct.product_name)}" decoding="async" onerror="handleImageError(this)" style="width:100%;height:100%"><div class="img-fallback" style="display:none;width:100%;height:100%">${placeholderImg(80)}</div>`;
   }
 }
 

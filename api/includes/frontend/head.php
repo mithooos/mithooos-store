@@ -14,13 +14,13 @@ $basePath = '';
   <meta property="og:type" content="website">
   <meta property="og:title" content="Mithooos">
   <meta property="og:description" content="Learn about Mithooos' story, values, and commitment to sustainable, story-driven fashion.">
-  <meta property="og:image" content="https://mithooos.com/images/og-image.png">
+  <meta property="og:image" content="https://mithooos.com/images/hero1.png">
   <meta property="og:url" content="https://mithooos.com/">
   <meta property="og:site_name" content="Mithooos">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Mithooos">
   <meta name="twitter:description" content="Learn about Mithooos' story, values, and commitment to sustainable, story-driven fashion.">
-  <meta name="twitter:image" content="https://mithooos.com/images/og-image.png">
+  <meta name="twitter:image" content="https://mithooos.com/images/hero1.png">
   <link rel="canonical" href="https://mithooos.com/">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="<?= $basePath ?>/css/variables.css?v=<?= time() ?>">

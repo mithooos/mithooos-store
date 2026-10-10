@@ -20,7 +20,7 @@
         <a href="/shop" class="btn btn-primary btn-lg" data-reveal style="transition-delay:.3s">Explore Heritage</a>
       </div>
       <div class="about-visual" data-reveal style="transition-delay:.2s; border-radius: var(--radius-2xl); overflow: hidden; box-shadow: var(--shadow-xl); align-self: center; aspect-ratio: auto;">
-        <img src="/images/Mithoosabt.jpeg" alt="Mithooos About" style="width: 100%; height: auto; display: block;">
+        <img src="/images/Mithoosabt.jpeg" alt="Mithooos heritage logo with Sindhi Ajrak and traditional crafts illustration" style="width: 100%; height: auto; display: block;">
       </div>
     </div>
   </div>
