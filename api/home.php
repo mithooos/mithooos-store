@@ -73,48 +73,53 @@
     </div>
 
     <div class="categories-grid" id="categoriesGrid" aria-live="polite">
-      <a href="/shop?cat=sindhi-ajrak" class="category-card" data-reveal>
-        <img src="/images/hero1.png" class="category-card-image" alt="Sindhi Ajrak heritage collection" loading="lazy">
+      <a href="#" class="category-card is-loading" data-reveal>
+        <div class="category-card-placeholder" aria-hidden="true"></div>
+        <img class="category-card-image" alt="Loading category" loading="lazy" hidden>
         <div class="category-card-overlay">
           <div class="category-card-content">
-            <div class="category-card-label">Sindhi Ajrak</div>
-            <div class="category-card-count">Heritage textile</div>
+            <div class="category-card-label">Loading</div>
+            <div class="category-card-count">Please wait</div>
           </div>
         </div>
       </a>
-      <a href="/shop?cat=sindhi-topi" class="category-card" data-reveal style="transition-delay:.05s">
-        <img src="/images/hero2.png" class="category-card-image" alt="Sindhi Topi traditional collection" loading="lazy">
+      <a href="#" class="category-card is-loading" data-reveal style="transition-delay:.05s">
+        <div class="category-card-placeholder" aria-hidden="true"></div>
+        <img class="category-card-image" alt="Loading category" loading="lazy" hidden>
         <div class="category-card-overlay">
           <div class="category-card-content">
-            <div class="category-card-label">Sindhi Topi</div>
-            <div class="category-card-count">Festive headwear</div>
+            <div class="category-card-label">Loading</div>
+            <div class="category-card-count">Please wait</div>
           </div>
         </div>
       </a>
-      <a href="/shop?cat=sindhi-kajoor" class="category-card" data-reveal style="transition-delay:.1s">
-        <img src="/images/hero3.png" class="category-card-image" alt="Sindhi Kajoor premium collection" loading="lazy">
+      <a href="#" class="category-card is-loading" data-reveal style="transition-delay:.1s">
+        <div class="category-card-placeholder" aria-hidden="true"></div>
+        <img class="category-card-image" alt="Loading category" loading="lazy" hidden>
         <div class="category-card-overlay">
           <div class="category-card-content">
-            <div class="category-card-label">Sindhi Kajoor</div>
-            <div class="category-card-count">Premium gifting</div>
+            <div class="category-card-label">Loading</div>
+            <div class="category-card-count">Please wait</div>
           </div>
         </div>
       </a>
-      <a href="/shop?cat=sindhi-handicrafts" class="category-card" data-reveal style="transition-delay:.15s">
-        <img src="/images/hero4.png" class="category-card-image" alt="Sindhi handcrafted traditions collection" loading="lazy">
+      <a href="#" class="category-card is-loading" data-reveal style="transition-delay:.15s">
+        <div class="category-card-placeholder" aria-hidden="true"></div>
+        <img class="category-card-image" alt="Loading category" loading="lazy" hidden>
         <div class="category-card-overlay">
           <div class="category-card-content">
-            <div class="category-card-label">Sindhi Handicrafts</div>
-            <div class="category-card-count">Crafted traditions</div>
+            <div class="category-card-label">Loading</div>
+            <div class="category-card-count">Please wait</div>
           </div>
         </div>
       </a>
-      <a href="/shop?cat=sindhi-gift-sets" class="category-card" data-reveal style="transition-delay:.2s">
-        <img src="/images/hero5.png" class="category-card-image" alt="Sindhi gift sets collection" loading="lazy">
+      <a href="#" class="category-card is-loading" data-reveal style="transition-delay:.2s">
+        <div class="category-card-placeholder" aria-hidden="true"></div>
+        <img class="category-card-image" alt="Loading category" loading="lazy" hidden>
         <div class="category-card-overlay">
           <div class="category-card-content">
-            <div class="category-card-label">Sindhi Gift Sets</div>
-            <div class="category-card-count">Celebrate together</div>
+            <div class="category-card-label">Loading</div>
+            <div class="category-card-count">Please wait</div>
           </div>
         </div>
       </a>
@@ -324,8 +329,21 @@
     try {
       const response = await API.categories.list();
       const rows = (response.data || []).slice(0, 5);
-      if (!rows.length) return;
       const cards = Array.from(categoryGrid.querySelectorAll('.category-card'));
+
+      if (!rows.length) {
+        cards.forEach((card) => {
+          card.classList.remove('is-loading');
+          card.classList.add('is-loaded');
+          card.href = '/shop';
+          const label = card.querySelector('.category-card-label');
+          const count = card.querySelector('.category-card-count');
+          if (label) label.textContent = 'Explore categories';
+          if (count) count.textContent = 'Discover our latest collections';
+        });
+        return;
+      }
+
       rows.forEach((category, index) => {
         const card = cards[index];
         if (!card) return;
@@ -342,10 +360,21 @@
         }
         if (label) label.textContent = category.category_name || '';
         if (count) count.textContent = category.description || categoryTextFallbacks[index % categoryTextFallbacks.length];
+        card.classList.remove('is-loading');
+        card.classList.add('is-loaded');
       });
     } catch (error) {
-      // Keep the server-rendered fallback cards visible if the API is unavailable.
+      // Keep the neutral placeholder cards visible if the API is unavailable.
       console.error('Error loading categories:', error);
+      const cards = Array.from(categoryGrid.querySelectorAll('.category-card'));
+      cards.forEach((card) => {
+        card.classList.remove('is-loading');
+        card.classList.add('is-loaded');
+        const label = card.querySelector('.category-card-label');
+        const count = card.querySelector('.category-card-count');
+        if (label) label.textContent = 'Explore categories';
+        if (count) count.textContent = 'Discover our latest collections';
+      });
     }
   }
   loadHomepageCategories();
