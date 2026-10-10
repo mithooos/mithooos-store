@@ -408,10 +408,10 @@
         </a>
         <p>Premium fashion for the modern individual. We believe great style shouldn't break the bank — quality and affordability together.</p>
         <div class="social-links" style="margin-top:var(--space-6); display:flex; gap:1.25rem;">
-          <a href="#" class="social-link" aria-label="Instagram">
+          <a href="https://www.instagram.com/mithooos.pk/" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Instagram">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
           </a>
-          <a href="#" class="social-link" aria-label="Facebook">
+          <a href="https://www.facebook.com/people/Mithooos/61593170878179/" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Facebook">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
           </a>
           <a href="#" class="social-link" aria-label="Twitter/X">
