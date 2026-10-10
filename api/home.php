@@ -20,39 +20,229 @@
     <div class="hero-shape hero-shape-1"></div>
     <div class="hero-shape hero-shape-2"></div>
     <div class="hero-shape hero-shape-3"></div>
+    
+    <div class="hero-motif-left"></div>
+    <div class="hero-motif-right">
+      <svg width="24" height="120" viewBox="0 0 24 120" fill="var(--color-primary)" opacity="0.8">
+        <polygon points="12,0 24,12 12,24 0,12" />
+        <polygon points="12,30 24,42 12,54 0,42" />
+        <polygon points="12,60 24,72 12,84 0,72" />
+        <polygon points="12,90 24,102 12,114 0,102" />
+      </svg>
+    </div>
   </div>
-  <div class="container">
-    <div class="hero-grid">
-      <div class="hero-content">
-        <h1 class="hero-title">
-          <span class="hero-title-line">Rooted in</span>
-          <span class="hero-title-line text-gradient">Sindh.</span>
-          <span class="hero-title-line">Made for Today.</span>
-        </h1>
-        <p class="hero-desc">
-          Discover authentic Ajrak, traditional craftsmanship and timeless pieces thoughtfully curated for modern living.
-        </p>
-        <div class="hero-actions">
-          <a href="/shop" class="btn btn-primary btn-lg">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-            Shop the Collection
-          </a>
-          <a href="/shop?cat=sindhi-ajrak" class="btn btn-outline btn-lg">Explore Ajrak</a>
-        </div>
-        <div class="hero-signature"><span></span> Authentic Sindhi craft <span></span></div>
-      </div>
 
-      <div class="hero-image-wrapper">
-        <div class="hero-image-card">
-          <div class="hero-slides" aria-live="polite">
-            <img class="hero-image hero-slide is-active" src="/images/hero1.png" alt="Model wearing a red and black Sindhi Ajrak shawl" fetchpriority="high" decoding="async">
-            <img class="hero-image hero-slide" src="/images/hero2.png" alt="Model wearing a dark Sindhi Ajrak shawl" loading="lazy" decoding="async">
-            <img class="hero-image hero-slide" src="/images/hero3.png" alt="Model wearing a blue Sindhi Ajrak shawl" loading="lazy" decoding="async">
-            <img class="hero-image hero-slide" src="/images/hero4.png" alt="Model wearing a red and black Sindhi Ajrak shawl" loading="lazy" decoding="async">
-            <img class="hero-image hero-slide" src="/images/hero5.png" alt="Model wearing a Sindhi Ajrak shawl" loading="lazy" decoding="async">
+  <div class="hero-slider-container" id="heroSlider" aria-live="polite">
+    
+    <!-- SLIDE 1 -->
+    <div class="hero-slide is-active">
+      <div class="container">
+        <div class="hero-grid">
+          <div class="hero-content">
+            <div class="hero-eyebrow">
+              CULTURE, CRAFT &amp; HERITAGE <span class="eyebrow-line"></span>
+            </div>
+            <h1 class="hero-title">
+              <span class="hero-title-line">Rooted in</span>
+              <span class="hero-title-line text-burgundy">Sindh.</span>
+              <span class="hero-title-line">Made for Today.</span>
+            </h1>
+            <p class="hero-desc">
+              Discover authentic Ajrak, traditional craftsmanship and timeless pieces thoughtfully curated for modern living.
+            </p>
+            <div class="hero-actions">
+              <a href="/shop" class="btn btn-primary btn-lg">
+                Shop the Collection
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </a>
+              <a href="/shop?cat=sindhi-ajrak" class="btn btn-outline btn-lg">Explore Ajrak</a>
+            </div>
+            <div class="hero-signature">
+              <span class="signature-line"></span> AUTHENTIC SINDHI CRAFT <span class="signature-line"></span>
+            </div>
+            <div class="hero-scroll-indicator">
+              <svg width="14" height="20" viewBox="0 0 24 36" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="32" rx="10"></rect><path d="M12 10v4"></path></svg>
+              SCROLL DOWN
+            </div>
+          </div>
+          <div class="hero-image-wrapper">
+            <div class="hero-image-card">
+              <img class="hero-image" src="/images/hero1.png" alt="Model wearing a red and black Sindhi Ajrak shawl" fetchpriority="high" decoding="async">
+            </div>
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- SLIDE 2 -->
+    <div class="hero-slide">
+      <div class="container">
+        <div class="hero-grid">
+          <div class="hero-content">
+            <div class="hero-eyebrow">
+              TIMELESS ELEGANCE <span class="eyebrow-line"></span>
+            </div>
+            <h1 class="hero-title">
+              <span class="hero-title-line">Woven with</span>
+              <span class="hero-title-line text-burgundy">History.</span>
+              <span class="hero-title-line">Styled for Now.</span>
+            </h1>
+            <p class="hero-desc">
+              Experience the deep hues and intricate block prints of our midnight collection. Perfect for evening wear.
+            </p>
+            <div class="hero-actions">
+              <a href="/shop" class="btn btn-primary btn-lg">
+                Shop the Collection
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </a>
+              <a href="/shop?cat=sindhi-ajrak" class="btn btn-outline btn-lg">Explore Ajrak</a>
+            </div>
+            <div class="hero-signature">
+              <span class="signature-line"></span> EVENING COLLECTION <span class="signature-line"></span>
+            </div>
+            <div class="hero-scroll-indicator">
+              <svg width="14" height="20" viewBox="0 0 24 36" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="32" rx="10"></rect><path d="M12 10v4"></path></svg>
+              SCROLL DOWN
+            </div>
+          </div>
+          <div class="hero-image-wrapper">
+            <div class="hero-image-card">
+              <img class="hero-image" src="/images/hero2.png" alt="Model wearing a dark Sindhi Ajrak shawl" loading="lazy" decoding="async">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3 -->
+    <div class="hero-slide">
+      <div class="container">
+        <div class="hero-grid">
+          <div class="hero-content">
+            <div class="hero-eyebrow">
+              INDIGO TRADITIONS <span class="eyebrow-line"></span>
+            </div>
+            <h1 class="hero-title">
+              <span class="hero-title-line">The True</span>
+              <span class="hero-title-line text-burgundy">Indigo.</span>
+              <span class="hero-title-line">Natural Beauty.</span>
+            </h1>
+            <p class="hero-desc">
+              Hand-dyed using traditional methods. Our indigo series brings a calm, sophisticated touch to your wardrobe.
+            </p>
+            <div class="hero-actions">
+              <a href="/shop" class="btn btn-primary btn-lg">
+                Shop the Collection
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </a>
+              <a href="/shop?cat=sindhi-ajrak" class="btn btn-outline btn-lg">Explore Ajrak</a>
+            </div>
+            <div class="hero-signature">
+              <span class="signature-line"></span> NATURAL DYE SERIES <span class="signature-line"></span>
+            </div>
+            <div class="hero-scroll-indicator">
+              <svg width="14" height="20" viewBox="0 0 24 36" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="32" rx="10"></rect><path d="M12 10v4"></path></svg>
+              SCROLL DOWN
+            </div>
+          </div>
+          <div class="hero-image-wrapper">
+            <div class="hero-image-card">
+              <img class="hero-image" src="/images/hero3.png" alt="Model wearing a blue Sindhi Ajrak shawl" loading="lazy" decoding="async">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4 -->
+    <div class="hero-slide">
+      <div class="container">
+        <div class="hero-grid">
+          <div class="hero-content">
+            <div class="hero-eyebrow">
+              MASTER CRAFTSMANSHIP <span class="eyebrow-line"></span>
+            </div>
+            <h1 class="hero-title">
+              <span class="hero-title-line">Bold in</span>
+              <span class="hero-title-line text-burgundy">Red.</span>
+              <span class="hero-title-line">Unapologetic.</span>
+            </h1>
+            <p class="hero-desc">
+              Make a statement with the classic crimson and black block prints, passed down through generations of artisans.
+            </p>
+            <div class="hero-actions">
+              <a href="/shop" class="btn btn-primary btn-lg">
+                Shop the Collection
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </a>
+              <a href="/shop?cat=sindhi-ajrak" class="btn btn-outline btn-lg">Explore Ajrak</a>
+            </div>
+            <div class="hero-signature">
+              <span class="signature-line"></span> HERITAGE PRINTS <span class="signature-line"></span>
+            </div>
+            <div class="hero-scroll-indicator">
+              <svg width="14" height="20" viewBox="0 0 24 36" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="32" rx="10"></rect><path d="M12 10v4"></path></svg>
+              SCROLL DOWN
+            </div>
+          </div>
+          <div class="hero-image-wrapper">
+            <div class="hero-image-card">
+              <img class="hero-image" src="/images/hero4.png" alt="Model wearing a red and black Sindhi Ajrak shawl" loading="lazy" decoding="async">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5 -->
+    <div class="hero-slide">
+      <div class="container">
+        <div class="hero-grid">
+          <div class="hero-content">
+            <div class="hero-eyebrow">
+              EVERYDAY HERITAGE <span class="eyebrow-line"></span>
+            </div>
+            <h1 class="hero-title">
+              <span class="hero-title-line">Wear your</span>
+              <span class="hero-title-line text-burgundy">Roots.</span>
+              <span class="hero-title-line">Every Day.</span>
+            </h1>
+            <p class="hero-desc">
+              Lightweight, breathable, and versatile. Integrate the beauty of Sindhi craft into your daily contemporary style.
+            </p>
+            <div class="hero-actions">
+              <a href="/shop" class="btn btn-primary btn-lg">
+                Shop the Collection
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </a>
+              <a href="/shop?cat=sindhi-ajrak" class="btn btn-outline btn-lg">Explore Ajrak</a>
+            </div>
+            <div class="hero-signature">
+              <span class="signature-line"></span> CONTEMPORARY CLASSICS <span class="signature-line"></span>
+            </div>
+            <div class="hero-scroll-indicator">
+              <svg width="14" height="20" viewBox="0 0 24 36" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="32" rx="10"></rect><path d="M12 10v4"></path></svg>
+              SCROLL DOWN
+            </div>
+          </div>
+          <div class="hero-image-wrapper">
+            <div class="hero-image-card">
+              <img class="hero-image" src="/images/hero5.png" alt="Model wearing a Sindhi Ajrak shawl" loading="lazy" decoding="async">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  
+  <div class="hero-indicators-wrapper">
+    <div class="hero-indicators">
+      <button class="hero-indicator active" aria-label="Go to slide 1"></button>
+      <button class="hero-indicator" aria-label="Go to slide 2"></button>
+      <button class="hero-indicator" aria-label="Go to slide 3"></button>
+      <button class="hero-indicator" aria-label="Go to slide 4"></button>
+      <button class="hero-indicator" aria-label="Go to slide 5"></button>
     </div>
   </div>
 </section>
@@ -294,18 +484,66 @@
 <script src="/js/search.js"></script>
 <script>
   // ── Hero campaign slider ──
+  const heroSlider = document.getElementById('heroSlider');
   const heroSlides = Array.from(document.querySelectorAll('.hero-slide'));
+  const heroIndicators = Array.from(document.querySelectorAll('.hero-indicator'));
+  
   if (heroSlides.length > 1) {
     let activeHeroIndex = Math.max(0, heroSlides.findIndex(slide => slide.classList.contains('is-active')));
-    heroSlides.forEach((slide, index) => slide.classList.toggle('is-active', index === activeHeroIndex));
+    let slideTimer;
+    let isPaused = false;
 
-    const showNextHero = () => {
+    const updateSlider = (index) => {
       heroSlides[activeHeroIndex].classList.remove('is-active');
-      activeHeroIndex = (activeHeroIndex + 1) % heroSlides.length;
+      if (heroIndicators[activeHeroIndex]) heroIndicators[activeHeroIndex].classList.remove('active');
+      
+      activeHeroIndex = index;
+      
       heroSlides[activeHeroIndex].classList.add('is-active');
+      if (heroIndicators[activeHeroIndex]) heroIndicators[activeHeroIndex].classList.add('active');
     };
 
-    window.setInterval(showNextHero, 4000);
+    const showNextHero = () => {
+      if (isPaused) return;
+      updateSlider((activeHeroIndex + 1) % heroSlides.length);
+    };
+
+    const startTimer = () => {
+      clearInterval(slideTimer);
+      slideTimer = setInterval(showNextHero, 4000); // Changed to 4 seconds for professional pace
+    };
+
+    startTimer();
+
+    if (heroSlider) {
+      // Touch swipe support
+      let touchStartX = 0;
+      let touchEndX = 0;
+      heroSlider.addEventListener('touchstart', e => {
+        touchStartX = e.changedTouches[0].screenX;
+        isPaused = true;
+      }, {passive: true});
+      heroSlider.addEventListener('touchend', e => {
+        touchEndX = e.changedTouches[0].screenX;
+        isPaused = false;
+        if (touchStartX - touchEndX > 50) {
+          updateSlider((activeHeroIndex + 1) % heroSlides.length);
+          startTimer();
+        } else if (touchEndX - touchStartX > 50) {
+          updateSlider((activeHeroIndex - 1 + heroSlides.length) % heroSlides.length);
+          startTimer();
+        } else {
+          startTimer();
+        }
+      }, {passive: true});
+    }
+
+    heroIndicators.forEach((btn, idx) => {
+      btn.addEventListener('click', () => {
+        updateSlider(idx);
+        startTimer();
+      });
+    });
   }
 
   // ── Categories — managed from admin CRUD ──
