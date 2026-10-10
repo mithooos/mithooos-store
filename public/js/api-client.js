@@ -31,7 +31,7 @@ const API = (() => {
         sessionStorage.setItem(CSRF_KEY, data.data.token);
         return data.data.token;
       }
-    } catch { /* fallback: no CSRF — JWT already protects auth endpoints */ }
+    } catch (e) { /* fallback: no CSRF — JWT already protects auth endpoints */ }
     return null;
   }
 
@@ -136,7 +136,7 @@ const API = (() => {
       window.dispatchEvent(new CustomEvent('pp:auth:logout'));
     },
     getUser() {
-      try { return JSON.parse(localStorage.getItem('pp_user')); } catch { return null; }
+      try { return JSON.parse(localStorage.getItem('pp_user')); } catch (e) { return null; }
     },
     isLoggedIn() { return !!localStorage.getItem('pp_user'); },
     async me() { return request('GET', '/api/auth/me'); },
@@ -257,11 +257,10 @@ class APIError extends Error {
   }
 }
 
-/* ── Global: sync cart count on load ── */
 document.addEventListener('DOMContentLoaded', async () => {
   try {
     await API.cart.sync();
-  } catch {
+  } catch (e) {
     // Backend not available — use localStorage fallback
     const local = JSON.parse(localStorage.getItem('pp_cart') || '[]');
     const count = local.reduce((n, i) => n + (i.qty || 1), 0);

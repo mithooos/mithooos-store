@@ -1,4 +1,4 @@
-﻿/* ============================================
+/* ============================================
    MITHOOOS - Mobile Responsive Overrides
    Strictly mobile-only (max-width: 767px)
    Desktop view is NEVER touched here.
@@ -14,7 +14,7 @@
 
   /* Product Card - Mobile Polish */
   .product-card { border-radius: 12px !important; }
-  .product-card-img { aspect-ratio: 3/4 !important; }
+  .product-card-img { aspect-ratio: 1/1 !important; }
   .product-card-badges { gap: 2px !important; top: 6px !important; left: 6px !important; max-height: 54px !important; overflow: hidden !important; }
   .badge { font-size: 0.55rem !important; padding: 2px 5px !important; border-radius: 4px !important; line-height: 1.2 !important; }
   .btn-wishlist { width: 28px !important; height: 28px !important; top: 6px !important; right: 6px !important; }

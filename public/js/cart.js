@@ -95,7 +95,7 @@ const Cart = (() => {
     if (!confirm('Remove all items from your cart?')) return;
     try {
       await API.cart.clear();
-    } catch {
+    } catch (e) {
       // Fallback: local storage
     }
     state.items   = [];
@@ -114,7 +114,7 @@ const Cart = (() => {
       if (res.success && res.data && res.data.items) {
           syncStateFromServer(res.data);
       }
-    } catch {
+    } catch (e) {
       state.items = state.items.filter(i => i._key !== localKey && i.cart_id !== cartId);
       save();
     }
@@ -157,7 +157,7 @@ const Cart = (() => {
       state.coupon   = null;
       state.discount = 0;
       return { success: false, message: 'Invalid or expired coupon code.' };
-    } catch {
+    } catch (e) {
       return { success: false, message: 'Could not validate coupon. Please try again.' };
     }
   }
@@ -207,7 +207,7 @@ const Cart = (() => {
       }));
       state.discount = res.data?.discount || state.discount || 0;
       save();
-    } catch {
+    } catch (e) {
       items = state.items;
     }
 

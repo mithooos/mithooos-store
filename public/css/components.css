@@ -306,9 +306,9 @@
 .product-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
 
 .product-card-img {
-  position: relative; aspect-ratio: 3/4; background: var(--color-surface);
+  position: relative; aspect-ratio: 1/1; background: #ffffff; display: flex; align-items: center; justify-content: center;
 }
-.product-card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; }
+.product-card-img img { width: 100%; height: 100%; object-fit: contain; padding: var(--space-4); transition: transform .5s ease; }
 .product-card:hover .product-card-img img { transform: scale(1.08); }
 
 .product-card-badges { position: absolute; top: var(--space-3); left: var(--space-3); display: flex; flex-direction: column; gap: var(--space-1); }

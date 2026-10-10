@@ -59,7 +59,7 @@ class SearchAutocomplete {
       const items = res.data || [];
       this.cache[q] = items;
       this.render(items, q);
-    } catch {
+    } catch (e) {
       // Fallback to static demo data
       const demo = [
         { product_id: 1, product_name: 'Classic Linen Shirt', final_price: 34.99, slug: 'classic-linen-shirt' },

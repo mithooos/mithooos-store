@@ -18,6 +18,10 @@ class Cart {
         $inv = new Inventory($this->db);
         $available = $inv->getAvailableStock($product_id, $variant_id);
         
+        if ($available <= 0) {
+            throw new \RuntimeException('Item is out of stock.');
+        }
+        
         $existing = $this->db->fetchOne(
             "SELECT cart_id, quantity FROM carts WHERE product_id = ? $vClause AND $clause",
             [$product_id, ...$vBind, ...$bind]
@@ -31,7 +35,7 @@ class Cart {
             $cappedQty = min($qty, $available);
             if ($cappedQty > 0) {
                 $this->db->insert(
-                    "INSERT INTO carts (product_id, variant_id, quantity, $col, expires_at) VALUES (?,?,?,?, datetime('now', '+30 days'))",
+                    "INSERT INTO carts (product_id, variant_id, quantity, $col) VALUES (?,?,?,?)",
                     [$product_id, $variant_id, $cappedQty, $val]
                 );
             }
@@ -172,6 +176,6 @@ class Cart {
     }
     
     public function cleanupExpired(): void {
-        $this->db->execute("DELETE FROM carts WHERE expires_at < CURRENT_TIMESTAMP");
+        $this->db->execute("DELETE FROM carts WHERE updated_at < datetime('now', '-30 days')");
     }
 }

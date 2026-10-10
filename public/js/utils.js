@@ -242,7 +242,7 @@ async function toggleWishlist(e, productId) {
       try {
         const listRes = await API.wishlist.list();
         badges.forEach(el => el.textContent = (listRes.data || []).length);
-      } catch { /* non-fatal — badge just won't update this time */ }
+      } catch (e) { /* non-fatal — badge just won't update this time */ }
     }
   } catch (err) {
     // Genuine failure — don't claim success (previously this silently
