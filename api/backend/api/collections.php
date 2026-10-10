@@ -12,10 +12,10 @@ if ($method === 'GET') {
         $rows = $db->fetchAll("
             SELECT p.product_id, p.product_name, p.slug,
                    ROUND(p.price - (p.price * p.discount_percentage / 100), 2) AS final_price, p.rating,
-                   (SELECT image_url FROM product_images WHERE product_id = p.product_id AND is_primary = TRUE LIMIT 1) AS image
+                   (SELECT image_url FROM product_images WHERE product_id = p.product_id AND is_primary = 1 LIMIT 1) AS image
             FROM product_collections pc
             JOIN products p ON pc.product_id = p.product_id
-            WHERE pc.collection_id = ? AND p.status = 'published' AND p.is_active = TRUE
+            WHERE pc.collection_id = ? AND p.status = 'published' AND p.is_active = 1
             ORDER BY p.created_at DESC LIMIT ? OFFSET ?", 
             [$c['collection_id'], $limit, $offset]
         );

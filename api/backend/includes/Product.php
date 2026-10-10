@@ -46,7 +46,7 @@ class Product {
                     p.rating, p.review_count, c.category_name,
                     p.online_discount_enabled, p.online_discount_percentage,
                     p.online_discount_start, p.online_discount_end, p.online_discount_label,
-                    (SELECT image_url FROM product_images WHERE product_id = p.product_id AND is_primary = TRUE LIMIT 1) AS image
+                    (SELECT image_url FROM product_images WHERE product_id = p.product_id AND is_primary = 1 LIMIT 1) AS image
              FROM products p
              LEFT JOIN categories c ON p.category_id = c.category_id
              WHERE $wSql ORDER BY $order LIMIT ? OFFSET ?",
@@ -150,13 +150,18 @@ class Product {
                 $this->db->insert('INSERT INTO product_attributes (product_id, attribute_name, attribute_value) VALUES (?,?,?)', [$pid, $name, $val]);
             }
         }
+        $inv = new Inventory($this->db);
+        if (isset($data['stock_quantity'])) {
+            $inv->setAbsoluteStock($pid, null, (int)$data['stock_quantity']);
+        }
         if (isset($data['variants']) && is_array($data['variants'])) {
             $this->db->execute('DELETE FROM product_variants WHERE product_id = ?', [$pid]);
             foreach ($data['variants'] as $v) {
-                $this->db->insert(
+                $vid = $this->db->insert(
                     'INSERT INTO product_variants (product_id, sku, variant_name, size, color, price, stock_quantity) VALUES (?,?,?,?,?,?,?)',
                     [$pid, $v['sku'] ?? null, $v['variant_name'], $v['size'] ?? null, $v['color'] ?? null, $v['price'] ?? null, $v['stock_quantity'] ?? 0]
                 );
+                $inv->setAbsoluteStock($pid, $vid, (int)($v['stock_quantity'] ?? 0));
             }
         }
     }

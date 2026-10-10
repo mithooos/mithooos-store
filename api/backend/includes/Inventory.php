@@ -29,10 +29,27 @@ class Inventory {
      * Initialize inventory for a new product or variant.
      */
     public function initInventory(int $productId, ?int $variantId = null, int $initialStock = 0): void {
-        $this->db->insert(
-            'INSERT INTO inventory_items (product_id, variant_id, quantity) VALUES (?, ?, ?) ON CONFLICT DO NOTHING',
-            [$productId, $variantId, $initialStock]
-        );
+        $query = 'SELECT inventory_id FROM inventory_items WHERE product_id = ?';
+        $params = [$productId];
+        if ($variantId) { $query .= ' AND variant_id = ?'; $params[] = $variantId; } else { $query .= ' AND variant_id IS NULL'; }
+        if (!$this->db->fetchOne($query, $params)) {
+            $this->db->insert(
+                'INSERT INTO inventory_items (product_id, variant_id, quantity) VALUES (?, ?, ?)',
+                [$productId, $variantId, $initialStock]
+            );
+        }
+    }
+
+    public function setAbsoluteStock(int $productId, ?int $variantId, int $quantity): void {
+        $query = 'SELECT inventory_id FROM inventory_items WHERE product_id = ?';
+        $params = [$productId];
+        if ($variantId) { $query .= ' AND variant_id = ?'; $params[] = $variantId; } else { $query .= ' AND variant_id IS NULL'; }
+        $existing = $this->db->fetchOne($query, $params);
+        if ($existing) {
+            $this->db->execute('UPDATE inventory_items SET quantity = ? WHERE inventory_id = ?', [$quantity, $existing['inventory_id']]);
+        } else {
+            $this->initInventory($productId, $variantId, $quantity);
+        }
     }
 
     /**

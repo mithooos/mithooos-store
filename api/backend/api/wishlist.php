@@ -2,7 +2,7 @@
 $user=$auth->require(); $uid=(int)$user['user_id'];
 match($method){
     'GET'=>(function()use($db,$uid){
-        $items=$db->fetchAll("SELECT w.*,p.product_name,p.slug,ROUND(p.price - (p.price * p.discount_percentage / 100), 2) AS final_price,p.rating,(SELECT image_url FROM product_images WHERE product_id=p.product_id AND is_primary=TRUE LIMIT 1) AS image FROM wishlists w JOIN products p ON w.product_id=p.product_id WHERE w.user_id=?",[$uid]);
+        $items=$db->fetchAll("SELECT w.*,p.product_name,p.slug,ROUND(p.price - (p.price * p.discount_percentage / 100), 2) AS final_price,p.rating,(SELECT image_url FROM product_images WHERE product_id=p.product_id AND is_primary=1 LIMIT 1) AS image FROM wishlists w JOIN products p ON w.product_id=p.product_id WHERE w.user_id=?",[$uid]);
         Response::success($items);
     })(),
     'POST'=>(function()use($db,$uid,$body){

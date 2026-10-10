@@ -306,7 +306,7 @@
 .product-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
 
 .product-card-img {
-  position: relative; overflow: hidden; aspect-ratio: 3/4; background: var(--color-surface);
+  position: relative; aspect-ratio: 3/4; background: var(--color-surface);
 }
 .product-card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; }
 .product-card:hover .product-card-img img { transform: scale(1.08); }
