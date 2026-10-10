@@ -180,8 +180,8 @@ class Product {
     public function refreshRating(int $product_id): void {
         $this->db->execute(
             'UPDATE products SET
-             rating       = (SELECT COALESCE(AVG(rating),0) FROM product_reviews WHERE product_id = products.product_id AND is_approved = TRUE),
-             review_count = (SELECT COUNT(*) FROM product_reviews WHERE product_id = products.product_id AND is_approved = TRUE)
+             rating       = (SELECT COALESCE(AVG(rating),0) FROM product_reviews WHERE product_id = products.product_id AND status = 'approved'),
+             review_count = (SELECT COUNT(*) FROM product_reviews WHERE product_id = products.product_id AND status = 'approved')
              WHERE product_id = ?',
             [$product_id]
         );

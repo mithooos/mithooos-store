@@ -62,7 +62,7 @@ set_exception_handler(function (\Throwable $e) {
         date('c'), get_class($e), $e->getMessage(), $e->getFile(), $e->getLine()
     ));
 
-    if ($e instanceof \RuntimeException) {
+    if ($e instanceof \RuntimeException && !($e instanceof \PDOException)) {
         Response::error($e->getMessage(), 400);
         return;
     }
