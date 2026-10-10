@@ -79,7 +79,7 @@ class Product {
 
         $prod['images']     = $this->db->fetchAll('SELECT image_id, product_id, image_url, image_mime, alt_text, display_order, is_primary, created_at FROM product_images WHERE product_id = ? ORDER BY is_primary DESC, display_order', [$prod['product_id']]);
         $prod['variants']   = $this->db->fetchAll('SELECT * FROM product_variants WHERE product_id = ? AND is_active = TRUE ORDER BY variant_id', [$prod['product_id']]);
-        $prod['attributes'] = $this->db->fetchAll('SELECT attribute_type AS attr_name, attribute_value AS attr_value FROM product_attributes WHERE product_id = ?', [$prod['product_id']]);
+        $prod['attributes'] = $this->db->fetchAll('SELECT attribute_name AS attr_name, attribute_value AS attr_value FROM product_attributes WHERE product_id = ?', [$prod['product_id']]);
         $prod['collections']= $this->db->fetchAll('SELECT c.collection_id, c.collection_name, c.slug FROM product_collections pc JOIN collections c ON pc.collection_id = c.collection_id WHERE pc.product_id = ? AND c.is_active = TRUE', [$prod['product_id']]);
         
         if (empty($f['admin_view'])) {
@@ -147,7 +147,7 @@ class Product {
         if (isset($data['attributes']) && is_array($data['attributes'])) {
             $this->db->execute('DELETE FROM product_attributes WHERE product_id = ?', [$pid]);
             foreach ($data['attributes'] as $name => $val) {
-                $this->db->insert('INSERT INTO product_attributes (product_id, attribute_type, attribute_value) VALUES (?,?,?)', [$pid, $name, $val]);
+                $this->db->insert('INSERT INTO product_attributes (product_id, attribute_name, attribute_value) VALUES (?,?,?)', [$pid, $name, $val]);
             }
         }
         if (isset($data['variants']) && is_array($data['variants'])) {
