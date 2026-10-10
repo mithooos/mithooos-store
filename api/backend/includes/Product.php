@@ -36,10 +36,10 @@ class Product {
         };
 
         $wSql  = implode(' AND ', $where);
-        $total = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM products p WHERE $wSql", $bind);
 
         $rows = $this->db->fetchAll(
             "SELECT p.product_id, p.product_name, p.slug,
+                    COUNT(*) OVER() AS total_count,
                     p.price, p.discount_percentage,
                     ROUND(p.price - (p.price * p.discount_percentage / 100), 2) AS final_price,
                     p.stock_quantity, p.is_featured, p.is_new, p.is_sale,
@@ -52,6 +52,16 @@ class Product {
              WHERE $wSql ORDER BY $order LIMIT ? OFFSET ?",
             [...$bind, $limit, $offset]
         );
+
+        if ($rows) {
+            $total = (int)$rows[0]['total_count'];
+            foreach ($rows as &$row) {
+                unset($row['total_count']);
+            }
+            unset($row);
+        } else {
+            $total = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM products p WHERE $wSql", $bind);
+        }
 
         return compact('rows', 'total');
     }
@@ -87,9 +97,9 @@ class Product {
         $pid = $this->db->insert(
             'INSERT INTO products (product_name, slug, category_id, description, short_description,
              price, cost_price, discount_percentage, stock_quantity, sku, weight, is_featured, is_new, is_sale, 
-             meta_title, meta_description, meta_keywords, status, published_at,
+             meta_title, meta_description, meta_keywords, status, is_active, published_at,
              online_discount_enabled, online_discount_percentage, online_discount_start, online_discount_end, online_discount_label)
-             VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+             VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
             [
                 $data['product_name'], $slug, $data['category_id'],
                 $data['description'], $data['short_description'] ?? null,
@@ -97,7 +107,8 @@ class Product {
                 $data['stock_quantity'] ?? 0, $data['sku'] ?? null, $data['weight'] ?? null,
                 (int)($data['is_featured'] ?? 0), (int)($data['is_new'] ?? 0), (int)($data['is_sale'] ?? 0),
                 $data['meta_title'] ?? null, $data['meta_description'] ?? null, $data['meta_keywords'] ?? null,
-                $data['status'] ?? 'draft', !empty($data['published_at']) ? $data['published_at'] : null,
+                $data['status'] ?? 'published', (int)($data['is_active'] ?? 1),
+                !empty($data['published_at']) ? $data['published_at'] : null,
                 (int)($data['online_discount_enabled'] ?? 0), $data['online_discount_percentage'] ?? 0,
                 !empty($data['online_discount_start']) ? $data['online_discount_start'] : null,
                 !empty($data['online_discount_end']) ? $data['online_discount_end'] : null,

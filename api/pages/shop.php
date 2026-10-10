@@ -531,9 +531,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (hero) hero.textContent = `Results for "${search}"`;
   }
 
-  await loadCategories(); // must resolve before loadProducts() so ?cat= applies
-  await loadCollections();
-  await loadProducts();
+  const categoriesPromise = loadCategories();
+  const collectionsPromise = loadCollections();
+  if (params.get('cat')) {
+    await categoriesPromise;
+    await Promise.all([collectionsPromise, loadProducts()]);
+  } else {
+    await Promise.all([categoriesPromise, collectionsPromise, loadProducts()]);
+  }
 });
 
 async function loadCollections() {
