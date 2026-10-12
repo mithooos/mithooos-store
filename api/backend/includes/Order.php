@@ -17,13 +17,15 @@ class Order {
                 $payment_proof_url = null; // update later
             }
 
+            $orderStatus = ($pay_method === 'cod') ? 'confirmed' : 'pending';
+
             $order_id = $this->db->insert(
                 'INSERT INTO orders (user_id, order_number, subtotal, tax, shipping_cost, discount_amount, online_discount_amount,
-                 total_amount, payment_method, payment_status, shipping_address, billing_address, payment_proof_url, payment_proof_data, payment_proof_mime, notes, shipping_method)
-                 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+                 total_amount, payment_method, payment_status, order_status, shipping_address, billing_address, payment_proof_url, payment_proof_data, payment_proof_mime, notes, shipping_method)
+                 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
                 [$user_id, $order_number, $totals['subtotal'], $totals['tax'] ?? 0,
                  $totals['shipping'] ?? 0, $totals['discount'] ?? 0, $totals['online_discount'] ?? 0, $totals['total'],
-                 $pay_method, 'pending', json_encode($ship), json_encode($bill), $payment_proof_url, $proofData, $proofMime, $idempotency_key, $shipping_method]
+                 $pay_method, 'pending', $orderStatus, json_encode($ship), json_encode($bill), $payment_proof_url, $proofData, $proofMime, $idempotency_key, $shipping_method]
             );
 
             if ($proofData) {
@@ -31,15 +33,6 @@ class Order {
             }
 
             foreach ($items as $item) {
-                // Reserve stock
-                $resId = $inv->reserveStock(
-                    (int)$item['product_id'], 
-                    !empty($item['variant_id']) ? (int)$item['variant_id'] : null, 
-                    $user_id, 
-                    null, 
-                    (int)$item['quantity']
-                );
-
                 $this->db->insert(
                     'INSERT INTO order_items (order_id, product_id, variant_id, product_name, sku, product_sku, price_at_purchase, cost_at_purchase,
                     quantity, item_total)
@@ -51,8 +44,13 @@ class Order {
                      ($item['final_price'] ?? $item['price']) * $item['quantity']]
                 );
                 
-                // Fulfill the reservation immediately since the order is placed
-                $inv->fulfillReservation($resId, $user_id);
+                $inv->deductStock(
+                    (int)$item['product_id'],
+                    !empty($item['variant_id']) ? (int)$item['variant_id'] : null,
+                    (int)$item['quantity'],
+                    (int)$order_id,
+                    $user_id
+                );
             }
 
             $this->db->commit();

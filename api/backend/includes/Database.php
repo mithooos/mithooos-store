@@ -82,8 +82,9 @@ class Database
         if ($value === null) return ['type' => 'null'];
         if (is_int($value) || is_bool($value)) return ['type' => 'integer', 'value' => (string)(int)$value];
         if (is_float($value)) return ['type' => 'float', 'value' => (float)$value];
-        // Handle BLOBs (basic check if string is valid UTF-8. If not, it's a blob)
-        if (!mb_check_encoding($value, 'UTF-8')) {
+        // Handle BLOBs (check if string is valid UTF-8. If not, it's a blob)
+        $isUtf8 = function_exists('mb_check_encoding') ? mb_check_encoding($value, 'UTF-8') : (bool)preg_match('//u', $value);
+        if (!$isUtf8) {
             return ['type' => 'blob', 'base64' => base64_encode($value)];
         }
         return ['type' => 'text', 'value' => (string)$value];
@@ -232,10 +233,17 @@ class Database
     
     public function commit(): void {
         if (!--$this->transactionCounter) {
-            $this->query("COMMIT");
-            $this->sendRequest([['type' => 'close']]);
-            $this->baton = null;
-            $this->baseUrl = null;
+            try {
+                $this->query("COMMIT");
+            } finally {
+                if ($this->baton) {
+                    try {
+                        $this->sendRequest([['type' => 'close']]);
+                    } catch (\Throwable $e) {}
+                }
+                $this->baton = null;
+                $this->baseUrl = null;
+            }
         }
     }
     
@@ -244,10 +252,16 @@ class Database
             $this->transactionCounter = 0;
             try {
                 $this->query("ROLLBACK");
-                $this->sendRequest([['type' => 'close']]);
-            } catch (Exception $e) {}
-            $this->baton = null;
-            $this->baseUrl = null;
+            } catch (\Throwable $e) {
+            } finally {
+                if ($this->baton) {
+                    try {
+                        $this->sendRequest([['type' => 'close']]);
+                    } catch (\Throwable $e) {}
+                }
+                $this->baton = null;
+                $this->baseUrl = null;
+            }
         }
     }
 

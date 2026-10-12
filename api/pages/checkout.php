@@ -242,7 +242,7 @@
 </div><!-- /checkoutWrap -->
 
 <!-- ORDER CONFIRMATION -->
-<div id="confirmStep" class="container" style="padding:var(--space-8) 0 var(--space-16)">
+<div id="confirmStep" class="container" style="display:none;padding:var(--space-8) 0 var(--space-16)">
   <div class="confirm-card">
     <div class="confirm-icon">
       <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
@@ -259,7 +259,7 @@
       <div style="display:flex;justify-content:space-between;margin-bottom:var(--space-3);font-size:var(--text-sm)"><span style="color:var(--color-muted)">Items</span><span style="font-weight:600" id="confirmItemCount">—</span></div>
       <div style="display:flex;justify-content:space-between;margin-bottom:var(--space-3);font-size:var(--text-sm)"><span style="color:var(--color-muted)">Total Paid</span><span style="font-weight:700;color:var(--color-ink)" id="confirmTotal">—</span></div>
       <div style="display:flex;justify-content:space-between;margin-bottom:var(--space-3);font-size:var(--text-sm)"><span style="color:var(--color-muted)">Estimated Delivery</span><span style="font-weight:600" id="confirmDelivery">—</span></div>
-      <div style="display:flex;justify-content:space-between;font-size:var(--text-sm)"><span style="color:var(--color-muted)">Status</span><span class="order-status processing" id="confirmStatus">Processing</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:var(--text-sm)"><span style="color:var(--color-muted)">Status</span><span class="order-status confirmed" id="confirmStatus">Confirmed</span></div>
     </div>
 
     <p style="font-size:var(--text-sm);color:var(--color-muted);margin-bottom:var(--space-6)">A confirmation email has been sent to <strong id="confirmEmail">—</strong></p>
@@ -473,44 +473,79 @@ async function placeOrder() {
       idempotency_key: idempotencyKey,
     });
 
-    const { order_id, order_number } = placeRes.data;
+    const orderData = placeRes?.data || placeRes || {};
+    const order_id = orderData.order_id;
+    const order_number = orderData.order_number;
 
-    // Fetch the full order back so the confirmation screen reflects exactly
-    // what was actually charged and saved, not a client-side estimate.
-    let order = null;
-    try {
-      const orderRes = await API.orders.get(order_id);
-      order = orderRes.data;
-    } catch { /* non-fatal — we still have order_number to show */ }
-
+    // Immediately hide checkout layout and show confirmation card
     document.getElementById('checkoutWrap').style.display = 'none';
     document.getElementById('confirmStep').style.display = 'block';
-    document.getElementById('confirmOrderNum').textContent = order_number;
+    window.scrollTo({top: 0, behavior: 'smooth'});
 
-    if (order) {
-      document.getElementById('confirmItemCount').textContent =
-        `${order.items.length} item${order.items.length !== 1 ? 's' : ''}`;
-      document.getElementById('confirmTotal').textContent = formatPrice(order.total_amount);
-      
-      let displayStatus = order.order_status.charAt(0).toUpperCase() + order.order_status.slice(1);
-      if (order.payment_method === 'easypaisa' && order.payment_status === 'pending') {
-          displayStatus = 'Pending Verification';
-      }
-      document.getElementById('confirmStatus').textContent = displayStatus;
-      
-      document.getElementById('confirmEmail').textContent = order.email || shippingAddress.email;
-    } else {
-      document.getElementById('confirmTotal').textContent = checkoutTotals ? formatPrice(checkoutTotals.total) : '—';
+    // Immediately populate confirmation details
+    if (order_number) {
+      document.getElementById('confirmOrderNum').textContent = order_number;
     }
 
-    // Estimated delivery: 3-5 business days from now (standard shipping only —
-    // the backend doesn't yet vary this by shipping_method; see note above)
+    const itemsCount = checkoutTotals?.items?.length || Cart.state?.items?.length || 1;
+    document.getElementById('confirmItemCount').textContent =
+      `${itemsCount} item${itemsCount !== 1 ? 's' : ''}`;
+
+    const totalAmt = checkoutTotals?.total ?? 0;
+    document.getElementById('confirmTotal').textContent = formatPrice(totalAmt);
+
+    const isCod = selectedPayMethod === 'cod';
+    const statusEl = document.getElementById('confirmStatus');
+    if (statusEl) {
+      statusEl.textContent = isCod ? 'Confirmed' : 'Pending Verification';
+      statusEl.className = 'order-status ' + (isCod ? 'confirmed' : 'processing');
+    }
+
+    if (shippingAddress?.email) {
+      document.getElementById('confirmEmail').textContent = shippingAddress.email;
+    }
+
+    // Estimated delivery: 3-5 business days from now
     const deliveryStart = new Date(); deliveryStart.setDate(deliveryStart.getDate() + 3);
     const deliveryEnd = new Date(); deliveryEnd.setDate(deliveryEnd.getDate() + 5);
     const fmt = d => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     document.getElementById('confirmDelivery').textContent = `${fmt(deliveryStart)}–${fmt(deliveryEnd)}`;
 
-    window.scrollTo({top:0,behavior:'smooth'});
+    // Clear client-side cart & sync badge counts immediately
+    try {
+      localStorage.removeItem('pp_cart');
+      if (window.Cart) {
+        Cart.state.items = [];
+        Cart.state.coupon = null;
+        if (typeof Cart.save === 'function') Cart.save();
+        if (typeof Cart.syncUI === 'function') Cart.syncUI();
+      }
+    } catch (_) {}
+    document.querySelectorAll('[data-cart-count], #cartCount, #cartCountBadge, #mobileCartBadge, .nav-badge, .mobile-cart-badge').forEach(el => el.textContent = '0');
+
+    // Optionally fetch full order in background to refine details
+    if (order_id) {
+      try {
+        const orderRes = await API.orders.get(order_id);
+        const order = orderRes?.data;
+        if (order) {
+          if (order.order_number) document.getElementById('confirmOrderNum').textContent = order.order_number;
+          if (order.total_amount) document.getElementById('confirmTotal').textContent = formatPrice(order.total_amount);
+          if (order.items && order.items.length) {
+            document.getElementById('confirmItemCount').textContent = `${order.items.length} item${order.items.length !== 1 ? 's' : ''}`;
+          }
+          if (order.email) document.getElementById('confirmEmail').textContent = order.email;
+          let displayStatus = order.order_status ? (order.order_status.charAt(0).toUpperCase() + order.order_status.slice(1)) : 'Confirmed';
+          if (order.payment_method === 'easypaisa' && order.payment_status === 'pending') {
+            displayStatus = 'Pending Verification';
+          }
+          if (statusEl) {
+            statusEl.textContent = displayStatus;
+            statusEl.className = 'order-status ' + (displayStatus === 'Confirmed' || displayStatus === 'Delivered' ? 'confirmed' : 'processing');
+          }
+        }
+      } catch (_) { /* non-fatal — initial confirmation is already displayed */ }
+    }
   } catch (err) {
     showToast(err.message || 'Could not place your order. Please try again.', 'error');
     btn.disabled = false;

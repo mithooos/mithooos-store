@@ -97,6 +97,43 @@ class Inventory {
     }
 
     /**
+     * Directly deduct stock upon order placement (fast single-step operation).
+     */
+    public function deductStock(int $productId, ?int $variantId, int $quantity, int $orderId, ?int $userId = null): void {
+        $query = 'SELECT inventory_id, quantity FROM inventory_items WHERE product_id = ?';
+        $params = [$productId];
+        if ($variantId) {
+            $query .= ' AND variant_id = ?';
+            $params[] = $variantId;
+        } else {
+            $query .= ' AND variant_id IS NULL';
+        }
+        $item = $this->db->fetchOne($query, $params);
+        if (!$item) {
+            $this->initInventory($productId, $variantId, 0);
+            $item = $this->db->fetchOne($query, $params);
+        }
+
+        $invId = $item ? (int)$item['inventory_id'] : 0;
+        if ($invId > 0) {
+            $this->db->execute(
+                'UPDATE inventory_items SET quantity = MAX(0, quantity - ?) WHERE inventory_id = ?',
+                [$quantity, $invId]
+            );
+        }
+
+        if ($variantId) {
+            $this->db->execute('UPDATE product_variants SET stock_quantity = MAX(0, stock_quantity - ?) WHERE variant_id = ?', [$quantity, $variantId]);
+        } else {
+            $this->db->execute('UPDATE products SET stock_quantity = MAX(0, stock_quantity - ?) WHERE product_id = ?', [$quantity, $productId]);
+        }
+
+        if ($invId > 0) {
+            $this->logMovement($invId, 'sale', -$quantity, 'Order placed', 'order', $orderId, $userId);
+        }
+    }
+
+    /**
      * Fulfill a reservation (when order is placed and confirmed).
      */
     public function fulfillReservation(int $reservationId, ?int $userId = null): void {

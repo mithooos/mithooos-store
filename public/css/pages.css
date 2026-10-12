@@ -534,6 +534,7 @@
 .orders-table tr:hover td { background:var(--color-surface); }
 .order-status { display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:700; }
 .order-status.delivered { background:#D1FAE5;color:#065F46; }
+.order-status.confirmed { background:#D1FAE5;color:#065F46; }
 .order-status.processing { background:#DBEAFE;color:#1E40AF; }
 .order-status.shipped { background:#EDE9FE;color:#5B21B6; }
 .order-status.cancelled { background:#FEE2E2;color:#991B1B; }
