@@ -52,34 +52,44 @@ class Cart {
              p.discount_percentage, p.stock_quantity, p.sku AS p_sku,
              p.online_discount_enabled, p.online_discount_percentage, p.online_discount_start, p.online_discount_end,
              v.variant_name, v.size, v.color, v.price AS variant_price, v.sku AS v_sku,
-             (SELECT image_url FROM product_images WHERE product_id = p.product_id AND is_primary = 1 LIMIT 1) AS image
+             (SELECT image_url FROM product_images WHERE product_id = p.product_id AND is_primary = 1 LIMIT 1) AS image,
+             COALESCE(inv.quantity - inv.reserved_quantity, v.stock_quantity, p.stock_quantity, 0) AS available_stock
              FROM carts c 
              JOIN products p ON c.product_id = p.product_id 
              LEFT JOIN product_variants v ON c.variant_id = v.variant_id
+             LEFT JOIN inventory_items inv ON inv.product_id = c.product_id AND (inv.variant_id = c.variant_id OR (c.variant_id IS NULL AND inv.variant_id IS NULL))
              WHERE c.$clause",
             $bind
         );
         
-        $inv = new Inventory($this->db);
+        $toUpdate = [];
+        $toRemove = [];
         foreach ($items as &$item) {
-            // Auto-cap quantity to available stock
-            $available = $inv->getAvailableStock($item['product_id'], $item['variant_id']);
+            $available = (int)($item['available_stock'] ?? 0);
             if ($item['quantity'] > $available) {
                 $item['quantity'] = max($available, 0);
                 if ($item['quantity'] === 0) {
-                    $this->remove($item['cart_id']);
+                    $toRemove[] = (int)$item['cart_id'];
                 } else {
-                    $this->db->execute('UPDATE carts SET quantity = ? WHERE cart_id = ?', [$item['quantity'], $item['cart_id']]);
+                    $toUpdate[] = [(int)$item['quantity'], (int)$item['cart_id']];
                 }
             }
             if ($item['variant_id'] && $item['variant_price'] !== null) {
-                // if the variant has a specific absolute price, apply the discount logic to it
                 $discount = $item['discount_percentage'];
                 $item['price'] = $item['variant_price'];
                 $item['final_price'] = round($item['price'] - ($item['price'] * $discount / 100), 2);
             }
         }
-        // filter out zero qty (removed items)
+        unset($item);
+
+        if (!empty($toRemove)) {
+            $in = implode(',', $toRemove);
+            $this->db->execute("DELETE FROM carts WHERE cart_id IN ($in)");
+        }
+        foreach ($toUpdate as [$qty, $cid]) {
+            $this->db->execute('UPDATE carts SET quantity = ? WHERE cart_id = ?', [$qty, $cid]);
+        }
+
         $items = array_filter($items, fn($i) => $i['quantity'] > 0);
         return array_values($items);
     }
@@ -146,8 +156,17 @@ class Cart {
 
         $total_discount = $discount + $online_discount;
         
-        $setting = $this->db->fetchOne("SELECT setting_val FROM settings WHERE setting_key = 'free_shipping_threshold'");
-        $threshold = $setting && is_numeric($setting['setting_val']) ? (float)$setting['setting_val'] : 5000;
+        static $cachedThreshold = null;
+        if ($cachedThreshold === null) {
+            $cachedThreshold = 5000;
+            try {
+                $setting = $this->db->fetchOne("SELECT setting_val FROM settings WHERE setting_key = 'free_shipping_threshold'");
+                if ($setting && is_numeric($setting['setting_val'])) {
+                    $cachedThreshold = (float)$setting['setting_val'];
+                }
+            } catch (\Throwable $e) {}
+        }
+        $threshold = $cachedThreshold;
         
         $shipping = 0;
         if ($shipping_method === 'express') {
@@ -176,6 +195,11 @@ class Cart {
     }
     
     public function cleanupExpired(): void {
-        $this->db->execute("DELETE FROM carts WHERE updated_at < datetime('now', '-30 days')");
+        // Run lottery cleanup only 2% of the time to keep reads fast
+        if (mt_rand(1, 50) === 1) {
+            try {
+                $this->db->execute("DELETE FROM carts WHERE updated_at < datetime('now', '-30 days')");
+            } catch (\Throwable $e) {}
+        }
     }
 }

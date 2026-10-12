@@ -173,18 +173,77 @@ const Cart = (() => {
     });
   }
 
-  /* ── Render cart page ── */
+  function renderRows(items) {
+    const container = document.getElementById('cartItemsList');
+    if (!container) return;
+    if (!items || !items.length) {
+      document.getElementById('cartEmptyState')?.classList.remove('hidden');
+      document.getElementById('cartContent')?.classList.add('hidden');
+      container.innerHTML = '';
+      return;
+    }
+    document.getElementById('cartEmptyState')?.classList.add('hidden');
+    document.getElementById('cartContent')?.classList.remove('hidden');
+
+    container.innerHTML = items.map(item => {
+      const name = escapeHtml(item.product_name || item.name || '');
+      const variantText = item.variant_name ? ` <span class="cart-item-variant" style="font-size:var(--text-xs);color:var(--color-muted);font-weight:normal">(${escapeHtml(item.variant_name)})</span>` : '';
+      const image = item.image ? escapeHtml(item.image) : '';
+      const unitPrice = parseFloat(item.final_price ?? item.price ?? 0);
+      const qty = parseInt(item.quantity ?? item.qty ?? 1, 10);
+      const id = item.cart_id || item.id || '';
+      return `
+      <div class="cart-item" id="cart-row-${id}" data-key="${item._key || ''}">
+        <div class="cart-item-img">
+          ${image
+            ? `<img src="${image}" alt="${name}" loading="lazy">`
+            : `<img src="/images/logo.png" alt="Mithooos Placeholder" style="object-fit:contain; padding:8px; width:100%; height:100%; background:var(--color-surface);" loading="lazy">`}
+        </div>
+        <div class="cart-item-info">
+          <div class="cart-item-top-row">
+            <p class="cart-item-name">${name}${variantText}</p>
+            <button class="cart-item-remove" onclick="Cart.removeFromPage('${id}', '${item._key || ''}')"
+              aria-label="Remove item">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2"/>
+              </svg>
+            </button>
+          </div>
+          <div class="qty-selector">
+            <button class="qty-btn" onclick="Cart.changeQty('${id}', '${item._key || ''}', -1)"
+              aria-label="Decrease quantity">−</button>
+            <input class="qty-val" value="${qty}" readonly id="qty-${id}">
+            <button class="qty-btn" onclick="Cart.changeQty('${id}', '${item._key || ''}', 1)"
+              aria-label="Increase quantity">+</button>
+          </div>
+          <p class="cart-item-price" id="item-total-${id}"
+             data-unit="${unitPrice}">
+            ${formatPrice(unitPrice * qty)}
+          </p>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  /* ── Render cart page (Instant optimistic render + background sync) ── */
   async function renderCartPage() {
     const container = document.getElementById('cartItemsList');
     if (!container) return;
 
-    let items = [];
+    // 1. Instant optimistic render from existing local state (0ms delay)
+    if (state.items && state.items.length) {
+      renderRows(state.items);
+      updateCartSummary();
+    } else {
+      document.getElementById('cartEmptyState')?.classList.remove('hidden');
+      document.getElementById('cartContent')?.classList.add('hidden');
+    }
+
+    // 2. Fetch fresh cart from server in background and sync
     try {
       const res = await API.cart.get(state.coupon || null);
       if (res && res.success && res.data) {
-        items = res.data.items || [];
-        // Keep local state (used by totals()) aligned with what the server returned,
-        // so the summary panel matches what's actually rendered.
+        const items = res.data.items || [];
         state.items = items.map(i => ({
           _key: `${i.product_id}_${i.variant_id || 0}`,
           id: i.cart_id,
@@ -199,60 +258,18 @@ const Cart = (() => {
         }));
         state.discount = res.data.discount || 0;
         save();
-      } else {
-        items = state.items;
+        renderRows(items);
+        updateCartSummary();
+      } else if (!state.items.length) {
+        renderRows([]);
+        updateCartSummary();
       }
     } catch (e) {
-      items = state.items;
+      if (!state.items.length) {
+        renderRows([]);
+        updateCartSummary();
+      }
     }
-
-    if (!items.length) {
-      document.getElementById('cartEmptyState')?.classList.remove('hidden');
-      document.getElementById('cartContent')?.classList.add('hidden');
-      container.innerHTML = '';
-      updateCartSummary();
-      return;
-    }
-    document.getElementById('cartEmptyState')?.classList.add('hidden');
-    document.getElementById('cartContent')?.classList.remove('hidden');
-
-    container.innerHTML = items.map(item => {
-      const name  = escapeHtml(item.product_name || item.name || '');
-      const variantText = item.variant_name ? ` <span class="cart-item-variant" style="font-size:var(--text-xs);color:var(--color-muted);font-weight:normal">(${escapeHtml(item.variant_name)})</span>` : '';
-      const image = item.image ? escapeHtml(item.image) : '';
-      return `
-      <div class="cart-item" id="cart-row-${item.cart_id || item.id}" data-key="${item._key || ''}">
-        <div class="cart-item-img">
-          ${image
-            ? `<img src="${image}" alt="${name}" loading="lazy">`
-            : `<img src="/images/logo.png" alt="Mithooos Placeholder" style="object-fit:contain; padding:8px; width:100%; height:100%; background:var(--color-surface);" loading="lazy">`}
-        </div>
-        <div class="cart-item-info">
-          <div class="cart-item-top-row">
-            <p class="cart-item-name">${name}${variantText}</p>
-            <button class="cart-item-remove" onclick="Cart.removeFromPage('${item.cart_id || item.id}', '${item._key || ''}')"
-              aria-label="Remove item">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2"/>
-              </svg>
-            </button>
-          </div>
-          <div class="qty-selector">
-            <button class="qty-btn" onclick="Cart.changeQty('${item.cart_id || item.id}', '${item._key || ''}', -1)"
-              aria-label="Decrease quantity">−</button>
-            <input class="qty-val" value="${item.quantity || item.qty}" readonly id="qty-${item.cart_id || item.id}">
-            <button class="qty-btn" onclick="Cart.changeQty('${item.cart_id || item.id}', '${item._key || ''}', 1)"
-              aria-label="Increase quantity">+</button>
-          </div>
-          <p class="cart-item-price" id="item-total-${item.cart_id || item.id}"
-             data-unit="${(item.final_price || item.price)}">
-            ${formatPrice((item.final_price || item.price) * (item.quantity || item.qty))}
-          </p>
-        </div>
-      </div>`;
-    }).join('');
-
-    updateCartSummary();
   }
 
   let _qtys = {};

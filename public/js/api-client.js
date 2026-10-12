@@ -180,12 +180,21 @@ const API = (() => {
   };
 
   /* ── Cart ── */
+  let _cartInFlight = null;
   const cart = {
     get: (coupon, shippingMethod) => {
         let params = {};
         if (coupon) params.coupon = coupon;
         if (shippingMethod) params.shipping_method = shippingMethod;
-        return request('GET', '/api/cart', null, params);
+        const cacheKey = JSON.stringify(params);
+        if (_cartInFlight && _cartInFlight.key === cacheKey) {
+            return _cartInFlight.promise;
+        }
+        const promise = request('GET', '/api/cart', null, params).finally(() => {
+            if (_cartInFlight && _cartInFlight.key === cacheKey) _cartInFlight = null;
+        });
+        _cartInFlight = { key: cacheKey, promise };
+        return promise;
     },
     add: (productId, qty = 1, variantId = null) =>
       request('POST', '/api/cart', { product_id: productId, quantity: qty, variant_id: variantId }),

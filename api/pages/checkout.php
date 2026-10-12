@@ -291,40 +291,56 @@ if (!API.auth.isLoggedIn()) {
 // ── Load real cart contents into the order summary sidebar ──
 let checkoutTotals = null;
 
+function renderSummaryItemsList(items) {
+  const itemsEl = document.getElementById('ckSummaryItems');
+  if (!itemsEl) return;
+  itemsEl.innerHTML = items.map(i => {
+    const name  = escapeHtml(i.product_name || i.name || '');
+    const image = i.image ? escapeHtml(i.image) : '';
+    const price = parseFloat(i.final_price ?? i.price ?? 0);
+    const qty = parseInt(i.quantity ?? i.qty ?? 1, 10);
+    return `
+      <div class="ck-summary-item">
+        <div class="ck-item-thumb">
+          ${image
+            ? `<img src="${image}" alt="${name}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit">`
+            : `<div class="img-placeholder" style="width:100%;height:100%;background:linear-gradient(135deg,#EFF6FF,#DBEAFE)"></div>`}
+          <div class="qty-pill">${qty}</div>
+        </div>
+        <span class="ck-item-name">${name}</span>
+        <span class="ck-item-price">${formatPrice(price * qty)}</span>
+      </div>`;
+  }).join('');
+}
+
 async function loadOrderSummary() {
+  // 1. Instant optimistic render from Cart local state (0ms delay)
+  if (window.Cart && Cart.state && Cart.state.items && Cart.state.items.length) {
+    renderSummaryItemsList(Cart.state.items);
+    renderTotals(Cart.totals());
+  }
+
+  // 2. Fetch fresh cart from server in background
   try {
     const shipMethod = document.querySelector('input[name="shipMethod"]:checked')?.value || 'standard';
     const res = await API.cart.get(Cart.state.coupon || null, shipMethod);
     const items = res.data?.items || [];
     checkoutTotals = res.data;
 
-    if (!items.length) {
-      // Nothing to check out — send the shopper back to their cart
+    if (!items.length && (!Cart.state.items || !Cart.state.items.length)) {
       window.location.href = "/cart";
       return;
     }
 
-    const itemsEl = document.getElementById('ckSummaryItems');
-    itemsEl.innerHTML = items.map(i => {
-      const name  = escapeHtml(i.product_name || '');
-      const image = i.image ? escapeHtml(i.image) : '';
-      return `
-        <div class="ck-summary-item">
-          <div class="ck-item-thumb">
-            ${image
-              ? `<img src="${image}" alt="${name}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit">`
-              : `<div class="img-placeholder" style="width:100%;height:100%;background:linear-gradient(135deg,#EFF6FF,#DBEAFE)"></div>`}
-            <div class="qty-pill">${parseInt(i.quantity, 10)}</div>
-          </div>
-          <span class="ck-item-name">${name}</span>
-          <span class="ck-item-price">${formatPrice(parseFloat(i.final_price) * parseInt(i.quantity, 10))}</span>
-        </div>`;
-    }).join('');
-
-    renderTotals(checkoutTotals);
+    if (items.length) {
+      renderSummaryItemsList(items);
+      renderTotals(checkoutTotals);
+    }
   } catch (err) {
-    showToast(err.message || 'Could not load your cart.', 'error');
-    setTimeout(() => window.location.href = "/cart", 1500);
+    if (!Cart.state.items || !Cart.state.items.length) {
+      showToast(err.message || 'Could not load your cart.', 'error');
+      setTimeout(() => window.location.href = "/cart", 1500);
+    }
   }
 }
 
