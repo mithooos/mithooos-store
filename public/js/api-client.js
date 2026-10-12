@@ -16,9 +16,16 @@ const API = (() => {
   function getSessionId() {
     let sid = localStorage.getItem(SESSION_KEY);
     if (!sid) {
-      sid = 'sess_' + Date.now() + '_' + Math.random().toString(36).slice(2, 10);
-      localStorage.setItem(SESSION_KEY, sid);
+      const match = document.cookie.match(new RegExp('(^|;\\s*)pp_session_id=([^;]*)'));
+      if (match) sid = decodeURIComponent(match[2]);
     }
+    if (!sid) {
+      sid = 'sess_' + Date.now() + '_' + Math.random().toString(36).slice(2, 10);
+    }
+    localStorage.setItem(SESSION_KEY, sid);
+    try {
+      document.cookie = 'pp_session_id=' + encodeURIComponent(sid) + '; path=/; max-age=' + (86400 * 30) + '; SameSite=Lax';
+    } catch (_) {}
     return sid;
   }
 
@@ -188,7 +195,7 @@ const API = (() => {
     async sync() {
       const data  = await this.get();
       const count = data.data?.items?.reduce((n, i) => n + i.quantity, 0) || 0;
-      document.querySelectorAll('[data-cart-count], #cartCount').forEach(el => el.textContent = count);
+      document.querySelectorAll('[data-cart-count], #cartCount, #cartCountBadge, #mobileCartBadge, .nav-badge, .mobile-cart-badge').forEach(el => el.textContent = count);
       window.dispatchEvent(new CustomEvent('pp:cart:updated', { detail: data.data }));
       return data;
     },
@@ -264,6 +271,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Backend not available — use localStorage fallback
     const local = JSON.parse(localStorage.getItem('pp_cart') || '[]');
     const count = local.reduce((n, i) => n + (i.qty || 1), 0);
-    document.querySelectorAll('[data-cart-count], #cartCount').forEach(el => el.textContent = count);
+    document.querySelectorAll('[data-cart-count], #cartCount, #cartCountBadge, #mobileCartBadge, .nav-badge, .mobile-cart-badge').forEach(el => el.textContent = count);
   }
 });

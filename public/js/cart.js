@@ -31,7 +31,8 @@ const Cart = (() => {
   function totals() {
     const subtotal = state.items.reduce((s, i) => s + i.price * i.qty, 0);
     const discount = state.discount || 0;
-    const shipping = (subtotal - discount) >= 50 ? 0 : 5.99;
+    const threshold = 5000;
+    const shipping = (subtotal - discount) >= threshold ? 0 : 250;
     const tax = parseFloat(((subtotal - discount) * 0.10).toFixed(2));
     const total = parseFloat((subtotal - discount + shipping + tax).toFixed(2));
     return { subtotal, discount, shipping, tax, total, count: count() };
@@ -42,10 +43,12 @@ const Cart = (() => {
     if (!data) return;
     const items = data.items || [];
     state.items = items.map(i => ({
-      _key: `${i.product_id}`,
+      _key: `${i.product_id}_${i.variant_id || 0}`,
       id: i.cart_id,
       cart_id: i.cart_id,
       product_id: i.product_id,
+      variant_id: i.variant_id || null,
+      variant_name: i.variant_name || null,
       name: i.product_name,
       price: parseFloat(i.final_price ?? i.price),
       image: i.image || null,
@@ -57,37 +60,23 @@ const Cart = (() => {
 
   /* ── Add item ── */
   async function add(product, qty = 1) {
-    // Try API first
+    const productId = product.product_id || product.id;
+    const variantId = product.variant_id || null;
+    const name = product.product_name || product.name || 'Item';
+
     try {
-      const res = await API.cart.add(product.product_id || product.id, qty);
-      if (res.success && res.data && res.data.items) {
-          syncStateFromServer(res.data);
+      const res = await API.cart.add(productId, qty, variantId);
+      if (res && res.success && res.data && res.data.items) {
+        syncStateFromServer(res.data);
+        syncUI();
+        showAddedFeedback(name);
+        return { success: true, data: res.data };
+      } else {
+        throw new Error(res?.message || 'Could not add item to cart.');
       }
     } catch (err) {
-      if (err.message && err.message.includes('out of stock')) {
-          if (typeof showToast === 'function') showToast('Item is out of stock.', 'error');
-          return;
-      }
-      // Fallback: local storage
-      const key = `${product.product_id || product.id}`;
-      const existing = state.items.find(i => i._key === key);
-      if (existing) {
-        existing.qty = Math.min(existing.qty + qty, 10);
-      } else {
-        state.items.push({
-          _key: key,
-          id: product.product_id || product.id,
-          product_id: product.product_id || product.id,
-          name: product.product_name || product.name,
-          price: parseFloat(product.final_price || product.price),
-          image: product.image || null,
-          qty,
-        });
-      }
-      save();
+      throw err;
     }
-    syncUI();
-    showAddedFeedback(product.product_name || product.name);
   }
 
   /* ── Clear entire cart (asks for confirmation) ── */
@@ -165,7 +154,7 @@ const Cart = (() => {
   /* ── Sync UI across all cart indicators ── */
   function syncUI() {
     const c = count();
-    document.querySelectorAll('[data-cart-count], #cartCount, .nav-badge').forEach(el => {
+    document.querySelectorAll('[data-cart-count], #cartCount, #cartCountBadge, #mobileCartBadge, .nav-badge, .mobile-cart-badge').forEach(el => {
       el.textContent = c;
     });
     window.dispatchEvent(new CustomEvent('pp:cart:changed', { detail: { count: c, totals: totals() } }));
@@ -192,21 +181,27 @@ const Cart = (() => {
     let items = [];
     try {
       const res = await API.cart.get(state.coupon || null);
-      items = res.data?.items || [];
-      // Keep local state (used by totals()) aligned with what the server returned,
-      // so the summary panel matches what's actually rendered.
-      state.items = items.map(i => ({
-        _key: `${i.product_id}`,
-        id: i.cart_id,
-        cart_id: i.cart_id,
-        product_id: i.product_id,
-        name: i.product_name,
-        price: parseFloat(i.final_price ?? i.price),
-        image: i.image || null,
-        qty: i.quantity,
-      }));
-      state.discount = res.data?.discount || state.discount || 0;
-      save();
+      if (res && res.success && res.data) {
+        items = res.data.items || [];
+        // Keep local state (used by totals()) aligned with what the server returned,
+        // so the summary panel matches what's actually rendered.
+        state.items = items.map(i => ({
+          _key: `${i.product_id}_${i.variant_id || 0}`,
+          id: i.cart_id,
+          cart_id: i.cart_id,
+          product_id: i.product_id,
+          variant_id: i.variant_id || null,
+          variant_name: i.variant_name || null,
+          name: i.product_name,
+          price: parseFloat(i.final_price ?? i.price),
+          image: i.image || null,
+          qty: i.quantity,
+        }));
+        state.discount = res.data.discount || 0;
+        save();
+      } else {
+        items = state.items;
+      }
     } catch (e) {
       items = state.items;
     }
@@ -223,6 +218,7 @@ const Cart = (() => {
 
     container.innerHTML = items.map(item => {
       const name  = escapeHtml(item.product_name || item.name || '');
+      const variantText = item.variant_name ? ` <span class="cart-item-variant" style="font-size:var(--text-xs);color:var(--color-muted);font-weight:normal">(${escapeHtml(item.variant_name)})</span>` : '';
       const image = item.image ? escapeHtml(item.image) : '';
       return `
       <div class="cart-item" id="cart-row-${item.cart_id || item.id}" data-key="${item._key || ''}">
@@ -233,7 +229,7 @@ const Cart = (() => {
         </div>
         <div class="cart-item-info">
           <div class="cart-item-top-row">
-            <p class="cart-item-name">${name}</p>
+            <p class="cart-item-name">${name}${variantText}</p>
             <button class="cart-item-remove" onclick="Cart.removeFromPage('${item.cart_id || item.id}', '${item._key || ''}')"
               aria-label="Remove item">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

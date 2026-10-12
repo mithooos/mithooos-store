@@ -1,7 +1,30 @@
 <?php
-$user=$auth->getUser();
-$sid=$_SERVER['HTTP_X_SESSION_ID']??bin2hex(random_bytes(16));
-$cart=new Cart($db,$user?(int)$user['user_id']:null,$user?null:$sid);
+$user = $auth->getUser();
+
+$sid = $_SERVER['HTTP_X_SESSION_ID'] ?? ($_COOKIE['pp_session_id'] ?? null);
+if (!$sid && function_exists('getallheaders')) {
+    $h = getallheaders();
+    $sid = $h['X-Session-ID'] ?? ($h['x-session-id'] ?? null);
+}
+
+if (!$sid) {
+    $sid = 'sess_' . bin2hex(random_bytes(16));
+}
+
+if (!$user) {
+    if (empty($_COOKIE['pp_session_id']) || $_COOKIE['pp_session_id'] !== $sid) {
+        setcookie('pp_session_id', $sid, [
+            'expires'  => time() + (86400 * 30),
+            'path'     => '/',
+            'httponly' => false,
+            'samesite' => 'Lax',
+            'secure'   => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
+        ]);
+    }
+    header("X-Session-ID: $sid");
+}
+
+$cart = new Cart($db, $user ? (int)$user['user_id'] : null, $user ? null : $sid);
 match($method){
     'GET'=>(function()use($cart){Response::success($cart->totals(0.10,$_GET['coupon']??null, null, $_GET['shipping_method']??'standard'));})(),
     'POST'=>(function()use($cart,$body){

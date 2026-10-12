@@ -142,9 +142,11 @@ async function handleApplyCoupon() {
 }
 
 /* ── Load real cart data from the backend on page load ── */
-document.addEventListener('DOMContentLoaded', () => {
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => Cart.renderCartPage());
+} else {
   Cart.renderCartPage();
-});
+}
 </script>
 <script src="/js/site-footer.js"></script>
 </body>

@@ -13,10 +13,15 @@ match ($method . ':' . $action) {
         if ($v->fails()) { Response::error('Validation failed.',422,$v->errors()); return; }
         $r = $auth->login($body['email'],$body['password']);
         
-        // Merge guest cart if session_id is provided in headers
-        $sessionId = $_SERVER['HTTP_X_SESSION_ID'] ?? null;
-        if ($sessionId && isset($r['user']['user_id'])) {
-            $cart = new Cart($db, (int)$r['user']['user_id']);
+        // Merge guest cart if session_id is provided in headers/cookies
+        $sessionId = $_SERVER['HTTP_X_SESSION_ID'] ?? ($_COOKIE['pp_session_id'] ?? null);
+        if (!$sessionId && function_exists('getallheaders')) {
+            $h = getallheaders();
+            $sessionId = $h['X-Session-ID'] ?? ($h['x-session-id'] ?? null);
+        }
+        $userId = $r['user_id'] ?? ($r['user']['user_id'] ?? null);
+        if ($sessionId && $userId) {
+            $cart = new Cart($db, (int)$userId);
             $cart->mergeSession($sessionId);
         }
         
