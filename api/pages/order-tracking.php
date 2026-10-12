@@ -541,6 +541,290 @@
 .tracking-not-found-panel.show {
   display: block;
 }
+
+/* ── DEDICATED 1-PAGE PRINT RECEIPT STYLES ── */
+#printReceipt {
+  display: none;
+}
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 8mm 10mm;
+  }
+  
+  *, *::before, *::after {
+    box-sizing: border-box !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #111827 !important;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    font-size: 11px !important;
+    line-height: 1.35 !important;
+    width: 100% !important;
+    min-height: auto !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  /* Completely hide all extraneous website elements on print */
+  body > *:not(#printReceipt) {
+    display: none !important;
+  }
+  .navbar, .navbar-container, .mobile-nav, .trk-breadcrumb,
+  .trk-search-card, .trk-main-card, .tracking-page-wrap,
+  .site-footer, footer, .toast-container, #toastContainer,
+  header, nav, script, noscript {
+    display: none !important;
+  }
+
+  /* Display strictly the 1-page receipt */
+  #printReceipt {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #111827 !important;
+    page-break-after: avoid !important;
+    page-break-inside: avoid !important;
+    break-after: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .pr-head-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 8px;
+  }
+  .pr-brand-col {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  .pr-brand-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 24px;
+    font-weight: 800;
+    color: #7A1F2B;
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+  }
+  .pr-brand-sub {
+    font-size: 10px;
+    font-weight: 600;
+    color: #B58A3A;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+  }
+  .pr-brand-meta {
+    font-size: 9.5px;
+    color: #6B7280;
+    margin-top: 2px;
+  }
+  .pr-title-col {
+    text-align: right;
+  }
+  .pr-badge-inv {
+    font-family: 'Poppins', sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    color: #7A1F2B;
+    letter-spacing: 0.5px;
+    line-height: 1.1;
+  }
+  .pr-order-ref {
+    font-size: 13px;
+    font-weight: 800;
+    color: #111827;
+    margin-top: 3px;
+  }
+  .pr-date-line {
+    font-size: 10px;
+    color: #4B5563;
+    margin-top: 2px;
+  }
+
+  .pr-decor-line {
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, #7A1F2B 0%, #7A1F2B 75%, #B58A3A 75%, #B58A3A 100%);
+    margin: 8px 0 12px 0;
+  }
+
+  .pr-party-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .pr-party-box {
+    border: 1px solid #E5E7EB;
+    border-radius: 6px;
+    padding: 8px 10px;
+    background: #FAFAFA;
+    font-size: 10px;
+    line-height: 1.45;
+  }
+  .pr-party-label {
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: #7A1F2B;
+    margin-bottom: 4px;
+    border-bottom: 1px solid #F3F4F6;
+    padding-bottom: 2px;
+  }
+  .pr-party-name {
+    font-weight: 700;
+    color: #111827;
+    font-size: 11px;
+    margin-bottom: 1px;
+  }
+  .pr-party-txt {
+    color: #4B5563;
+  }
+  .pr-pill {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 9px;
+    font-weight: 700;
+  }
+  .pr-pill-paid {
+    background: #D1FAE5 !important;
+    color: #065F46 !important;
+  }
+  .pr-pill-pending {
+    background: #FEF3C7 !important;
+    color: #92400E !important;
+  }
+
+  .pr-items-tbl {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 12px;
+    font-size: 10.5px;
+  }
+  .pr-items-tbl th {
+    background: #7A1F2B;
+    color: #ffffff;
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    padding: 6px 8px;
+    border: 1px solid #7A1F2B;
+    text-align: left;
+  }
+  .pr-items-tbl td {
+    padding: 7px 8px;
+    border: 1px solid #E5E7EB;
+    color: #1F2937;
+    vertical-align: middle;
+  }
+  .pr-items-tbl tbody tr:nth-child(even) {
+    background: #FCFAF6;
+  }
+  .pr-item-name {
+    font-weight: 700;
+    color: #111827;
+  }
+  .pr-item-sub {
+    font-size: 9px;
+    color: #6B7280;
+  }
+
+  .pr-bottom-grid {
+    display: grid;
+    grid-template-columns: 1.25fr 0.75fr;
+    gap: 12px;
+    align-items: start;
+    margin-bottom: 12px;
+  }
+  .pr-notes-box {
+    border: 1px dashed #D1D5DB;
+    border-radius: 6px;
+    padding: 8px 10px;
+    background: #FCFBF9;
+    font-size: 9.5px;
+    color: #4B5563;
+    line-height: 1.45;
+  }
+  .pr-notes-title {
+    font-weight: 700;
+    color: #7A1F2B;
+    margin-bottom: 3px;
+    font-size: 10px;
+  }
+  .pr-verify-stamp {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 6px;
+    padding: 2px 8px;
+    background: #ECFDF5;
+    border: 1px solid #A7F3D0;
+    border-radius: 4px;
+    color: #065F46;
+    font-size: 9px;
+    font-weight: 700;
+  }
+
+  .pr-totals-card {
+    border: 1px solid #E5E7EB;
+    border-radius: 6px;
+    background: #FAFAFA;
+    padding: 8px 12px;
+  }
+  .pr-sum-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2.5px 0;
+    font-size: 10.5px;
+    color: #4B5563;
+  }
+  .pr-sum-row span:last-child {
+    font-weight: 600;
+    color: #111827;
+  }
+  .pr-grand-row {
+    border-top: 1.5px solid #7A1F2B;
+    margin-top: 4px;
+    padding-top: 5px !important;
+    font-size: 12.5px !important;
+    font-weight: 800 !important;
+    color: #7A1F2B !important;
+  }
+  .pr-grand-row span:last-child {
+    color: #7A1F2B !important;
+    font-size: 13.5px !important;
+    font-weight: 800 !important;
+  }
+
+  .pr-paper-foot {
+    border-top: 1px solid #E5E7EB;
+    padding-top: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 8.5px;
+    color: #9CA3AF;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
 </style>
 
 <main class="tracking-page-wrap">
@@ -637,7 +921,7 @@
 
             <div style="margin-top:var(--space-6);display:flex;gap:var(--space-3);flex-wrap:wrap">
               <a href="/shop" class="btn btn-outline btn-sm" style="flex:1;justify-content:center">Continue Shopping</a>
-              <button onclick="window.print()" class="btn btn-ghost btn-sm" style="flex:1;justify-content:center;border:1px solid var(--color-border)">Print Receipt</button>
+              <button onclick="printCustomerReceipt()" class="btn btn-ghost btn-sm" style="flex:1;justify-content:center;border:1px solid var(--color-border)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Print Receipt</button>
             </div>
           </div>
 
@@ -666,6 +950,9 @@
   </div>
 </main>
 
+<!-- Dedicated Single-Page Customer Receipt for Print -->
+<div id="printReceipt" class="pr-receipt-root" aria-hidden="true"></div>
+
 <div class="toast-container" id="toastContainer" aria-live="polite"></div>
 
 <script src="/js/utils.js"></script>
@@ -692,6 +979,8 @@ function copyOrderNumber(num) {
   }
 }
 
+let currentTrackedOrder = null;
+
 function lookupOrder() {
   const raw = document.getElementById('orderInput').value.trim().toUpperCase();
   if (!raw) return;
@@ -717,7 +1006,8 @@ function lookupOrder() {
     btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg> Track Order';
 
     if (res.success && res.data) {
-      renderOrder(normalizeApiOrder(res.data));
+      currentTrackedOrder = normalizeApiOrder(res.data);
+      renderOrder(currentTrackedOrder);
     } else {
       throw new Error('Not found');
     }
@@ -735,6 +1025,7 @@ function normalizeApiOrder(raw) {
   const items = (raw.items || []).map(item => ({
     name: item.product_name || 'Product',
     variant: item.product_sku ? `SKU: ${item.product_sku}` : (item.sku ? `SKU: ${item.sku}` : ''),
+    sku: item.product_sku || item.sku || '—',
     qty: Number(item.quantity || 1),
     price: Number(item.price_at_purchase || item.price || item.item_total || 0),
     image: item.image || (item.product_id ? `/backend/api/image.php?type=product&id=${item.product_id}` : '/images/logo.png')
@@ -819,6 +1110,9 @@ function normalizeApiOrder(raw) {
     id: raw.order_number || raw.id || 'N/A',
     date: raw.created_at || new Date().toISOString(),
     status: stepStatus,
+    subtotal: Number(raw.subtotal || 0),
+    shipping_fee: Number(raw.shipping_fee || 0),
+    discount: Number(raw.discount_amount || 0),
     total: Number(raw.total_amount || 0),
     estimatedDelivery: estDate,
     carrier: raw.shipping_method === 'standard' ? 'Standard Shipping (3–5 Days)' : (raw.shipping_method || 'Standard'),
@@ -979,6 +1273,153 @@ function renderOrder(order) {
   // Show Result Card and scroll smoothly
   document.getElementById('trackingResult').classList.add('show');
   document.getElementById('trackingResult').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  // Pre-render dedicated single-page print receipt
+  renderPrintReceipt(order);
+}
+
+function renderPrintReceipt(order) {
+  const container = document.getElementById('printReceipt');
+  if (!container) return;
+
+  const isPaid = order.payment_status === 'completed';
+  const isCod = order.payment_method === 'cod';
+  const payLabel = isCod ? 'Cash on Delivery (COD)' : 'Online / Easypaisa';
+  const statusBadge = isPaid
+    ? '<span class="pr-pill pr-pill-paid">Paid</span>'
+    : '<span class="pr-pill pr-pill-pending">Pending</span>';
+
+  // Compute breakdown safely
+  const itemsSubtotal = (order.items || []).reduce((s, it) => s + (it.price * it.qty), 0);
+  const subtotal = order.subtotal > 0 ? order.subtotal : itemsSubtotal;
+  const discount = order.discount || 0;
+  const shipping = order.shipping_fee > 0 ? order.shipping_fee : Math.max(0, order.total - subtotal + discount);
+  const grandTotal = order.total || (subtotal + shipping - discount);
+
+  const ship = order.shipping_address || {};
+  const street = [ship.street, ship.apt].filter(Boolean).join(', ') || 'Address on record';
+  const cityState = [ship.city, ship.state, ship.zip].filter(Boolean).join(', ') || 'Pakistan';
+  const phone = ship.phone || order.customer_phone || '—';
+  const email = ship.email || order.customer_email || '—';
+
+  const itemsRows = (order.items || []).map((item, idx) => `
+    <tr>
+      <td style="text-align: center; color: #6B7280; font-weight: 600;">${idx + 1}</td>
+      <td>
+        <div class="pr-item-name">${escapeHtml(item.name)}</div>
+        ${item.variant ? `<div class="pr-item-sub">${escapeHtml(item.variant)}</div>` : ''}
+      </td>
+      <td style="color: #4B5563;">${escapeHtml(item.sku || '—')}</td>
+      <td style="text-align: center; font-weight: 700;">${item.qty}</td>
+      <td style="text-align: right;">${formatPrice(item.price)}</td>
+      <td style="text-align: right; font-weight: 700;">${formatPrice(item.price * item.qty)}</td>
+    </tr>
+  `).join('');
+
+  container.innerHTML = `
+    <!-- Header -->
+    <div class="pr-head-row">
+      <div class="pr-brand-col">
+        <div class="pr-brand-title">Mithooos</div>
+        <div class="pr-brand-sub">Sindh Ki Khushboo · Handcrafted Heritage</div>
+        <div class="pr-brand-meta">
+          <span>Official Store: www.mithooos.com</span> · 
+          <span>Helpline: +92 326 353535</span>
+        </div>
+      </div>
+      <div class="pr-title-col">
+        <div class="pr-badge-inv">ORDER RECEIPT</div>
+        <div class="pr-order-ref">#${escapeHtml(order.id)}</div>
+        <div class="pr-date-line">Date: ${formatDate(order.date)}</div>
+      </div>
+    </div>
+
+    <div class="pr-decor-line"></div>
+
+    <!-- Customer & Shipping Summary Grid -->
+    <div class="pr-party-grid">
+      <div class="pr-party-box">
+        <div class="pr-party-label">CUSTOMER DETAILS</div>
+        <div class="pr-party-name">${escapeHtml(order.customer_name || 'Customer')}</div>
+        <div class="pr-party-txt">Phone: ${escapeHtml(phone)}</div>
+        ${email !== '—' ? `<div class="pr-party-txt">Email: ${escapeHtml(email)}</div>` : ''}
+      </div>
+      <div class="pr-party-box">
+        <div class="pr-party-label">SHIPPING DESTINATION</div>
+        <div class="pr-party-name">${escapeHtml(street)}</div>
+        <div class="pr-party-txt">${escapeHtml(cityState)}</div>
+        <div class="pr-party-txt">Country: Pakistan</div>
+      </div>
+      <div class="pr-party-box">
+        <div class="pr-party-label">ORDER & PAYMENT SUMMARY</div>
+        <div class="pr-party-txt">Payment Method: <strong>${escapeHtml(payLabel)}</strong></div>
+        <div class="pr-party-txt" style="margin: 2px 0;">Payment Status: ${statusBadge}</div>
+        <div class="pr-party-txt">Shipping: <span>${escapeHtml(order.carrier || 'Standard (3–5 Days)')}</span></div>
+      </div>
+    </div>
+
+    <!-- Products Table -->
+    <table class="pr-items-tbl">
+      <thead>
+        <tr>
+          <th style="width: 32px; text-align: center;">#</th>
+          <th>Product Description</th>
+          <th style="width: 110px;">SKU</th>
+          <th style="width: 50px; text-align: center;">Qty</th>
+          <th style="width: 100px; text-align: right;">Unit Price</th>
+          <th style="width: 110px; text-align: right;">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${itemsRows}
+      </tbody>
+    </table>
+
+    <!-- Totals & Notes Section -->
+    <div class="pr-bottom-grid">
+      <div class="pr-notes-box">
+        <div class="pr-notes-title">Order Notes & Customer Care:</div>
+        <p style="margin: 0 0 4px 0;">Thank you for your order with Mithooos! Please inspect your parcel upon arrival. Keep this receipt for any warranty or customer service inquiries.</p>
+        <div class="pr-verify-stamp">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#065F46" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>Verified Genuine Mithooos Order Receipt</span>
+        </div>
+      </div>
+      <div class="pr-totals-card">
+        <div class="pr-sum-row">
+          <span>Items Subtotal</span>
+          <span>${formatPrice(subtotal)}</span>
+        </div>
+        ${discount > 0 ? `
+        <div class="pr-sum-row">
+          <span>Discount</span>
+          <span style="color:#065F46">-${formatPrice(discount)}</span>
+        </div>` : ''}
+        <div class="pr-sum-row">
+          <span>Shipping Fee</span>
+          <span>${formatPrice(shipping)}</span>
+        </div>
+        <div class="pr-sum-row pr-grand-row">
+          <span>Grand Total</span>
+          <span>${formatPrice(grandTotal)}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1-Page Document Footer -->
+    <div class="pr-paper-foot">
+      <span>Mithooos Official E-Store · www.mithooos.com</span>
+      <span>Computer Generated Invoice · Valid Without Signature</span>
+      <span>Page 1 of 1</span>
+    </div>
+  `;
+}
+
+function printCustomerReceipt() {
+  if (currentTrackedOrder) {
+    renderPrintReceipt(currentTrackedOrder);
+  }
+  window.print();
 }
 
 // Enter Key triggers search
