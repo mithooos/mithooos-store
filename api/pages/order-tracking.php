@@ -997,6 +997,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
-<?php include __DIR__ . '/../includes/frontend/footer.php'; ?>
+<script src="/js/site-footer.js"></script>
 </body>
 </html>
