@@ -19,11 +19,11 @@ class Order {
 
             $order_id = $this->db->insert(
                 'INSERT INTO orders (user_id, order_number, subtotal, tax, shipping_cost, discount_amount, online_discount_amount,
-                 total_amount, payment_method, payment_status, shipping_address, billing_address, payment_proof_url, payment_proof_data, payment_proof_mime, notes)
-                 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+                 total_amount, payment_method, payment_status, shipping_address, billing_address, payment_proof_url, payment_proof_data, payment_proof_mime, notes, shipping_method)
+                 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
                 [$user_id, $order_number, $totals['subtotal'], $totals['tax'] ?? 0,
                  $totals['shipping'] ?? 0, $totals['discount'] ?? 0, $totals['online_discount'] ?? 0, $totals['total'],
-                 $pay_method, 'pending', json_encode($ship), json_encode($bill), $payment_proof_url, $proofData, $proofMime, $idempotency_key]
+                 $pay_method, 'pending', json_encode($ship), json_encode($bill), $payment_proof_url, $proofData, $proofMime, $idempotency_key, $shipping_method]
             );
 
             if ($proofData) {
@@ -41,10 +41,11 @@ class Order {
                 );
 
                 $this->db->insert(
-                    'INSERT INTO order_items (order_id, product_id, variant_id, product_name, product_sku, price_at_purchase, cost_at_purchase,
+                    'INSERT INTO order_items (order_id, product_id, variant_id, product_name, sku, product_sku, price_at_purchase, cost_at_purchase,
                     quantity, item_total)
-                     VALUES (?,?,?,?,?,?,?,?,?)',
+                     VALUES (?,?,?,?,?,?,?,?,?,?)',
                     [$order_id, $item['product_id'], $item['variant_id'] ?? null, $item['product_name'], 
+                     $item['sku'] ?? null,
                      $item['sku'] ?? null,
                      $item['final_price'] ?? $item['price'], $item['cost_price'] ?? 0, $item['quantity'],
                      ($item['final_price'] ?? $item['price']) * $item['quantity']]
