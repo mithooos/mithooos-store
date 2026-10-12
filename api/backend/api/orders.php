@@ -21,8 +21,7 @@ if($method==='GET'){
             return;
         }
 
-        if (!$user) { Response::error('Unauthorized.', 401); return; }
-        $checkUserId = ($user['user_type'] === 'admin') ? null : (int)$user['user_id'];
+        $checkUserId = ($user && $user['user_type'] === 'admin') ? null : ($user ? (int)$user['user_id'] : null);
         $o = $om->findByOrderNumber((string)$id, $checkUserId);
         if (!$o) { Response::error('Order not found.', 404); return; }
         Response::success($o);
