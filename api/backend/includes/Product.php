@@ -82,10 +82,8 @@ class Product {
         $prod['attributes'] = $this->db->fetchAll('SELECT attribute_name AS attr_name, attribute_value AS attr_value FROM product_attributes WHERE product_id = ?', [$prod['product_id']]);
         $prod['collections']= $this->db->fetchAll('SELECT c.collection_id, c.collection_name, c.slug FROM product_collections pc JOIN collections c ON pc.collection_id = c.collection_id WHERE pc.product_id = ? AND c.is_active = TRUE', [$prod['product_id']]);
         
-        if (empty($f['admin_view'])) {
-            // Increment views only for non-admin
-            $this->db->execute('UPDATE products SET view_count = view_count + 1 WHERE product_id = ?', [$prod['product_id']]);
-        }
+        // Increment views only for non-admin
+        $this->db->execute('UPDATE products SET view_count = view_count + 1 WHERE product_id = ?', [$prod['product_id']]);
 
         return $prod;
     }

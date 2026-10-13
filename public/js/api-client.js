@@ -73,7 +73,9 @@ const API = (() => {
   /* ── Core request ── */
   async function request(method, endpoint, data = null, params = {}) {
     let url = `${BASE}/index.php?_url=${endpoint}`;
-    if (Object.keys(params).length) {
+    if (typeof params === 'string' && params.trim().length) {
+      url += '&' + (params.startsWith('?') || params.startsWith('&') ? params.slice(1) : params);
+    } else if (params && typeof params === 'object' && Object.keys(params).length) {
       url += '&' + new URLSearchParams(params).toString();
     }
     try {

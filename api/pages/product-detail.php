@@ -36,6 +36,10 @@
     <!-- ── PRODUCT INFO ── -->
     <div class="product-info-panel">
       <div>
+        <div style="display:flex;align-items:center;gap:var(--space-3);flex-wrap:wrap;margin-bottom:var(--space-2)">
+          <span class="badge" id="pdCategoryBadge" style="display:none;background:var(--color-surface);color:var(--color-primary);border:1px solid var(--color-border-soft);font-weight:600"></span>
+          <span id="pdSkuWrap" style="display:none;font-size:var(--text-xs);color:var(--color-muted);font-weight:600;letter-spacing:0.5px">SKU: <span id="pdSku" style="color:var(--color-ink)"></span></span>
+        </div>
         <h1 class="product-detail-title" id="pdTitle">Loading…</h1>
       </div>
 
@@ -53,6 +57,8 @@
         <div class="stock-dot"></div>
         Checking availability…
       </div>
+
+      <p id="pdShortDesc" class="product-short-desc" style="display:none;font-size:var(--text-sm);color:var(--color-body);line-height:1.6;margin-top:var(--space-3);margin-bottom:var(--space-2)"></p>
 
       <!-- Variant Selector -->
       <div id="pdVariantsWrap" style="display:none;margin-bottom:var(--space-4)">
@@ -102,11 +108,11 @@
       <!-- Accordion details -->
       <div class="accordion">
         <div class="accordion-item">
-          <button class="accordion-trigger" onclick="toggleAccordion(this)">
+          <button class="accordion-trigger open" onclick="toggleAccordion(this)">
             Product Description
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
           </button>
-          <div class="accordion-body" id="pdDescription">Loading…</div>
+          <div class="accordion-body open" id="pdDescription">Loading…</div>
         </div>
         <div class="accordion-item">
           <button class="accordion-trigger" onclick="toggleAccordion(this)">
@@ -278,6 +284,39 @@ function renderProduct(p) {
   document.getElementById('twitterImage')?.setAttribute('content', ogImage);
 
   document.getElementById('pdTitle').textContent = p.product_name;
+
+  // Category Badge & SKU
+  const catBadge = document.getElementById('pdCategoryBadge');
+  if (catBadge) {
+    if (p.category_name) {
+      catBadge.textContent = p.category_name;
+      catBadge.style.display = 'inline-block';
+    } else {
+      catBadge.style.display = 'none';
+    }
+  }
+
+  const skuWrap = document.getElementById('pdSkuWrap');
+  const skuEl = document.getElementById('pdSku');
+  if (skuWrap && skuEl) {
+    if (p.sku) {
+      skuEl.textContent = p.sku;
+      skuWrap.style.display = 'inline-block';
+    } else {
+      skuWrap.style.display = 'none';
+    }
+  }
+
+  // Short description
+  const shortDescEl = document.getElementById('pdShortDesc');
+  if (shortDescEl) {
+    if (p.short_description) {
+      shortDescEl.textContent = p.short_description;
+      shortDescEl.style.display = 'block';
+    } else {
+      shortDescEl.style.display = 'none';
+    }
+  }
 
   document.getElementById('breadcrumbName').textContent = p.product_name;
   const catLink = document.getElementById('breadcrumbCat');
