@@ -28,7 +28,7 @@
         <div class="contact-icon-box"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
         <div>
           <p style="font-weight:700;color:var(--color-ink);margin-bottom:4px">Email Us</p>
-          <a href="mailto:hello@mithooos.com" style="color:var(--color-primary);font-size:var(--text-sm)">hello@mithooos.com</a>
+          <a href="mailto:mithooos.info@gmail.com" style="color:var(--color-primary);font-size:var(--text-sm)">mithooos.info@gmail.com</a>
           <p style="font-size:var(--text-xs);color:var(--color-muted);margin-top:2px">We reply within 24 hours</p>
         </div>
       </div>
@@ -37,17 +37,8 @@
         <div class="contact-icon-box"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.08 1.18 2 2 0 012.06 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.2 7.72a16 16 0 006.07 6.07l1.07-1.07a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"/></svg></div>
         <div>
           <p style="font-weight:700;color:var(--color-ink);margin-bottom:4px">Call Us</p>
-          <a href="tel:+15551234567" style="color:var(--color-primary);font-size:var(--text-sm)">+1 (555) 123-4567</a>
-          <p style="font-size:var(--text-xs);color:var(--color-muted);margin-top:2px">Mon–Fri, 9 AM–6 PM EST</p>
-        </div>
-      </div>
-
-      <div class="contact-info-item">
-        <div class="contact-icon-box"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
-        <div>
-          <p style="font-weight:700;color:var(--color-ink);margin-bottom:4px">Visit Us</p>
-          <p style="font-size:var(--text-sm);color:var(--color-body)">123 Fashion Avenue, Suite 400<br>New York, NY 10001, USA</p>
-          <p style="font-size:var(--text-xs);color:var(--color-muted);margin-top:2px">By appointment only</p>
+          <a href="tel:03013421260" style="color:var(--color-primary);font-size:var(--text-sm)">0301 3421260</a>
+          <p style="font-size:var(--text-xs);color:var(--color-muted);margin-top:2px">Available 24/7</p>
         </div>
       </div>
 
@@ -55,17 +46,9 @@
         <div class="contact-icon-box"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
         <div>
           <p style="font-weight:700;color:var(--color-ink);margin-bottom:4px">Business Hours</p>
-          <p style="font-size:var(--text-sm);color:var(--color-body)">Monday – Friday: 9 AM – 6 PM EST</p>
-          <p style="font-size:var(--text-sm);color:var(--color-body)">Saturday: 10 AM – 4 PM EST</p>
-          <p style="font-size:var(--text-xs);color:var(--color-muted)">Sunday: Closed</p>
+          <p style="font-size:var(--text-sm);color:var(--color-body)">24 Hours / 7 Days a Week</p>
+          <p style="font-size:var(--text-xs);color:var(--color-muted);margin-top:2px">Open 24/7 to assist you</p>
         </div>
-      </div>
-
-      <!-- Map placeholder -->
-      <div class="map-placeholder">
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#93C5FD" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-        <p style="color:var(--color-muted);font-size:var(--text-sm)">123 Fashion Avenue, New York</p>
-        <a href="https://maps.google.com" target="_blank" class="btn btn-outline btn-sm">Open in Maps</a>
       </div>
     </div>
 

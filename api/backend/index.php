@@ -294,12 +294,14 @@ match (true) {
         }
         Response::success($settings);
     })(),
-    
+
+
 
     /* ── ADMIN ── */
     $resource === 'admin' => (function() use ($method, $body, $query, $sub, $id, $db, $auth, $segments) {
         require __DIR__ . '/admin/router.php';
     })(),
+    
 
     /* ── 404 ── */
     default => Response::error("Endpoint not found: $uri", 404),
