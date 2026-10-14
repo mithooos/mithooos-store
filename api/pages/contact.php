@@ -75,14 +75,14 @@
         <h2 class="contact-form-title">Send a Message</h2>
         <p class="contact-form-sub">Fill out the form and we'll get back to you as soon as possible.</p>
 
-        <form id="contactForm" onsubmit="handleContact(event)" novalidate>
+        <form id="contactForm" action="https://formspree.io/f/xqpeyvkr" method="POST" enctype="multipart/form-data" onsubmit="handleContact(event)" novalidate>
           <div class="form-row">
-            <div class="form-group"><label class="form-label" for="ctName">Full Name *</label><input type="text" id="ctName" class="form-input" placeholder="Your full name" required></div>
-            <div class="form-group"><label class="form-label" for="ctEmail">Email *</label><input type="email" id="ctEmail" class="form-input" placeholder="your@email.com" required></div>
+            <div class="form-group"><label class="form-label" for="ctName">Full Name *</label><input type="text" id="ctName" name="name" class="form-input" placeholder="Your full name" required></div>
+            <div class="form-group"><label class="form-label" for="ctEmail">Email *</label><input type="email" id="ctEmail" name="email" class="form-input" placeholder="your@email.com" required></div>
           </div>
           <div class="form-group">
             <label class="form-label" for="ctSubject">Subject *</label>
-            <select id="ctSubject" class="form-input" style="appearance:none;background-image:url(\"data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%236B7280' stroke-width='1.5' stroke-linecap='round' fill='none'/%3E%3C/svg%3E\");background-repeat:no-repeat;background-position:right 14px center;padding-right:2.5rem" required>
+            <select id="ctSubject" name="subject" class="form-input" style="appearance:none;background-image:url(\"data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%236B7280' stroke-width='1.5' stroke-linecap='round' fill='none'/%3E%3C/svg%3E\");background-repeat:no-repeat;background-position:right 14px center;padding-right:2.5rem" required>
               <option value="">Select a topic…</option>
               <option>General Inquiry</option>
               <option>Order Issue</option>
@@ -95,14 +95,14 @@
           </div>
           <div class="form-group">
             <label class="form-label" for="ctMsg">Message *</label>
-            <textarea id="ctMsg" class="form-input" placeholder="Tell us how we can help you…" required style="height:140px;resize:vertical"></textarea>
+            <textarea id="ctMsg" name="message" class="form-input" placeholder="Tell us how we can help you…" required style="height:140px;resize:vertical"></textarea>
           </div>
           <div class="form-group">
             <label class="form-label" for="ctAttach">Attachment <span style="font-weight:400;color:var(--color-muted)">(optional, max 5MB)</span></label>
-            <input type="file" id="ctAttach" class="form-input" accept=".jpg,.png,.pdf" style="padding:var(--space-3)">
+            <input type="file" id="ctAttach" name="attachment" class="form-input" accept=".jpg,.png,.pdf" style="padding:var(--space-3)">
           </div>
           <label class="form-check" style="margin-bottom:var(--space-5)">
-            <input type="checkbox" id="ctConsent" required>
+            <input type="checkbox" id="ctConsent" name="consent" required>
             <span style="font-size:var(--text-sm)">I agree that my data will be used to respond to my inquiry</span>
           </label>
           <button type="submit" class="btn btn-primary btn-lg" style="width:100%" id="ctSubmitBtn">
@@ -146,21 +146,27 @@ function toggleFaq(el) {
 
 async function handleContact(e) {
   e.preventDefault();
+  const form = e.target;
   const btn = document.getElementById('ctSubmitBtn');
-  if(!document.getElementById('ctConsent').checked){ showToast('Please agree to data usage','error'); return; }
+  if (!document.getElementById('ctConsent').checked) {
+    showToast('Please agree to data usage', 'error');
+    return;
+  }
 
   const name = document.getElementById('ctName').value.trim();
   const email = document.getElementById('ctEmail').value.trim();
   const subject = document.getElementById('ctSubject').value;
   const message = document.getElementById('ctMsg').value.trim();
-  if (!name || !email || !subject || !message) { showToast('Please fill in all required fields','error'); return; }
+  if (!name || !email || !subject || !message) {
+    showToast('Please fill in all required fields', 'error');
+    return;
+  }
 
-  const attachment = document.getElementById('ctAttach').files[0];
-  if (attachment) {
-    // Attachments aren't supported by the backend yet (POST /api/contact
-    // only accepts the text fields) — be upfront about it rather than
-    // silently drop the file while implying it was sent.
-    showToast('Note: attachments aren\'t supported yet — sending your message without it.', 'info');
+  const fileInput = document.getElementById('ctAttach');
+  const attachment = fileInput.files[0];
+  if (attachment && attachment.size > 5 * 1024 * 1024) {
+    showToast('Attachment exceeds 5MB limit. Please choose a smaller file.', 'error');
+    return;
   }
 
   const originalHTML = btn.innerHTML;
@@ -168,13 +174,50 @@ async function handleContact(e) {
   btn.disabled = true;
 
   try {
-    await API.contact.send(name, email, subject, message);
-    btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Message Sent!';
-    btn.style.background = 'linear-gradient(135deg,#10B981,#059669)';
-    showToast('Message sent! We\'ll get back to you within 24 hours.','success');
-    setTimeout(()=>{ e.target.reset(); btn.innerHTML=originalHTML; btn.disabled=false; btn.style.background=''; }, 3000);
+    const formData = new FormData(form);
+    // Explicit Formspree subject line helper
+    formData.set('_subject', `[Pixel Pockets Inquiry] ${subject} - ${name}`);
+
+    const response = await fetch('https://formspree.io/f/xqpeyvkr', {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (response.ok) {
+      // Optional background local backup to database
+      try {
+        if (window.API?.contact?.send) {
+          API.contact.send(name, email, subject, message).catch(() => {});
+        }
+      } catch (_) {}
+
+      btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Message Sent!';
+      btn.style.background = 'linear-gradient(135deg,#10B981,#059669)';
+      showToast('Message sent! We\'ll get back to you within 24 hours.', 'success');
+      setTimeout(() => {
+        form.reset();
+        btn.innerHTML = originalHTML;
+        btn.disabled = false;
+        btn.style.background = '';
+      }, 3000);
+    } else {
+      let errMsg = 'Could not send your message. Please try again.';
+      if (data && data.errors && Array.isArray(data.errors) && data.errors.length > 0) {
+        errMsg = data.errors.map(err => err.message).join(', ');
+      } else if (data && data.error) {
+        errMsg = data.error;
+      }
+      showToast(errMsg, 'error');
+      btn.innerHTML = originalHTML;
+      btn.disabled = false;
+    }
   } catch (err) {
-    showToast(err.message || 'Could not send your message. Please try again.', 'error');
+    showToast(err.message || 'Could not send your message. Please check your connection and try again.', 'error');
     btn.innerHTML = originalHTML;
     btn.disabled = false;
   }

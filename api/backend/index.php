@@ -294,6 +294,7 @@ match (true) {
         }
         Response::success($settings);
     })(),
+    
 
     /* ── ADMIN ── */
     $resource === 'admin' => (function() use ($method, $body, $query, $sub, $id, $db, $auth, $segments) {
