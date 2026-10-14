@@ -60,10 +60,6 @@
             <div class="hero-signature">
               <span class="signature-line"></span> AUTHENTIC SINDHI CRAFT <span class="signature-line"></span>
             </div>
-            <div class="hero-scroll-indicator">
-              <svg width="14" height="20" viewBox="0 0 24 36" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="32" rx="10"></rect><path d="M12 10v4"></path></svg>
-              SCROLL DOWN
-            </div>
           </div>
           <div class="hero-image-wrapper">
             <div class="hero-image-card">
@@ -99,10 +95,6 @@
             </div>
             <div class="hero-signature">
               <span class="signature-line"></span> EVENING COLLECTION <span class="signature-line"></span>
-            </div>
-            <div class="hero-scroll-indicator">
-              <svg width="14" height="20" viewBox="0 0 24 36" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="32" rx="10"></rect><path d="M12 10v4"></path></svg>
-              SCROLL DOWN
             </div>
           </div>
           <div class="hero-image-wrapper">
@@ -140,10 +132,6 @@
             <div class="hero-signature">
               <span class="signature-line"></span> NATURAL DYE SERIES <span class="signature-line"></span>
             </div>
-            <div class="hero-scroll-indicator">
-              <svg width="14" height="20" viewBox="0 0 24 36" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="32" rx="10"></rect><path d="M12 10v4"></path></svg>
-              SCROLL DOWN
-            </div>
           </div>
           <div class="hero-image-wrapper">
             <div class="hero-image-card">
@@ -180,10 +168,6 @@
             <div class="hero-signature">
               <span class="signature-line"></span> HERITAGE PRINTS <span class="signature-line"></span>
             </div>
-            <div class="hero-scroll-indicator">
-              <svg width="14" height="20" viewBox="0 0 24 36" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="32" rx="10"></rect><path d="M12 10v4"></path></svg>
-              SCROLL DOWN
-            </div>
           </div>
           <div class="hero-image-wrapper">
             <div class="hero-image-card">
@@ -219,10 +203,6 @@
             </div>
             <div class="hero-signature">
               <span class="signature-line"></span> CONTEMPORARY CLASSICS <span class="signature-line"></span>
-            </div>
-            <div class="hero-scroll-indicator">
-              <svg width="14" height="20" viewBox="0 0 24 36" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="32" rx="10"></rect><path d="M12 10v4"></path></svg>
-              SCROLL DOWN
             </div>
           </div>
           <div class="hero-image-wrapper">
