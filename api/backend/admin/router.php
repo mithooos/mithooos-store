@@ -62,6 +62,11 @@ match (true) {
         require __DIR__ . '/blog.php';
     })(),
 
+    /* Reviews management */
+    $sub === 'reviews' => (function() use ($method, $id, $body, $query, $db, $auth, $segments) {
+        require __DIR__ . '/reviews.php';
+    })(),
+
     /* Analytics — period-based revenue chart + category breakdown */
     $sub === 'analytics' && $method === 'GET' => (function() use ($db, $query) {
         $days = max(1, min((int)($query['days'] ?? 30), 365));

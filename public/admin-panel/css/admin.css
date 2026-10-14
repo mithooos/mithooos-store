@@ -99,6 +99,9 @@ tr:hover td{background:#FAFBFC}
 .badge-featured  {background:#F1DDE0;color:#7A1F2B}
 .badge-sale      {background:#FEE2E2;color:#991B1B}
 .badge-new       {background:#D1FAE5;color:#065F46}
+.badge-approved  {background:#D1FAE5;color:#065F46}
+.badge-rejected  {background:#FEE2E2;color:#991B1B}
+.badge-reply     {background:#F1DDE0;color:#7A1F2B}
 
 /* ── Buttons ── */
 .btn{display:inline-flex;align-items:center;gap:.375rem;padding:.5rem 1rem;border-radius:var(--radius-md);font-size:.85rem;font-weight:600;cursor:pointer;border:none;transition:var(--transition-base);font-family:var(--font-body);white-space:nowrap}

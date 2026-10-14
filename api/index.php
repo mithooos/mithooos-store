@@ -1,6 +1,18 @@
 <?php
 declare(strict_types=1);
 
+// Load .env for local development
+$_envFile = dirname(__DIR__) . '/.env';
+if (file_exists($_envFile)) {
+    foreach (file($_envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $_envLine) {
+        if (str_starts_with(trim($_envLine), '#') || !str_contains($_envLine, '=')) continue;
+        [$_k, $_v] = explode('=', $_envLine, 2);
+        if (!getenv(trim($_k))) putenv(trim($_k) . '=' . trim($_v));
+        $_ENV[trim($_k)] = trim($_v);
+    }
+}
+unset($_envFile, $_envLine, $_k, $_v);
+
 $requestPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
 $route = $_GET['__route'] ?? null;
 $target = null;

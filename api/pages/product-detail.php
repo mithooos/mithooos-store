@@ -528,10 +528,13 @@ document.getElementById('wishlistBtn').addEventListener('click', async function 
 });
 
 /* ── Reviews ── */
+let currentReviewsSummary = null;
+
 async function loadReviews(page) {
   try {
     const res = await API.reviews.list(productId, { page, limit: 5 });
     const rows = res.data || [];
+    currentReviewsSummary = res.summary || null;
     reviewsHasMore = res.pagination?.has_more || false;
     reviewsPage = page;
 
@@ -544,7 +547,7 @@ async function loadReviews(page) {
     }
 
     document.getElementById('loadMoreReviewsBtn').style.display = reviewsHasMore ? '' : 'none';
-    if (page === 1) renderReviewSummary(currentProduct);
+    if (page === 1) renderReviewSummary(currentReviewsSummary, currentProduct);
   } catch (err) {
     document.getElementById('reviewsList').innerHTML =
       `<p style="color:var(--color-error);font-size:var(--text-sm)">Could not load reviews.</p>`;
@@ -552,11 +555,28 @@ async function loadReviews(page) {
 }
 
 function reviewCard(r) {
-  const name = escapeHtml(`${r.first_name} ${(r.last_name || '').charAt(0)}.`);
-  const initial = escapeHtml((r.first_name || '?').charAt(0).toUpperCase());
-  const date = new Date(r.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  const displayName = r.reviewer_display_name || (r.first_name ? `${r.first_name} ${(r.last_name || '').charAt(0)}.` : 'Verified Customer');
+  const initial = escapeHtml((displayName || 'C').charAt(0).toUpperCase());
+  const name = escapeHtml(displayName);
+  const date = r.created_at ? new Date(r.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '';
   const title = r.title ? escapeHtml(r.title) : '';
-  const text = escapeHtml(r.review_text || '');
+  const text = escapeHtml(r.review_text || r.comment || '');
+  const isVerified = parseInt(r.is_verified_purchase, 10) === 1;
+  const isPending = r.status === 'pending';
+
+  const replyDate = r.admin_reply_at ? new Date(r.admin_reply_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
+  const replyHtml = r.admin_reply ? `
+    <div class="store-reply-card">
+      <div class="store-reply-header">
+        <div class="store-reply-badge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Official Response from Mithooos
+        </div>
+        ${replyDate ? `<span class="store-reply-date">${replyDate}</span>` : ''}
+      </div>
+      <div class="store-reply-text">${escapeHtml(r.admin_reply)}</div>
+    </div>` : '';
+
   return `
     <div class="review-card">
       <div class="review-header">
@@ -567,28 +587,56 @@ function reviewCard(r) {
             <div class="reviewer-date">${date}</div>
           </div>
         </div>
-        <div>
+        <div style="text-align:right">
           <div class="review-rating">${starString(parseInt(r.rating, 10))}</div>
-          ${parseInt(r.is_verified_purchase, 10) ? `<span class="verified-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Verified Purchase</span>` : ''}
+          <div style="display:flex;gap:6px;justify-content:flex-end;align-items:center;margin-top:4px;flex-wrap:wrap">
+            ${isVerified ? `<span class="verified-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Verified Purchase</span>` : ''}
+            ${isPending ? `<span class="badge" style="background:#FEF3C7;color:#92400E;font-size:0.68rem;padding:2px 8px;border-radius:12px;font-weight:600">Pending Moderation</span>` : ''}
+          </div>
         </div>
       </div>
       ${title ? `<div class="review-title">${title}</div>` : ''}
-      <div class="review-text">${text}</div>
+      ${text ? `<div class="review-text">${text}</div>` : ''}
+      ${replyHtml}
     </div>`;
 }
 
-function renderReviewSummary(p) {
-  const rating = parseFloat(p.rating) || 0;
-  const count = parseInt(p.review_count, 10) || 0;
+function renderReviewSummary(summary, p) {
+  const rating = summary && typeof summary.average_rating !== 'undefined'
+    ? parseFloat(summary.average_rating)
+    : (parseFloat(p?.rating) || 0);
+
+  const count = summary && typeof summary.total_reviews !== 'undefined'
+    ? parseInt(summary.total_reviews, 10)
+    : (parseInt(p?.review_count, 10) || 0);
+
   document.getElementById('reviewsAvg').textContent = rating > 0 ? rating.toFixed(1) : '—';
   document.getElementById('reviewsAvgStars').innerHTML = starString(rating);
   document.getElementById('reviewsTotalLabel').textContent = `${count} review${count !== 1 ? 's' : ''}`;
-  // Per-star breakdown isn't returned by the API (Product::find() only gives
-  // an aggregate average + count), so the bar chart isn't shown rather than
-  // fabricating percentages.
-  document.getElementById('ratingBars').innerHTML = count
-    ? `<p style="font-size:var(--text-xs);color:var(--color-muted)">Rating breakdown by star isn't available yet.</p>`
-    : '';
+
+  const ratingBarsEl = document.getElementById('ratingBars');
+  if (!ratingBarsEl) return;
+
+  if (summary && summary.star_counts && count > 0) {
+    let barsHtml = '';
+    for (let star = 5; star >= 1; star--) {
+      const starCount = summary.star_counts[star] || 0;
+      const pct = count > 0 ? Math.round((starCount / count) * 100) : 0;
+      barsHtml += `
+        <div class="rating-bar-row">
+          <div class="rating-bar-label">${star}★</div>
+          <div class="rating-bar-track">
+            <div class="rating-bar-fill" style="width:${pct}%"></div>
+          </div>
+          <div class="rating-bar-pct">${starCount} (${pct}%)</div>
+        </div>`;
+    }
+    ratingBarsEl.innerHTML = barsHtml;
+  } else if (count > 0) {
+    ratingBarsEl.innerHTML = `<p style="font-size:var(--text-xs);color:var(--color-muted)">Based on ${count} verified review${count !== 1 ? 's' : ''}</p>`;
+  } else {
+    ratingBarsEl.innerHTML = `<p style="font-size:var(--text-xs);color:var(--color-muted)">No ratings submitted yet.</p>`;
+  }
 }
 
 document.getElementById('loadMoreReviewsBtn').addEventListener('click', () => loadReviews(reviewsPage + 1));
@@ -598,6 +646,10 @@ function openReviewForm() {
   if (!API.auth.isLoggedIn()) {
     showToast('Please log in to write a review', 'info');
     setTimeout(() => window.location.href = `/login?redirect=${encodeURIComponent(location.pathname + location.search)}`, 1200);
+    return;
+  }
+  if (currentReviewsSummary?.user_review_submitted) {
+    showToast('You have already submitted a review for this product.', 'info');
     return;
   }
   document.getElementById('reviewFormWrap').classList.remove('hidden');
@@ -631,16 +683,23 @@ async function submitReview() {
     showToast('Please select a star rating', 'error');
     return;
   }
+  const commentText = document.getElementById('reviewTextInput').value.trim();
+  const titleText = document.getElementById('reviewTitleInput').value.trim();
+  if (!commentText && !titleText) {
+    showToast('Please write a short review or title', 'error');
+    return;
+  }
+
   try {
     await API.reviews.submit({
       product_id: currentProduct.product_id,
       rating: selectedStarRating,
-      title: document.getElementById('reviewTitleInput').value.trim() || undefined,
-      review_text: document.getElementById('reviewTextInput').value.trim() || undefined,
+      title: titleText || undefined,
+      review_text: commentText || undefined,
     });
-    showToast('Thanks! Your review has been submitted for approval.', 'success');
+    showToast('Thank you! Your review has been submitted.', 'success');
     closeReviewForm();
-    // Re-fetch the product to pick up the updated aggregate rating
+    // Re-fetch the product to pick up the updated aggregate rating and reload reviews
     const res = await API.products.get(productId);
     currentProduct = res.data;
     loadReviews(1);

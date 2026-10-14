@@ -136,7 +136,7 @@ if ($resource === 'api' && $sub === 'auth' && $stateChanging) {
     }
 }
 
-if ($stateChanging && !$isCsrfTokenEndpoint && !$isAuthEndpoint) {
+if ($stateChanging && !$isCsrfTokenEndpoint && !$isAuthEndpoint && !$isAdminEndpoint) {
     CSRF::require();
 }
 
@@ -296,7 +296,7 @@ match (true) {
     })(),
 
     /* ── ADMIN ── */
-    $resource === 'admin' => (function() use ($method, $body, $query, $sub, $id, $db, $auth) {
+    $resource === 'admin' => (function() use ($method, $body, $query, $sub, $id, $db, $auth, $segments) {
         require __DIR__ . '/admin/router.php';
     })(),
 
