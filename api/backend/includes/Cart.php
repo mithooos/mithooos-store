@@ -10,28 +10,36 @@ class Cart {
 
     public function add(int $product_id, int $qty = 1, ?int $variant_id = null): void {
         [$clause, $bind] = $this->clause();
-        
-        $vClause = $variant_id ? 'AND variant_id = ?' : 'AND variant_id IS NULL';
-        $vBind = $variant_id ? [$variant_id] : [];
-        
-        // Stock check
-        $inv = new Inventory($this->db);
-        $available = $inv->getAvailableStock($product_id, $variant_id);
-        
+
+        $vClause   = $variant_id !== null ? 'AND variant_id = ?' : 'AND variant_id IS NULL';
+        $vBind     = $variant_id !== null ? [$variant_id] : [];
+
+        // One HTTP round-trip: stock check + existing cart item in parallel
+        [$stockRows, $cartRows] = $this->db->queryBatch([
+            [
+                "SELECT COALESCE((SELECT quantity - reserved_quantity FROM inventory_items
+                  WHERE product_id = ? " . ($variant_id !== null ? "AND variant_id = ?" : "AND variant_id IS NULL") . "), p.stock_quantity, 0) AS available
+                 FROM products p WHERE p.product_id = ?",
+                $variant_id !== null ? [$product_id, $variant_id, $product_id] : [$product_id, $product_id],
+            ],
+            [
+                "SELECT cart_id, quantity FROM carts WHERE product_id = ? $vClause AND $clause",
+                [$product_id, ...$vBind, ...$bind],
+            ],
+        ]);
+
+        $available = (int)($stockRows[0]['available'] ?? 0);
         if ($available <= 0) {
             throw new \RuntimeException('Item is out of stock.');
         }
-        
-        $existing = $this->db->fetchOne(
-            "SELECT cart_id, quantity FROM carts WHERE product_id = ? $vClause AND $clause",
-            [$product_id, ...$vBind, ...$bind]
-        );
+
+        $existing = $cartRows[0] ?? null;
         if ($existing) {
             $newQty = min($existing['quantity'] + $qty, $available);
             $this->db->execute('UPDATE carts SET quantity = ?, updated_at = CURRENT_TIMESTAMP WHERE cart_id = ?', [$newQty, $existing['cart_id']]);
         } else {
-            $col  = $this->user_id ? 'user_id' : 'session_id';
-            $val  = $this->user_id ?? $this->session_id;
+            $col       = $this->user_id ? 'user_id' : 'session_id';
+            $val       = $this->user_id ?? $this->session_id;
             $cappedQty = min($qty, $available);
             if ($cappedQty > 0) {
                 $this->db->insert(

@@ -70,23 +70,47 @@ const Cart = (() => {
     save();
   }
 
-  /* ── Add item ── */
+  /* ── Add item (optimistic: instant UI update, server sync in background) ── */
   async function add(product, qty = 1) {
     const productId = product.product_id || product.id;
     const variantId = product.variant_id || null;
-    const name = product.product_name || product.name || 'Item';
+    const name      = product.product_name || product.name || 'Item';
+    const price     = parseFloat(product.final_price ?? product.price ?? 0);
+    const key       = `${productId}_${variantId || 0}`;
 
+    // Snapshot for rollback
+    const prevItems    = JSON.parse(JSON.stringify(state.items));
+    const prevDiscount = state.discount;
+
+    // Optimistic local update — show result immediately
+    const existing = state.items.find(i => i._key === key);
+    if (existing) {
+      existing.qty = Math.min(existing.qty + qty, MAX_QTY);
+    } else {
+      state.items.push({
+        _key: key, id: null, cart_id: null,
+        product_id: productId, variant_id: variantId,
+        name, price, image: product.image || null, qty,
+      });
+    }
+    save();
+    syncUI();
+    showAddedFeedback(name);
+
+    // Background server sync
     try {
       const res = await API.cart.add(productId, qty, variantId);
-      if (res && res.success && res.data && res.data.items) {
+      if (res?.success && res.data?.items) {
         syncStateFromServer(res.data);
         syncUI();
-        showAddedFeedback(name);
-        return { success: true, data: res.data };
-      } else {
-        throw new Error(res?.message || 'Could not add item to cart.');
       }
+      return { success: true };
     } catch (err) {
+      // Revert on server error
+      state.items    = prevItems;
+      state.discount = prevDiscount;
+      save();
+      syncUI();
       throw err;
     }
   }

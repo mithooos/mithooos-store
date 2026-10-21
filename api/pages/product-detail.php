@@ -217,7 +217,11 @@ window.addEventListener('scroll', () => nb.classList.toggle('scrolled', scrollY 
    ══════════════════════════════════════════ */
 
 const params = new URLSearchParams(location.search);
-const productId = params.get('id');
+// Support both /product?id=123 and /product/some-slug clean URLs
+const productId = params.get('id') || params.get('slug') || (() => {
+  const m = location.pathname.match(/^\/product\/([^/]+)$/);
+  return m ? m[1] : null;
+})();
 
 let currentProduct = null;
 let selectedVariantId = null;

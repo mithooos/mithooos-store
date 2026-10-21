@@ -186,6 +186,47 @@ class Database
         );
     }
 
+    /**
+     * Send multiple SELECT queries in a single HTTP round-trip to Turso.
+     * Returns an array of row-sets, one per statement.
+     * Each row-set is an array of associative arrays (same as fetchAll).
+     */
+    public function queryBatch(array $statements): array
+    {
+        $requests = array_map(function ($stmt) {
+            [$sql, $params] = $stmt;
+            return [
+                'type' => 'execute',
+                'stmt' => [
+                    'sql'  => $sql,
+                    'args' => array_map([$this, 'formatArg'], $params),
+                ],
+            ];
+        }, $statements);
+
+        $results = $this->sendRequest($requests);
+        $out = [];
+        foreach ($results as $i => $result) {
+            if (!$result || $result['type'] === 'error') {
+                $errMsg = $result['error']['message'] ?? "Batch query $i failed";
+                throw new PDOException($errMsg);
+            }
+            $resultData = $result['response']['result'] ?? [];
+            $cols       = $resultData['cols'] ?? [];
+            $rawRows    = $resultData['rows'] ?? [];
+            $rows = [];
+            foreach ($rawRows as $row) {
+                $assoc = [];
+                foreach ($row as $j => $val) {
+                    $assoc[$cols[$j]['name'] ?? $j] = $this->parseValue($val);
+                }
+                $rows[] = $assoc;
+            }
+            $out[] = $rows;
+        }
+        return $out;
+    }
+
     public function fetchAll(string $sql, array $params = []): array
     {
         return $this->query($sql, $params)->fetchAll();

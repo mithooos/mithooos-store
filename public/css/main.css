@@ -1,9 +1,8 @@
 /* ============================================
    MITHOOOS — Global Styles
    ============================================ */
-/* NOTE: Google Fonts are loaded via <link> in each HTML <head>.
-   Do NOT @import them here — that causes a duplicate HTTP request. */
-@import 'variables.css';
+/* NOTE: variables.css and Google Fonts are loaded via <link> in head.php before this
+   stylesheet — do NOT @import either here, as that creates a blocking CSS waterfall. */
 
 /* ── Reset ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }

@@ -15,9 +15,9 @@
       try {
         if (window.API?.newsletter?.subscribe) await API.newsletter.subscribe(email);
         form.reset();
-        alert('Thanks for subscribing to Mithooos.');
+        if (typeof showToast === 'function') showToast('Thanks for subscribing to Mithooos!', 'success');
       } catch (error) {
-        alert(error.message || 'Subscription could not be completed.');
+        if (typeof showToast === 'function') showToast(error.message || 'Subscription could not be completed.', 'error');
       } finally {
         if (button) { button.disabled = false; button.textContent = 'Subscribe'; }
       }
@@ -31,7 +31,7 @@
       <div class="container">
         <div class="newsletter-inner">
           <span class="section-label" style="color:rgba(255,255,255,.6)">Stay in the Loop</span>
-          <h2 id="pageNewsletterHeading">Get 10% Off Your First Order</h2>
+          <h2 id="pageNewsletterHeading">Get 20% Off Your First Order</h2>
           <p>Subscribe to our newsletter for exclusive deals, new arrivals, and style inspiration delivered straight to your inbox.</p>
           <form class="newsletter-form" onsubmit="handleNewsletterSubmit(event)" aria-label="Newsletter signup">
             <input type="email" class="newsletter-input" placeholder="Enter your email address..." required aria-label="Email address">
