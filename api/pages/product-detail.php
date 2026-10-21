@@ -364,6 +364,9 @@ function renderProduct(p) {
   const variantsWrap = document.getElementById('pdVariantsWrap');
   const variantsContainer = document.getElementById('pdVariants');
   if (p.variants && p.variants.length > 0) {
+    const VARIANT_LABELS = { 'sindhi-kajoor': 'Select Weight', 'achaar': 'Select Weight', 'sindhi-topi': 'Select Size' };
+    const varLabelEl = variantsWrap.querySelector('.variant-label');
+    if (varLabelEl) varLabelEl.textContent = VARIANT_LABELS[p.category_slug] || 'Select Option';
     variantsWrap.style.display = 'block';
     variantsContainer.innerHTML = p.variants.map(v => 
       `<button class="variant-pill" data-id="${v.variant_id}" data-price="${v.price ?? p.final_price ?? p.price}" data-stock="${v.stock_quantity}">

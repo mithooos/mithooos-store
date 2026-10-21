@@ -12,6 +12,10 @@ if ($method === 'GET') {
             'SELECT image_id, product_id, image_url, image_mime, alt_text, display_order, is_primary, created_at FROM product_images WHERE product_id = ? ORDER BY is_primary DESC, display_order',
             [(int)$id]
         );
+        $row['variants'] = $db->fetchAll(
+            'SELECT * FROM product_variants WHERE product_id = ? AND is_active = TRUE ORDER BY variant_id',
+            [(int)$id]
+        );
         Response::success($row);
         return;
     }

@@ -70,7 +70,7 @@ class Product {
     public function find(int|string $id, string $by = 'id'): array|false {
         $col  = $by === 'slug' ? 'p.slug' : 'p.product_id';
         $prod = $this->db->fetchOne(
-            "SELECT p.*, ROUND(p.price - (p.price * p.discount_percentage / 100), 2) AS final_price, c.category_name
+            "SELECT p.*, ROUND(p.price - (p.price * p.discount_percentage / 100), 2) AS final_price, c.category_name, c.slug AS category_slug
              FROM products p
              LEFT JOIN categories c ON p.category_id = c.category_id
              WHERE $col = ? AND p.is_active = TRUE", [$id]

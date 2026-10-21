@@ -141,7 +141,7 @@
         </div>
         <div class="form-row">
           <div class="form-group"><label class="form-label">Category *</label>
-            <select class="form-control" id="pCategory" required>
+            <select class="form-control" id="pCategory" required onchange="onCategoryChange()">
               <option value="">Select…</option>
             </select>
           </div>
@@ -157,6 +157,21 @@
         </div>
         <div class="form-group"><label class="form-label">Short Description</label><input type="text" class="form-control" id="pShortDesc" placeholder="One-line summary (max 100 chars)" maxlength="100"></div>
         <div class="form-group"><label class="form-label">Full Description *</label><textarea class="form-control" id="pDesc" rows="4" placeholder="Detailed product description…" required style="height:100px"></textarea></div>
+
+        <!-- Category-aware Variants Section -->
+        <div id="variantsSection" style="display:none;border:1px solid var(--border);border-radius:var(--radius);padding:1rem;margin-bottom:1.5rem;background:var(--bg-soft)">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">
+            <div>
+              <h4 style="margin:0;font-size:.9rem;font-weight:700" id="variantsTitle">Variants</h4>
+              <p style="margin:.2rem 0 0;font-size:.72rem;color:var(--muted)" id="variantsHint"></p>
+            </div>
+            <button type="button" class="btn btn-outline btn-sm" onclick="addVariantRow()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="11" height="11" style="margin-right:.2rem"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add
+            </button>
+          </div>
+          <div id="variantsTableHead" style="display:grid;grid-template-columns:1fr 1fr 1fr 28px;gap:.5rem;font-size:.7rem;font-weight:700;text-transform:uppercase;color:var(--muted);letter-spacing:.5px;padding:.1rem .25rem .4rem"></div>
+          <div id="variantsBody"></div>
+        </div>
 
         <!-- Flags -->
         <div style="display:flex;flex-wrap:wrap;gap:1.25rem;margin-bottom:1.5rem">
@@ -289,10 +304,92 @@ function buildCategorySelects(cats) {
     const parent = cats.find(candidate => candidate.category_id === c.parent_category_id);
     const label = parent ? `${parent.category_name} › ${c.category_name}` : c.category_name;
     filterHtml += `<option value="${c.category_id}">${escapeHtml(label)}</option>`;
-    modalHtml += `<option value="${c.category_id}">${escapeHtml(label)}</option>`;
+    modalHtml += `<option value="${c.category_id}" data-slug="${escapeHtml(c.slug || '')}">${escapeHtml(label)}</option>`;
   });
   modalSelect.innerHTML = modalHtml;
   if (filterSelect) filterSelect.innerHTML = filterHtml;
+}
+
+/* ── Category-aware variants ── */
+const PRODUCT_TYPE_BY_SLUG = {
+  'sindhi-kajoor': 'food',
+  'achaar':        'food',
+  'sindhi-topi':   'wearable',
+  'ajrak':         'craft',
+  'home-textiles': 'textile',
+};
+
+function getCategoryType() {
+  const sel = document.getElementById('pCategory');
+  const opt = sel && sel.options[sel.selectedIndex];
+  return PRODUCT_TYPE_BY_SLUG[opt ? (opt.dataset.slug || '') : ''] || 'other';
+}
+
+function onCategoryChange() {
+  const type = getCategoryType();
+  const section = document.getElementById('variantsSection');
+  const title   = document.getElementById('variantsTitle');
+  const hint    = document.getElementById('variantsHint');
+  const head    = document.getElementById('variantsTableHead');
+  const body    = document.getElementById('variantsBody');
+
+  if (type === 'food') {
+    section.style.display = 'block';
+    title.textContent = 'Weight / Pack Variants';
+    hint.textContent  = 'Each pack size (e.g. 500g, 1 kg) can have its own price and stock.';
+    head.innerHTML    = '<span>Pack Label</span><span>Price (PKR)</span><span>Stock</span><span></span>';
+    if (!body.querySelectorAll('.variant-row').length) addVariantRow();
+  } else if (type === 'wearable') {
+    section.style.display = 'block';
+    title.textContent = 'Size Variants';
+    hint.textContent  = 'Each size (e.g. S, M, L, XL) can have its own price and stock.';
+    head.innerHTML    = '<span>Size</span><span>Price (PKR)</span><span>Stock</span><span></span>';
+    if (!body.querySelectorAll('.variant-row').length) addVariantRow();
+  } else {
+    section.style.display = 'none';
+    body.innerHTML = '';
+  }
+}
+
+function addVariantRow(v = {}) {
+  const type = getCategoryType();
+  const body = document.getElementById('variantsBody');
+  const row  = document.createElement('div');
+  row.className = 'variant-row';
+  row.style.cssText = 'display:grid;grid-template-columns:1fr 1fr 1fr 28px;gap:.5rem;margin-bottom:.4rem;align-items:center';
+  const ph = type === 'food' ? 'e.g. 500g' : 'e.g. M';
+  row.innerHTML = `
+    <input type="text"   class="form-control" placeholder="${ph}" value="${escapeHtml(v.variant_name || '')}" style="height:34px;font-size:.8rem">
+    <input type="number" class="form-control" placeholder="Price"  value="${v.price ?? ''}" min="0" step="1"   style="height:34px;font-size:.8rem">
+    <input type="number" class="form-control" placeholder="Stock"  value="${v.stock_quantity ?? ''}" min="0"   style="height:34px;font-size:.8rem">
+    <button type="button" onclick="this.closest('.variant-row').remove()" title="Remove"
+      style="background:none;border:none;cursor:pointer;padding:0;color:var(--muted);display:flex;align-items:center;justify-content:center">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>`;
+  body.appendChild(row);
+}
+
+function collectVariants() {
+  const type = getCategoryType();
+  if (type !== 'food' && type !== 'wearable') return undefined;
+  const variants = [];
+  document.querySelectorAll('#variantsBody .variant-row').forEach(row => {
+    const [nameInp, priceInp, stockInp] = row.querySelectorAll('input');
+    const name = nameInp.value.trim();
+    if (!name) return;
+    variants.push({
+      variant_name:   name,
+      size:           type === 'wearable' ? name : null,
+      price:          parseFloat(priceInp.value) || null,
+      stock_quantity: parseInt(stockInp.value, 10) || 0,
+    });
+  });
+  return variants.length ? variants : undefined;
+}
+
+function resetVariants() {
+  document.getElementById('variantsSection').style.display = 'none';
+  document.getElementById('variantsBody').innerHTML = '';
 }
 
 async function loadProducts() {
@@ -468,6 +565,13 @@ async function editProduct(id) {
     document.getElementById('pOnlineEnd').value = p.online_discount_end ? p.online_discount_end.substring(0, 16) : '';
     document.getElementById('modalTitle').textContent = 'Edit Product';
     editMode = true;
+    // Populate variants after category is set
+    onCategoryChange();
+    const existingVariants = p.variants || [];
+    if (existingVariants.length) {
+      document.getElementById('variantsBody').innerHTML = '';
+      existingVariants.forEach(v => addVariantRow(v));
+    }
     openModal('productModal');
   } catch (err) {
     showToast(err.message || 'Could not load product for editing.', 'error');
@@ -522,6 +626,8 @@ async function saveProduct(e) {
     online_discount_start: document.getElementById('pOnlineStart').value || undefined,
     online_discount_end: document.getElementById('pOnlineEnd').value || undefined,
   };
+  const variants = collectVariants();
+  if (variants !== undefined) payload.variants = variants;
 
   // Include any images uploaded via uploadImagesToServer() this session
   const uploadedUrls = window._uploadedImageUrls || [];
@@ -544,6 +650,7 @@ async function saveProduct(e) {
     document.getElementById('modalTitle').textContent = 'Add New Product';
     document.getElementById('imgPreviews').innerHTML = '';
     window._uploadedImageUrls = [];
+    resetVariants();
     loadProducts();
   } catch (err) {
     showToast(err.message || 'Could not save product.', 'error');
@@ -558,6 +665,7 @@ document.querySelector('[onclick="openModal(\'productModal\')"]')?.addEventListe
   document.getElementById('modalTitle').textContent = 'Add New Product';
   document.getElementById('imgPreviews').innerHTML = '';
   window._uploadedImageUrls = [];
+  resetVariants();
 });
 
 function toggleSelectAll(cb) {
