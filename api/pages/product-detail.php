@@ -116,23 +116,12 @@
         </div>
         <div class="accordion-item">
           <button class="accordion-trigger" onclick="toggleAccordion(this)">
-            Size & Fit
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-          </button>
-          <div class="accordion-body">
-            This shirt fits true to size. We recommend sizing up if you prefer a more relaxed fit.<br><br>
-            <strong>Chest:</strong> XS=32", S=34", M=36", L=38", XL=40"<br>
-            <strong>Length:</strong> XS=27", S=28", M=29", L=30", XL=31"
-          </div>
-        </div>
-        <div class="accordion-item">
-          <button class="accordion-trigger" onclick="toggleAccordion(this)">
             Shipping & Returns
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
           </button>
           <div class="accordion-body">
             <strong>Free shipping</strong> on orders over PKR 5,000. Standard delivery 3–5 business days.<br><br>
-            <strong>30-day returns:</strong> Items must be unworn, unwashed, with original tags attached. Free return shipping on all orders.
+            <strong>30-day returns:</strong> If you receive a damaged or incorrect item, contact us within 30 days for a full refund or replacement.
           </div>
         </div>
       </div>
