@@ -142,6 +142,11 @@ if ($stateChanging && !$isCsrfTokenEndpoint && !$isAuthEndpoint && !$isAdminEndp
 
 match (true) {
 
+    /* ── SEED (one-time, key-protected) ── */
+    $resource === 'api' && $sub === 'seed-products' => (function() use ($db) {
+        require __DIR__ . '/api/seed_products.php';
+    })(),
+
     /* ── CSRF TOKEN (GET — returns a fresh signed token) ── */
     $resource === 'api' && $sub === 'csrf-token' => (function() {
         $token = CSRF::token();
