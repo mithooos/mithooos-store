@@ -18,13 +18,35 @@ class Email {
         ];
     }
 
-    /* ── Send via PHP's mail() as fallback (use PHPMailer in production) ── */
+    /* ── Send via PHPMailer + Gmail SMTP ── */
     public function send(string $to, string $subject, string $html, string $text = ''): bool {
-        $headers  = "MIME-Version: 1.0\r\n";
-        $headers .= "Content-type: text/html; charset=UTF-8\r\n";
-        $headers .= "From: {$this->config['from_name']} <{$this->config['from']}>\r\n";
-        $headers .= "X-Mailer: PHP/" . PHP_VERSION . "\r\n";
-        return @mail($to, $subject, $html, $headers);
+        $dir = __DIR__ . '/phpmailer';
+        require_once $dir . '/Exception.php';
+        require_once $dir . '/PHPMailer.php';
+        require_once $dir . '/SMTP.php';
+
+        $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
+        try {
+            $mail->isSMTP();
+            $mail->Host       = $this->config['host'];
+            $mail->SMTPAuth   = true;
+            $mail->Username   = $this->config['user'];
+            $mail->Password   = $this->config['pass'];
+            $mail->SMTPSecure = \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port       = (int)$this->config['port'];
+            $mail->CharSet    = 'UTF-8';
+            $mail->setFrom($this->config['from'], $this->config['from_name']);
+            $mail->addAddress($to);
+            $mail->isHTML(true);
+            $mail->Subject = $subject;
+            $mail->Body    = $html;
+            $mail->AltBody = $text ?: strip_tags($html);
+            $mail->send();
+            return true;
+        } catch (\Exception $e) {
+            error_log('Email send failed: ' . $e->getMessage());
+            return false;
+        }
     }
 
     /* ── Order Confirmation ── */
