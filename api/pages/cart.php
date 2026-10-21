@@ -96,10 +96,8 @@
 
         <!-- Payment icons -->
         <div style="display:flex;justify-content:center;gap:var(--space-2);margin-top:var(--space-4)">
-          <span style="background:var(--color-surface);border-radius:var(--radius-sm);padding:4px 10px;font-size:.7rem;font-weight:700;color:var(--color-muted)">VISA</span>
-          <span style="background:var(--color-surface);border-radius:var(--radius-sm);padding:4px 10px;font-size:.7rem;font-weight:700;color:var(--color-muted)">MC</span>
-          <span style="background:var(--color-surface);border-radius:var(--radius-sm);padding:4px 10px;font-size:.7rem;font-weight:700;color:var(--color-muted)">PayPal</span>
-          <span style="background:var(--color-surface);border-radius:var(--radius-sm);padding:4px 10px;font-size:.7rem;font-weight:700;color:var(--color-muted)">Stripe</span>
+          <span style="background:var(--color-surface);border-radius:var(--radius-sm);padding:4px 10px;font-size:.7rem;font-weight:700;color:var(--color-muted)">Easypaisa</span>
+          <span style="background:var(--color-surface);border-radius:var(--radius-sm);padding:4px 10px;font-size:.7rem;font-weight:700;color:var(--color-muted)">Cash on Delivery</span>
         </div>
       </div>
     </div>

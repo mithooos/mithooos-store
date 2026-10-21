@@ -46,7 +46,7 @@
         <div class="footer-grid">
           <div class="footer-brand">
             <a href="/" aria-label="Mithooos home"><img src="/images/logo.png" alt="Mithooos" style="height:64px;width:auto;object-fit:contain"></a>
-            <p>Premium fashion for the modern individual. Quality and affordability together, rooted in Sindhi heritage.</p>
+            <p>Authentic Sindhi culture — hand-picked dates, ajrak, topi & homemade achaar. Bringing the fragrance of Sindh to the world.</p>
             <div class="social-links" style="margin-top:var(--space-5)">
               <a href="https://www.instagram.com/mithooos.pk/" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Instagram"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a>
               <a href="https://www.facebook.com/people/Mithooos/61593170878179/" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Facebook"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
@@ -57,9 +57,9 @@
             <li><a href="/shop?cat=sindhi-ajrak">Sindhi Ajrak</a></li>
             <li><a href="/shop?cat=sindhi-topi">Sindhi Topi</a></li>
             <li><a href="/shop?cat=sindhi-kajoor">Sindhi Kajoor</a></li>
-            <li><a href="/shop?cat=sindhi-handicrafts">Sindhi Handicrafts</a></li>
-            <li><a href="/shop?filter=new">New Arrivals</a></li>
-            <li><a href="/shop?filter=sale">Sale</a></li>
+            <li><a href="/shop?cat=achaar">Achaar</a></li>
+            <li><a href="/shop?cat=home-textiles">Home Textiles</a></li>
+            <li><a href="/shop">All Products</a></li>
           </ul></div>
           <div class="footer-col"><h4>Help</h4><ul>
             <li><a href="/account">My Account</a></li>

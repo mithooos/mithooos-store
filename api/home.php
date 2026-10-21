@@ -387,7 +387,7 @@
         <a href="/" aria-label="Mithooos Home">
           <img src="/images/logo.png" alt="Mithooos logo" style="height:56px;width:auto;display:block;filter:drop-shadow(0 2px 4px rgba(0,0,0,.2))">
         </a>
-        <p>Premium fashion for the modern individual. We believe great style shouldn't break the bank — quality and affordability together.</p>
+        <p>Authentic Sindhi culture — hand-picked dates, ajrak, topi &amp; homemade achaar. Bringing the fragrance of Sindh to the world.</p>
         <div class="social-links" style="margin-top:var(--space-6); display:flex; gap:1.25rem;">
           <a href="https://www.instagram.com/mithooos.pk/" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Instagram">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
@@ -409,9 +409,9 @@
           <li><a href="/shop?cat=sindhi-ajrak">Sindhi Ajrak</a></li>
           <li><a href="/shop?cat=sindhi-topi">Sindhi Topi</a></li>
           <li><a href="/shop?cat=sindhi-kajoor">Sindhi Kajoor</a></li>
-          <li><a href="/shop?cat=sindhi-handicrafts">Sindhi Handicrafts</a></li>
-          <li><a href="/shop?filter=new">New Arrivals</a></li>
-          <li><a href="/shop?filter=sale">Sale</a></li>
+          <li><a href="/shop?cat=achaar">Achaar</a></li>
+          <li><a href="/shop?cat=home-textiles">Home Textiles</a></li>
+          <li><a href="/shop">All Products</a></li>
         </ul>
       </div>
       <div class="footer-col">
@@ -693,11 +693,18 @@
     });
   });
 
-  // Countdown timer — connected to backend promo_end_date
+  // Countdown timer — settings cached in sessionStorage to avoid duplicate API call
   async function setCountdown() {
     let endTs = 0;
     try {
-        const data = await API.request('GET', '/api/settings');
+        let data;
+        const cached = sessionStorage.getItem('pp_settings_v1');
+        if (cached) {
+          data = JSON.parse(cached);
+        } else {
+          data = await API.request('GET', '/api/settings');
+          try { sessionStorage.setItem('pp_settings_v1', JSON.stringify(data)); } catch (_) {}
+        }
         if (data && data.success && data.data && data.data.promo_end_date) {
             endTs = new Date(data.data.promo_end_date).getTime();
         }

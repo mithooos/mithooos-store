@@ -27,12 +27,19 @@ const Cart = (() => {
     return state.items.reduce((n, i) => n + i.qty, 0);
   }
 
-  /* ── Free shipping threshold (fetched from API, cached per session) ── */
+  /* ── Free shipping threshold (sessionStorage-cached to avoid duplicate API call) ── */
   let _freeShipThreshold = 5000;
   (async () => {
     try {
-      const res = await fetch('/backend/index.php?_url=/api/settings', { credentials: 'same-origin' });
-      const data = await res.json();
+      const cached = sessionStorage.getItem('pp_settings_v1');
+      let data;
+      if (cached) {
+        data = JSON.parse(cached);
+      } else {
+        const res = await fetch('/backend/index.php?_url=/api/settings', { credentials: 'same-origin' });
+        data = await res.json();
+        sessionStorage.setItem('pp_settings_v1', JSON.stringify(data));
+      }
       if (data?.data?.free_shipping_threshold) {
         _freeShipThreshold = parseFloat(data.data.free_shipping_threshold) || 5000;
       }

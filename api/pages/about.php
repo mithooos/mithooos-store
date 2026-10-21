@@ -15,7 +15,7 @@
     <div class="about-grid">
       <div>
         <span class="section-label" data-reveal>Our Story</span>
-        <h1 data-reveal style="transition-delay:.1s">Crafted in Sindh.<br><span class="text-gradient">Worn by the World.</span></h1>
+        <h1 data-reveal style="transition-delay:.1s">Crafted in Sindh.<br><span class="text-gradient">Loved by the World.</span></h1>
         <p style="font-size:var(--text-xl);color:var(--color-body);margin:var(--space-5) 0 var(--space-8);max-width:480px" data-reveal style="transition-delay:.2s">We started Mithooos to bridge the gap between traditional Sindhi heritage and modern living. From authentic Ajrak to hand-woven Kajoor baskets, we celebrate the artisans who keep our culture alive.</p>
         <a href="/shop" class="btn btn-primary btn-lg" data-reveal style="transition-delay:.3s">Explore Heritage</a>
       </div>
@@ -82,10 +82,10 @@
       </div>
       <div data-reveal style="transition-delay:.2s">
         <div style="background:linear-gradient(135deg,#FFF5F0,#FFF0F9);border-radius:var(--radius-2xl);padding:var(--space-8);text-align:center">
-          <p style="font-family:var(--font-heading);font-size:var(--text-3xl);font-weight:800;color:var(--color-ink);line-height:1.4;margin-bottom:var(--space-5)">"We don't just sell clothes. We sell confidence."</p>
+          <p style="font-family:var(--font-heading);font-size:var(--text-3xl);font-weight:800;color:var(--color-ink);line-height:1.4;margin-bottom:var(--space-5)">"We don't just sell products. We carry a culture."</p>
           <div style="display:flex;align-items:center;justify-content:center;gap:var(--space-3)">
-            <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--color-primary),var(--color-secondary));display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:var(--text-lg)">A</div>
-            <div style="text-align:left"><p style="font-weight:700;color:var(--color-ink)">Alex Rivera</p><p style="font-size:var(--text-xs);color:var(--color-muted)">Co-Founder & Creative Director</p></div>
+            <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--color-primary),var(--color-secondary));display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:var(--text-lg)">M</div>
+            <div style="text-align:left"><p style="font-weight:700;color:var(--color-ink)">Mithooos Team</p><p style="font-size:var(--text-xs);color:var(--color-muted)">Founders, Sindhi Culture Advocates</p></div>
           </div>
         </div>
       </div>

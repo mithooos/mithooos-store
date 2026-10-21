@@ -315,7 +315,7 @@ function renderProduct(p) {
   const catLink = document.getElementById('breadcrumbCat');
   if (p.category_name) {
     catLink.textContent = p.category_name;
-    catLink.href = `/shop?cat=${encodeURIComponent((p.category_name || '').toLowerCase())}`;
+    catLink.href = `/shop?cat=${encodeURIComponent(p.category_slug || (p.category_name || '').toLowerCase().replace(/\s+/g, '-'))}`;
   } else {
     catLink.style.display = 'none';
   }

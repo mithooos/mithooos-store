@@ -240,9 +240,16 @@ const API = (() => {
     send: (name, email, subject, message) => request('POST', '/api/contact', { name, email, subject, message }),
   };
 
-  /* ── Categories ── */
+  /* ── Categories (cached 10 min — rarely changes) ── */
+  const _lsGet = (k) => { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } };
+  const _lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
   const categories = {
-    list: () => request('GET', '/api/categories'),
+    list: () => {
+      const KEY = 'pp_cats_v1', TTL = 10 * 60 * 1000;
+      const hit = _lsGet(KEY);
+      if (hit && Date.now() - hit.ts < TTL) return Promise.resolve(hit.data);
+      return request('GET', '/api/categories').then(res => { _lsSet(KEY, { ts: Date.now(), data: res }); return res; });
+    },
   };
 
   /* ── Saved addresses ── */
