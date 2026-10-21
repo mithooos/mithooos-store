@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+<?php $headExtras = '<link rel="preload" href="/images/hero1.png" as="image" fetchpriority="high">'; ?>
 <?php include __DIR__ . '/includes/frontend/head.php'; ?>
 
 <body>
@@ -329,8 +330,8 @@
     <div class="promo-card">
       <div class="promo-card-text" data-reveal="left">
         <span class="badge badge-sale" style="font-size:var(--text-sm);padding:var(--space-2) var(--space-4);margin-bottom:var(--space-4);"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3c1.5 3.5 5 4.5 5 9a5 5 0 1 1-10 0c0-2.5 1.6-4.4 3.2-6.2.3 2 1.3 3.1 2.3 3.7C13 7 12.6 5 12 3Z"/></svg> Limited Time Offer</span>
-        <h2>Summer Sale<br><span class="text-gradient">Up to 60% Off</span></h2>
-        <p>Don't miss out on our biggest sale of the year. Hundreds of styles reduced across all categories.</p>
+        <h2>Limited Sale<br><span class="text-gradient">Up to 60% Off</span></h2>
+        <p>Don't miss out on exclusive deals across hundreds of styles. Shop now before it ends!</p>
         <a href="/shop?filter=sale" class="btn btn-primary btn-lg">Shop the Sale</a>
       </div>
       <div style="text-align:center" data-reveal="right">
@@ -367,7 +368,7 @@
   <div class="container">
     <div class="newsletter-inner" data-reveal>
       <span class="section-label" style="color:rgba(255,255,255,.6)">Stay in the Loop</span>
-      <h2 id="newsletterHeading">Get 10% Off Your First Order</h2>
+      <h2 id="newsletterHeading">Get 20% Off Your First Order</h2>
       <p>Subscribe to our newsletter for exclusive deals, new arrivals, and style inspiration delivered straight to your inbox.</p>
       <form class="newsletter-form" onsubmit="handleNewsletterSubmit(event)" aria-label="Newsletter signup">
         <input type="email" class="newsletter-input" placeholder="Enter your email address…" required aria-label="Email address">
@@ -418,9 +419,9 @@
         <ul>
           <li><a href="/account">My Account</a></li>
           <li><a href="/order-tracking">Order Tracking</a></li>
-          <li><a href="#">Size Guide</a></li>
-          <li><a href="#">Returns & Exchanges</a></li>
-          <li><a href="#">Shipping Info</a></li>
+          <li><a href="/contact?subject=size-guide">Size Guide</a></li>
+          <li><a href="/contact?subject=returns">Returns & Exchanges</a></li>
+          <li><a href="/contact?subject=shipping">Shipping Info</a></li>
           <li><a href="/contact">Contact Us</a></li>
         </ul>
       </div>
@@ -429,9 +430,9 @@
         <ul>
           <li><a href="/about">About Us</a></li>
           <li><a href="/blog">Blog</a></li>
-          <li><a href="#">Sustainability</a></li>
-          <li><a href="#">Careers</a></li>
-          <li><a href="#">Affiliates</a></li>
+          <li><a href="/about#sustainability">Sustainability</a></li>
+          <li><a href="/contact?subject=careers">Careers</a></li>
+          <li><a href="/contact?subject=affiliates">Affiliates</a></li>
         </ul>
         <div style="margin-top:var(--space-6)">
           <h4 style="margin-bottom:var(--space-3)">Payment Methods</h4>
@@ -704,9 +705,20 @@
         console.error('Failed to fetch promo end date', e);
     }
     
-    // Fallback if no valid date from server
+    // Fallback if no valid date from server — persist in localStorage so it
+    // doesn't reset to a new 2-day window on every page load.
     if (!endTs || endTs < Date.now()) {
-      endTs = Date.now() + (2 * 24 * 60 * 60 + 14 * 60 * 60) * 1000;
+      try {
+        const stored = localStorage.getItem('pp_promo_end');
+        if (stored && parseInt(stored, 10) > Date.now()) {
+          endTs = parseInt(stored, 10);
+        } else {
+          endTs = Date.now() + (2 * 24 * 60 * 60 + 14 * 60 * 60) * 1000;
+          localStorage.setItem('pp_promo_end', String(endTs));
+        }
+      } catch (_) {
+        endTs = Date.now() + (2 * 24 * 60 * 60 + 14 * 60 * 60) * 1000;
+      }
     }
 
     function tick() {

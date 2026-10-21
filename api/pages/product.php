@@ -7,14 +7,27 @@ require_once __DIR__ . '/../backend/includes/Product.php';
 $db = Database::getInstance();
 $productModel = new Product($db);
 
-$productId = isset($_GET['id']) ? (int)$_GET['id'] : (isset($_GET['slug']) ? $_GET['slug'] : 0);
-$by = isset($_GET['slug']) ? 'slug' : 'id';
+// Support clean URL: /product/slug via Vercel route (passes slug in query)
+if (isset($_GET['slug']) && $_GET['slug'] !== '') {
+    $productId = $_GET['slug'];
+    $by = 'slug';
+} elseif (isset($_GET['id']) && $_GET['id'] !== '') {
+    $productId = (int)$_GET['id'];
+    $by = 'id';
+} else {
+    $productId = 0;
+    $by = 'id';
+}
 $product = $productId ? $productModel->find($productId, $by) : false;
 
 $title = "Product Not Found | Mithooos";
 $description = "This product could not be found or is no longer available.";
 $image = "";
-$url = "https://mithooos.com/product?" . ($by === 'slug' ? 'slug=' : 'id=') . htmlspecialchars($productId);
+// Canonical — prefer clean slug URL; fall back to id only if slug is missing
+$canonicalSlug = $product ? ($product['slug'] ?? null) : null;
+$url = $canonicalSlug
+    ? 'https://mithooos.com/product/' . rawurlencode($canonicalSlug)
+    : 'https://mithooos.com/product?' . ($by === 'slug' ? 'slug=' : 'id=') . htmlspecialchars($productId);
 
 if ($product) {
     $title = $product['meta_title'] ?: $product['product_name'] . ' | Mithooos';
@@ -71,7 +84,9 @@ if ($product) {
         "@context" => "https://schema.org",
         "@type" => "Product",
         "name" => $product['product_name'],
-        "url" => "https://mithooos.com/product?" . ($by === 'slug' ? 'slug=' : 'id=') . $productId
+        "url" => $canonicalSlug
+            ? 'https://mithooos.com/product/' . rawurlencode($canonicalSlug)
+            : 'https://mithooos.com/product?' . ($by === 'slug' ? 'slug=' : 'id=') . $productId
     ];
     
     $rawJsonDesc = $product['description'] ?: $product['short_description'];

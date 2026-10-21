@@ -14,6 +14,10 @@
       "dest": "/api/index.php?__route=pages/$1.php"
     },
     {
+      "src": "^/product/([a-z0-9][a-z0-9-]*)/?$",
+      "dest": "/api/index.php?__route=pages/product.php&slug=$1"
+    },
+    {
       "src": "^/pages/([a-z0-9-]+)\\.php$",
       "dest": "/api/index.php?__route=pages/$1.php"
     },

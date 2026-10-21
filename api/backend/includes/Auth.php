@@ -98,6 +98,11 @@ class Auth {
             throw new RuntimeException('Account is disabled. Contact support.');
         }
 
+        if (!$user['is_verified']) {
+            $this->logAudit($user['user_id'], 'login_failed_unverified');
+            throw new RuntimeException('Please verify your email address before signing in. Check your inbox for the verification link.');
+        }
+
         $this->db->execute(
             'UPDATE users SET login_attempts = 0, locked_until = NULL, last_login = CURRENT_TIMESTAMP WHERE user_id = ?',
             [$user['user_id']]

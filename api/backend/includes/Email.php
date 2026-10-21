@@ -30,24 +30,33 @@ class Email {
     /* ── Order Confirmation ── */
     public function orderConfirmation(array $order, array $user): bool {
         $subject = "Order Confirmed #{$order['order_number']} — Mithooos";
-        $items   = array_map(fn($i) =>
-            "<tr><td style='padding:8px 0;border-bottom:1px solid #F1F4F8'>{$i['product_name']}<br><small style='color:#9CA3AF'>Qty: {$i['quantity']}</small></td>
-             <td style='padding:8px 0;border-bottom:1px solid #F1F4F8;text-align:right;font-weight:600'>\${$i['item_total']}</td></tr>",
-            $order['items'] ?? []
-        );
+        $firstName = htmlspecialchars($user['first_name'] ?? '', ENT_QUOTES, 'UTF-8');
+        $items   = array_map(function($i) {
+            $pname = htmlspecialchars($i['product_name'] ?? '', ENT_QUOTES, 'UTF-8');
+            $qty   = (int)($i['quantity'] ?? 1);
+            $total = number_format((float)($i['item_total'] ?? 0), 2);
+            return "<tr><td style='padding:8px 0;border-bottom:1px solid #F1F4F8'>{$pname}<br><small style='color:#9CA3AF'>Qty: {$qty}</small></td>
+             <td style='padding:8px 0;border-bottom:1px solid #F1F4F8;text-align:right;font-weight:600'>PKR {$total}</td></tr>";
+        }, $order['items'] ?? []);
+        $subtotal  = number_format((float)($order['subtotal'] ?? 0), 2);
+        $shipping  = (float)($order['shipping_cost'] ?? 0);
+        $tax       = number_format((float)($order['tax'] ?? 0), 2);
+        $total     = number_format((float)($order['total_amount'] ?? 0), 2);
+        $shippingStr = $shipping == 0 ? 'FREE' : 'PKR ' . number_format($shipping, 2);
+        $orderNum  = htmlspecialchars($order['order_number'] ?? '', ENT_QUOTES, 'UTF-8');
         $html = $this->wrap($subject, "
             <h2 style='color:#1A1A2E;margin-bottom:8px'>Your order is confirmed!</h2>
-            <p style='color:#6B7280'>Hi {$user['first_name']}, thank you for shopping with us.</p>
+            <p style='color:#6B7280'>Hi {$firstName}, thank you for shopping with us.</p>
             <div style='background:#F8F9FC;border-radius:12px;padding:20px;margin:20px 0'>
                 <p style='font-size:.8rem;color:#9CA3AF;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px'>Order Number</p>
-                <p style='font-family:monospace;font-size:1.2rem;font-weight:800;color:#FF6B35'>{$order['order_number']}</p>
+                <p style='font-family:monospace;font-size:1.2rem;font-weight:800;color:#FF6B35'>{$orderNum}</p>
             </div>
             <table width='100%' style='border-collapse:collapse;margin-bottom:16px'>" . implode('', $items) . "</table>
             <table width='100%'>
-                <tr><td>Subtotal</td><td style='text-align:right'>\${$order['subtotal']}</td></tr>
-                <tr><td>Shipping</td><td style='text-align:right'>" . ($order['shipping_cost'] == 0 ? 'FREE' : "\${$order['shipping_cost']}") . "</td></tr>
-                <tr><td>Tax</td><td style='text-align:right'>\${$order['tax']}</td></tr>
-                <tr style='font-weight:800;font-size:1.1rem'><td>Total</td><td style='text-align:right;color:#FF6B35'>\${$order['total_amount']}</td></tr>
+                <tr><td>Subtotal</td><td style='text-align:right'>PKR {$subtotal}</td></tr>
+                <tr><td>Shipping</td><td style='text-align:right'>{$shippingStr}</td></tr>
+                <tr><td>Tax</td><td style='text-align:right'>PKR {$tax}</td></tr>
+                <tr style='font-weight:800;font-size:1.1rem'><td>Total</td><td style='text-align:right;color:#FF6B35'>PKR {$total}</td></tr>
             </table>
             <div style='margin-top:24px;text-align:center'>
                 <a href='{$this->config['base_url']}/account' style='display:inline-block;background:linear-gradient(135deg,#FF6B35,#FF3D7F);color:white;padding:12px 28px;border-radius:50px;text-decoration:none;font-weight:700'>Track Your Order</a>
@@ -58,11 +67,12 @@ class Email {
 
     /* ── Shipping Notification ── */
     public function shippingNotification(array $order, array $user): bool {
-        $subject = "Your order #{$order['order_number']} has shipped!";
-        $tracking = $order['tracking_number'] ?? 'N/A';
+        $subject   = "Your order #{$order['order_number']} has shipped!";
+        $firstName = htmlspecialchars($user['first_name'] ?? '', ENT_QUOTES, 'UTF-8');
+        $tracking  = htmlspecialchars($order['tracking_number'] ?? 'N/A', ENT_QUOTES, 'UTF-8');
         $html = $this->wrap($subject, "
             <h2 style='color:#1A1A2E'>Your order is on its way!</h2>
-            <p style='color:#6B7280'>Hi {$user['first_name']}, great news — your order has shipped.</p>
+            <p style='color:#6B7280'>Hi {$firstName}, great news — your order has shipped.</p>
             <div style='background:#D1FAE5;border-radius:12px;padding:20px;margin:20px 0;border-left:4px solid #10B981'>
                 <p style='font-size:.8rem;color:#065F46;text-transform:uppercase;letter-spacing:1px'>Tracking Number</p>
                 <p style='font-family:monospace;font-size:1.1rem;font-weight:800;color:#065F46'>{$tracking}</p>
@@ -77,12 +87,13 @@ class Email {
 
     /* ── Welcome / Registration ── */
     public function welcome(array $user, string $verifyToken): bool {
-        $subject = "Welcome to Mithooos!";
-        $link    = "{$this->config['base_url']}/backend/api/auth/verify?token={$verifyToken}";
-        $html    = $this->wrap($subject, "
-            <h2 style='color:#1A1A2E'>Welcome, {$user['first_name']}!</h2>
+        $subject   = "Welcome to Mithooos!";
+        $firstName = htmlspecialchars($user['first_name'] ?? '', ENT_QUOTES, 'UTF-8');
+        $link      = "{$this->config['base_url']}/api/auth/verify?token=" . urlencode($verifyToken);
+        $html      = $this->wrap($subject, "
+            <h2 style='color:#1A1A2E'>Welcome, {$firstName}!</h2>
             <p style='color:#6B7280'>We're so excited to have you join the Mithooos community.</p>
-            <p style='color:#6B7280;margin-top:16px'>Please verify your email to unlock your exclusive <strong style='color:#FF6B35'>10% welcome discount</strong>.</p>
+            <p style='color:#6B7280;margin-top:16px'>Please verify your email to unlock your exclusive <strong style='color:#FF6B35'>20% welcome discount</strong> with code <strong style='color:#FF6B35'>WELCOME20</strong>.</p>
             <div style='margin:28px 0;text-align:center'>
                 <a href='{$link}' style='display:inline-block;background:linear-gradient(135deg,#FF6B35,#FF3D7F);color:white;padding:14px 32px;border-radius:50px;text-decoration:none;font-weight:700;font-size:1rem'>Verify My Email</a>
             </div>
@@ -93,8 +104,9 @@ class Email {
 
     /* ── Newsletter Confirmation ── */
     public function newsletterConfirm(string $email, string $token): bool {
-        $subject = "You're subscribed! Here's your 10% off code";
-        $html    = $this->wrap($subject, "
+        $subject     = "You're subscribed! Here's your 20% off code";
+        $unsubscribe = "{$this->config['base_url']}/api/newsletter/unsubscribe?token=" . urlencode($token);
+        $html        = $this->wrap($subject, "
             <h2 style='color:#1A1A2E'>You're in!</h2>
             <p style='color:#6B7280'>Thanks for subscribing to the Mithooos newsletter.</p>
             <div style='background:linear-gradient(135deg,#FFF0EB,#FFE4F0);border-radius:16px;padding:28px;margin:24px 0;text-align:center;border:2px dashed rgba(255,107,53,.3)'>
@@ -105,7 +117,7 @@ class Email {
             <div style='text-align:center'>
                 <a href='{$this->config['base_url']}/shop' style='display:inline-block;background:linear-gradient(135deg,#FF6B35,#FF3D7F);color:white;padding:14px 32px;border-radius:50px;text-decoration:none;font-weight:700'>Shop Now</a>
             </div>
-        ");
+        ", $unsubscribe);
         return $this->send($email, $subject, $html);
     }
 
@@ -135,7 +147,11 @@ class Email {
     }
 
     /* ── HTML wrapper template ── */
-    private function wrap(string $title, string $content): string {
+    private function wrap(string $title, string $content, ?string $unsubscribeUrl = null): string {
+        $unsubLink = $unsubscribeUrl
+            ? htmlspecialchars($unsubscribeUrl, ENT_QUOTES, 'UTF-8')
+            : htmlspecialchars($this->config['base_url'] . '/account', ENT_QUOTES, 'UTF-8');
+        $baseUrl = htmlspecialchars($this->config['base_url'], ENT_QUOTES, 'UTF-8');
         return <<<HTML
         <!DOCTYPE html>
         <html lang="en">
@@ -154,8 +170,8 @@ class Email {
             <div style="background:#F8F9FC;padding:20px 32px;text-align:center;border-top:1px solid #E8ECF0">
               <p style="color:#9CA3AF;font-size:.75rem;margin:0">© 2026 Mithooos. All rights reserved.</p>
               <p style="color:#9CA3AF;font-size:.72rem;margin:6px 0 0">
-                <a href="{$this->config['base_url']}" style="color:#FF6B35;text-decoration:none">Visit Store</a> ·
-                <a href="{$this->config['base_url']}/account" style="color:#9CA3AF;text-decoration:none">Unsubscribe</a>
+                <a href="{$baseUrl}" style="color:#FF6B35;text-decoration:none">Visit Store</a> ·
+                <a href="{$unsubLink}" style="color:#9CA3AF;text-decoration:none">Unsubscribe</a>
               </p>
             </div>
           </div>

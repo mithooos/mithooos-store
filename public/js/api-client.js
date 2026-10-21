@@ -5,9 +5,7 @@
 'use strict';
 
 const API = (() => {
-  const BASE        = location.pathname.includes('/mithooos/')
-    ? '/mithooos/backend'
-    : '/backend';
+  const BASE = (window.__APP_CONFIG__ && window.__APP_CONFIG__.apiBase) || '/backend';
   const TOKEN_KEY   = 'pp_token';
   const SESSION_KEY = 'pp_session_id';
   const CSRF_KEY    = 'pp_csrf_token';

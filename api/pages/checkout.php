@@ -48,7 +48,7 @@
             </div>
             <div class="form-group" style="margin-bottom:0">
               <label class="form-label" for="ckPhone">Phone Number *</label>
-              <input type="tel" id="ckPhone" class="form-input" placeholder="+1 (555) 000-0000" required>
+              <input type="tel" id="ckPhone" class="form-input" placeholder="03XX-XXXXXXX" required>
             </div>
           </div>
           <div class="form-group">

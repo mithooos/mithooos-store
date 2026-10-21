@@ -18,7 +18,7 @@ define('API_VERSION', 'v1');
 //   - Suppress the _dev_token field in forgot-password responses
 //   - Cause the global exception handler (see below) to hide internal
 //     error details from API responses
-define('APP_ENV', getenv('APP_ENV') ?: 'development');
+define('APP_ENV', getenv('APP_ENV') ?: 'production');
 
 // ── Upload ──
 define('UPLOAD_DIR',  dirname(__DIR__, 3) . '/uploads');

@@ -56,7 +56,7 @@ class Order {
             $this->db->commit();
             return compact('order_id', 'order_number');
         } catch (\Throwable $e) {
-            $this->db->rollback();
+            $this->db->rollBack();
             throw $e;
         }
     }

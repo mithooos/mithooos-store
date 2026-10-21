@@ -19,7 +19,7 @@ unset($_envFile, $_envLine, $_k, $_v);
 
 
 // ── CORS ─────────────────────────────────────────────────────
-$allowed_origins = ['http://localhost', 'http://localhost:3000', 'https://mithooos.com'];
+$allowed_origins = ['https://mithooos.com', 'https://www.mithooos.com', 'http://localhost', 'http://localhost:3000'];
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 if (in_array($origin, $allowed_origins, true)) {
     header("Access-Control-Allow-Origin: $origin");
@@ -249,7 +249,7 @@ match (true) {
 
     /* ── UPLOAD PAYMENT PROOF ── */
     $resource === 'api' && $sub === 'upload-payment' => (function() use ($method, $auth) {
-        require __DIR__ . '/api/upload_/payment';
+        require __DIR__ . '/api/upload_payment.php';
     })(),
 
     /* ── NEWSLETTER ── */

@@ -27,11 +27,23 @@ const Cart = (() => {
     return state.items.reduce((n, i) => n + i.qty, 0);
   }
 
+  /* ── Free shipping threshold (fetched from API, cached per session) ── */
+  let _freeShipThreshold = 5000;
+  (async () => {
+    try {
+      const res = await fetch('/backend/index.php?_url=/api/settings', { credentials: 'same-origin' });
+      const data = await res.json();
+      if (data?.data?.free_shipping_threshold) {
+        _freeShipThreshold = parseFloat(data.data.free_shipping_threshold) || 5000;
+      }
+    } catch (_) {}
+  })();
+
   /* ── Calculate totals ── */
   function totals() {
     const subtotal = state.items.reduce((s, i) => s + i.price * i.qty, 0);
     const discount = state.discount || 0;
-    const threshold = 5000;
+    const threshold = _freeShipThreshold;
     const shipping = (subtotal - discount) >= threshold ? 0 : 250;
     const tax = parseFloat(((subtotal - discount) * 0.10).toFixed(2));
     const total = parseFloat((subtotal - discount + shipping + tax).toFixed(2));
@@ -272,12 +284,17 @@ const Cart = (() => {
     }
   }
 
+  const MAX_QTY = 10;
   let _qtys = {};
   function changeQty(id, key, delta) {
     const inp = document.getElementById(`qty-${id}`);
     if (!inp) return;
     const current = parseInt(inp.value) || 1;
-    const newQty = Math.max(1, Math.min(10, current + delta));
+    if (delta > 0 && current >= MAX_QTY) {
+      if (typeof showToast === 'function') showToast(`Maximum ${MAX_QTY} items per product.`, 'info');
+      return;
+    }
+    const newQty = Math.max(1, Math.min(MAX_QTY, current + delta));
     inp.value = newQty;
     _qtys[id] = newQty;
     // Debounce API call

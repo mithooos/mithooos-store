@@ -130,7 +130,7 @@ function buildProductCard(p) {
   return `
     <article class="product-card" data-product-id="${p.product_id}">
       <div class="product-card-img">
-        <a href="/product?id=${p.product_id}" class="product-card-img-link" aria-label="${name}" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;text-decoration:none">
+        <a href="${p.slug ? '/product/' + encodeURIComponent(p.slug) : '/product?id=' + p.product_id}" class="product-card-img-link" aria-label="${name}" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;text-decoration:none">
           ${image
             ? `<img src="${image}" alt="${name}" loading="lazy" onerror="handleImageError(this)" style="width:100%;height:100%;object-fit:cover"><div class="img-placeholder img-fallback" style="display:none;width:100%;height:100%;align-items:center;justify-content:center;background:linear-gradient(135deg,#FFF0EB,#FFE4F0)"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#FFB89A" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>`
             : `<div class="img-placeholder" style="width:100%;aspect-ratio:3/4;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#FFF0EB,#FFE4F0)">
@@ -155,7 +155,7 @@ function buildProductCard(p) {
             onclick="addToCartFromCard(event, ${p.product_id}, '${nameForJs}', ${finalPrice})">
             Add to Cart
           </button>
-          <a href="/product?id=${p.product_id}"
+          <a href="${p.slug ? '/product/' + encodeURIComponent(p.slug) : '/product?id=' + p.product_id}"
             class="btn btn-sm" style="background:white;color:var(--color-ink);border:1px solid var(--color-border);font-weight:600">
             View
           </a>
@@ -163,7 +163,7 @@ function buildProductCard(p) {
       </div>
       <div class="product-card-body">
         ${category ? `<span class="product-brand">${category}</span>` : ''}
-        <a href="/product?id=${p.product_id}" class="product-name">${name}</a>
+        <a href="${p.slug ? '/product/' + encodeURIComponent(p.slug) : '/product?id=' + p.product_id}" class="product-name">${name}</a>
         <div class="product-rating">
           <span style="color:#F59E0B;letter-spacing:1px;font-size:.8rem">${stars}</span>
           <span class="product-rating-count">(${p.review_count || 0})</span>
