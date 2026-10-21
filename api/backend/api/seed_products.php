@@ -38,7 +38,7 @@ foreach ($needed as $cat) {
 
 // ── 3. Helper: create/update product + variants ───────────────
 function seedProduct(Database $db, array $p, array $variants = []): string {
-    $existing = $db->fetchOne("SELECT product_id FROM products WHERE slug = ?", [$p['slug']]);
+    $existing = $db->fetchOne("SELECT product_id FROM products WHERE slug = ? OR sku = ?", [$p['slug'], $p['sku']]);
 
     if ($existing) {
         $pid = (int)$existing['product_id'];
