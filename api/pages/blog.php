@@ -201,8 +201,8 @@ function getAvatar(first, last) {
   return `<div class="blog-author-avatar img-placeholder" style="background:linear-gradient(135deg,#EFF6FF,#DBEAFE);display:flex;align-items:center;justify-content:center;color:var(--color-primary);font-weight:bold">${letters.toUpperCase()}</div>`;
 }
 
-function getCardImg(url, cat) {
-  if (url) return `<div class="blog-card-img"><img src="${url}" style="width:100%;height:100%;object-fit:cover"></div>`;
+function getCardImg(url, cat, title) {
+  if (url) return `<div class="blog-card-img"><img src="${url}" alt="${escapeHtml(title || cat || 'Sindhi culture blog post')}" style="width:100%;height:100%;object-fit:cover"></div>`;
   return `<div class="blog-card-img"><div class="img-placeholder" style="width:100%;height:100%;background:linear-gradient(135deg,#FEF3C7,#FDE68A);display:flex;align-items:center;justify-content:center;"><span style="color:#92400E">${cat || 'Blog'}</span></div></div>`;
 }
 
@@ -219,7 +219,7 @@ function renderPosts(posts, page) {
       const f = posts[0];
       featuredBlock.innerHTML = `
         <div class="blog-featured-img">
-          ${f.featured_image_url ? `<img src="${f.featured_image_url}" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0">` : ''}
+          ${f.featured_image_url ? `<img src="${f.featured_image_url}" alt="${escapeHtml(f.title)}" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0">` : ''}
           <div style="position:relative;z-index:2;text-align:center;padding:var(--space-8)">
             <p style="color:rgba(255,255,255,.9);font-size:var(--text-sm);text-shadow:0 1px 3px rgba(0,0,0,.5)">Featured Article</p>
           </div>
@@ -253,7 +253,7 @@ function renderPosts(posts, page) {
       const p = posts[i];
       blogGrid.insertAdjacentHTML('beforeend', `
         <article class="blog-card" data-reveal style="transition-delay:${(i%4)*0.08}s">
-          ${getCardImg(p.featured_image_url, p.category)}
+          ${getCardImg(p.featured_image_url, p.category, p.title)}
           <div class="blog-card-body">
             <span class="blog-cat-tag">${escapeHtml(p.category || 'News')}</span>
             <a href="/article?slug=${p.slug}" class="blog-card-title">${escapeHtml(p.title)}</a>

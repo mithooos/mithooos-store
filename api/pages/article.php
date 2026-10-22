@@ -75,7 +75,7 @@ async function loadArticle() {
       if (p.featured_image_url) {
           html += `
             <div style="width:100%; height:400px; border-radius:var(--radius-xl); overflow:hidden; margin-bottom:var(--space-10)">
-              <img src="${p.featured_image_url}" style="width:100%; height:100%; object-fit:cover">
+              <img src="${p.featured_image_url}" alt="${escapeHtml(p.title)}" style="width:100%; height:100%; object-fit:cover">
             </div>
           `;
       }

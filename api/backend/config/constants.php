@@ -5,7 +5,7 @@
 
 // ── App ──
 define('APP_NAME',    'Mithooos');
-define('APP_URL',     getenv('APP_URL') ?: 'http://localhost');
+define('APP_URL',     getenv('APP_URL') ?: 'https://mithooos.com');
 define('API_VERSION', 'v1');
 
 // APP_ENV controls environment-sensitive behavior: verbose error messages,

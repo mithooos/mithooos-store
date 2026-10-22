@@ -97,7 +97,7 @@ $headExtras   = '<link rel="preload" href="/images/hero1.png" as="image" fetchpr
                 Shop the Collection
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
               </a>
-              <a href="/shop?cat=sindhi-ajrak" class="btn btn-outline btn-lg">Explore Ajrak</a>
+              <a href="/shop?cat=sindhi-topi" class="btn btn-outline btn-lg">Shop Sindhi Topi</a>
             </div>
             <div class="hero-signature">
               <span class="signature-line"></span> EVENING COLLECTION <span class="signature-line"></span>
@@ -133,7 +133,7 @@ $headExtras   = '<link rel="preload" href="/images/hero1.png" as="image" fetchpr
                 Shop the Collection
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
               </a>
-              <a href="/shop?cat=sindhi-ajrak" class="btn btn-outline btn-lg">Explore Ajrak</a>
+              <a href="/shop?cat=sindhi-kajoor" class="btn btn-outline btn-lg">Shop Kajoor Dates</a>
             </div>
             <div class="hero-signature">
               <span class="signature-line"></span> NATURAL DYE SERIES <span class="signature-line"></span>
@@ -169,7 +169,7 @@ $headExtras   = '<link rel="preload" href="/images/hero1.png" as="image" fetchpr
                 Shop the Collection
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
               </a>
-              <a href="/shop?cat=sindhi-ajrak" class="btn btn-outline btn-lg">Explore Ajrak</a>
+              <a href="/shop?cat=home-textiles" class="btn btn-outline btn-lg">Home Textiles</a>
             </div>
             <div class="hero-signature">
               <span class="signature-line"></span> HERITAGE PRINTS <span class="signature-line"></span>
@@ -205,7 +205,7 @@ $headExtras   = '<link rel="preload" href="/images/hero1.png" as="image" fetchpr
                 Shop the Collection
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
               </a>
-              <a href="/shop?cat=sindhi-ajrak" class="btn btn-outline btn-lg">Explore Ajrak</a>
+              <a href="/shop?cat=achaar" class="btn btn-outline btn-lg">Shop Achaar</a>
             </div>
             <div class="hero-signature">
               <span class="signature-line"></span> CONTEMPORARY CLASSICS <span class="signature-line"></span>

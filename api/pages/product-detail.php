@@ -438,7 +438,7 @@ function renderGallery(images) {
 
   thumbsEl.innerHTML = images.map((img, i) => `
     <div class="gallery-thumb ${i === 0 ? 'active' : ''}" data-idx="${i}">
-      <img src="${escapeHtml(resolveImageUrl(img.image_url))}" alt="" loading="lazy" onerror="handleImageError(this)" style="width:100%;height:100%;object-fit:cover">
+      <img src="${escapeHtml(resolveImageUrl(img.image_url))}" alt="${escapeHtml(currentProduct.product_name)} - image ${i + 1}" loading="lazy" onerror="handleImageError(this)" style="width:100%;height:100%;object-fit:cover">
     </div>`).join('');
 
   thumbsEl.querySelectorAll('.gallery-thumb').forEach(t => {
