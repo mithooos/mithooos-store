@@ -1,5 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+<?php
+$pageTitle     = 'About Mithooos | Sindhi Heritage — Ajrak, Topi & Cultural Crafts';
+$pageDesc      = 'Learn the story behind Mithooos — a Sindhi cultural store connecting artisan families in rural Sindh with customers worldwide. Authentic Ajrak, Topi, Kajoor and more.';
+$pageCanonical = 'https://mithooos.com/about';
+$headExtras    = '<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mithooos.com/"},{"@type":"ListItem","position":2,"name":"About","item":"https://mithooos.com/about"}]}</script>';
+?>
 <?php include __DIR__ . '/../includes/frontend/head.php'; ?>
 <body>
 <?php include __DIR__ . '/../includes/frontend/navbar.php'; ?>

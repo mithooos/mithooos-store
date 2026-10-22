@@ -50,7 +50,10 @@ foreach ($staticUrls as $url) {
 }
 
 foreach ($products as $product) {
-    $loc = $baseUrl . '/product?id=' . $product['product_id'];
+    $slug = $product['slug'] ?? null;
+    $loc  = $slug
+        ? $baseUrl . '/product/' . rawurlencode($slug)
+        : $baseUrl . '/product?id=' . $product['product_id'];
     $lastmod = date('c', strtotime($product['updated_at']));
     
     echo "  <url>\n";

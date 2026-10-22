@@ -23,7 +23,7 @@ if ($route === 'home' || ($route === null && in_array($requestPath, ['/', '/inde
 } elseif ($requestPath === '/backend/api/image.php') {
     $target = __DIR__ . '/backend/api/image.php';
     $scriptName = '/backend/api/image.php';
-} elseif ($requestPath === '/backend/sitemap.php') {
+} elseif ($requestPath === '/backend/sitemap.php' || $route === 'backend/sitemap.php') {
     $target = __DIR__ . '/backend/sitemap.php';
     $scriptName = '/backend/sitemap.php';
 } elseif (preg_match('~^/backend/(?:index\.php|api/|admin/)~', $requestPath)

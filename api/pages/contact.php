@@ -1,5 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+<?php
+$pageTitle     = 'Contact Mithooos | Get in Touch — Sindhi Cultural Store';
+$pageDesc      = 'Contact the Mithooos team for questions about Sindhi Ajrak, Topi, Kajoor or your order. We ship worldwide and are happy to help.';
+$pageCanonical = 'https://mithooos.com/contact';
+?>
 <?php include __DIR__ . '/../includes/frontend/head.php'; ?>
 <body>
 

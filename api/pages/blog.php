@@ -1,5 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+<?php
+$pageTitle     = 'Sindhi Culture Blog | Ajrak, Heritage & Traditions — Mithooos';
+$pageDesc      = 'Explore Sindhi culture through our blog — stories on Ajrak block printing, Sindhi Topi craftsmanship, traditional recipes, heritage festivals, and artisan life.';
+$pageCanonical = 'https://mithooos.com/blog';
+$headExtras    = '<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mithooos.com/"},{"@type":"ListItem","position":2,"name":"Culture Blog","item":"https://mithooos.com/blog"}]}</script>';
+?>
 <?php include __DIR__ . '/../includes/frontend/head.php'; ?>
 <body>
 
@@ -11,9 +17,9 @@
 
 <section class="page-hero">
   <div class="container page-hero-inner">
-    <nav class="breadcrumb"><a href="/">Home</a><span class="breadcrumb-sep">/</span><span>Style Blog</span></nav>
-    <h1>Style Stories</h1>
-    <p style="color:var(--color-body);margin-top:var(--space-2)">Fashion tips, trend guides, and inspiration for every wardrobe.</p>
+    <nav class="breadcrumb"><a href="/">Home</a><span class="breadcrumb-sep">/</span><span>Culture Blog</span></nav>
+    <h1>Sindhi Culture & Heritage</h1>
+    <p style="color:var(--color-body);margin-top:var(--space-2)">Stories, traditions and craft guides from the heart of Sindh.</p>
   </div>
 </section>
 

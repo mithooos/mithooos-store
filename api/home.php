@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-<?php $headExtras = '<link rel="preload" href="/images/hero1.png" as="image" fetchpriority="high">'; ?>
+<?php
+$pageTitle    = 'Mithooos — Authentic Sindhi Ajrak, Topi & Cultural Products | Shop Online';
+$pageDesc     = 'Buy authentic Sindhi Ajrak shawls, Sindhi Topi, Kajoor dates, Achaar & home textiles. Handcrafted in Sindh, Pakistan. Worldwide delivery. Discover Sindhi heritage at Mithooos.';
+$pageCanonical = 'https://mithooos.com/';
+$headExtras   = '<link rel="preload" href="/images/hero1.png" as="image" fetchpriority="high">';
+?>
 <?php include __DIR__ . '/includes/frontend/head.php'; ?>
 
 <body>

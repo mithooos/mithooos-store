@@ -1,5 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+<?php
+$pageTitle     = 'Shop Sindhi Cultural Products | Ajrak, Topi, Kajoor & More — Mithooos';
+$pageDesc      = 'Explore our full collection of authentic Sindhi products: Ajrak shawls, Sindhi Topi, Kajoor dates, Achaar & hand-woven home textiles. Shop online with worldwide delivery.';
+$pageCanonical = 'https://mithooos.com/shop';
+$headExtras    = '<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mithooos.com/"},{"@type":"ListItem","position":2,"name":"Shop","item":"https://mithooos.com/shop"}]}</script>';
+?>
 <?php include __DIR__ . '/../includes/frontend/head.php'; ?>
 <body>
 
@@ -17,8 +23,8 @@
       <a href="/">Home</a><span class="breadcrumb-sep">/</span>
       <span>Shop</span>
     </nav>
-    <h1>All Products</h1>
-    <p style="color:var(--color-body);margin-top:var(--space-2)" id="heroSubtitle">Discover our complete collection of premium clothing</p>
+    <h1>Authentic Sindhi Products</h1>
+    <p style="color:var(--color-body);margin-top:var(--space-2)" id="heroSubtitle">Shop Ajrak, Sindhi Topi, Kajoor dates, Achaar & home textiles — handcrafted in Sindh</p>
   </div>
 </section>
 

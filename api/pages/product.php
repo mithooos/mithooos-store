@@ -117,16 +117,34 @@ if ($product) {
     $price = $product['final_price'] ?? $product['price'] ?? null;
     if ($price !== null) {
         $jsonLd['offers'] = [
-            "@type" => "Offer",
-            "price" => $price,
+            "@type"         => "Offer",
+            "price"         => (string)$price,
             "priceCurrency" => "PKR",
-            "availability" => ((int)($product['stock_quantity'] ?? 0) > 0) ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
-            "url" => $jsonLd['url']
+            "availability"  => ((int)($product['stock_quantity'] ?? 0) > 0) ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+            "url"           => $jsonLd['url'],
+            "seller"        => ["@type" => "Organization", "name" => "Mithooos"],
+            "priceValidUntil" => date('Y-12-31'),
+            "hasMerchantReturnPolicy" => ["@type" => "MerchantReturnPolicy", "returnPolicyCategory" => "https://schema.org/MerchantReturnFiniteReturnWindow"],
         ];
     }
+
+    // BreadcrumbList for product page
+    $catName = $product['category_name'] ?? 'Shop';
+    $catSlug = $product['category_slug'] ?? 'all';
+    $jsonLd['@graph'] ?? null; // not a graph, keep flat but add breadcrumb separately
+    $breadcrumbLd = [
+        "@context" => "https://schema.org",
+        "@type"    => "BreadcrumbList",
+        "itemListElement" => [
+            ["@type" => "ListItem", "position" => 1, "name" => "Home", "item" => "https://mithooos.com/"],
+            ["@type" => "ListItem", "position" => 2, "name" => $catName, "item" => "https://mithooos.com/shop?cat=" . rawurlencode($catSlug)],
+            ["@type" => "ListItem", "position" => 3, "name" => $product['product_name'], "item" => $jsonLd['url']],
+        ],
+    ];
     
-    // JSON_HEX_TAG prevents closing script tag injection e.g., </script>
-    $jsonLdScript = "\n" . '<script type="application/ld+json">' . "\n" . json_encode($jsonLd, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) . "\n" . '</script>';
+    $flags = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP;
+    $jsonLdScript  = "\n" . '<script type="application/ld+json">' . "\n" . json_encode($jsonLd, $flags) . "\n" . '</script>';
+    $jsonLdScript .= "\n" . '<script type="application/ld+json">' . "\n" . json_encode($breadcrumbLd, $flags) . "\n" . '</script>';
     
     // AEO FAQ Schema
     $faqLd = [
@@ -151,7 +169,7 @@ if ($product) {
             ]
         ]
     ];
-    $jsonLdScript .= "\n" . '<script type="application/ld+json">' . "\n" . json_encode($faqLd, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) . "\n" . '</script>';
+    $jsonLdScript .= "\n" . '<script type="application/ld+json">' . "\n" . json_encode($faqLd, $flags) . "\n" . '</script>';
 
     $metaHtml .= $jsonLdScript;
 }
